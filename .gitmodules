@@ -1,0 +1,3 @@
+[submodule "sources/contrib/libsodium"]
+	path = sources/contrib/libsodium
+	url = https://github.com/jedisct1/libsodium.git
