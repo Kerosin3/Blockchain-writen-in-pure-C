@@ -1,6 +1,7 @@
 ADD_LIBRARY( accounts STATIC
-		accounts.c
+	activation.c
+	)
 
 TARGET_LINK_LIBRARIES(accounts
-	              openssl
+		      sodium
 		      )
