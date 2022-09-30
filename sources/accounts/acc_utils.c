@@ -1,30 +1,33 @@
 #include "acc_utils.h"
+#include <assert.h>
+#include <sodium/crypto_sign.h>
+#include <string.h>
 
-typedef struct {
-	unsigned char pk[crypto_sign_PUBLICKEYBYTES]; 
-	unsigned char sk[crypto_sign_SECRETKEYBYTES]; 
-} user_keys;
+signed_message_t sign_a_message(unsigned char* msg,size_t len,unsigned char* secret_key){
+	assert(len>0);
+	signed_message_t sigmsg;
 
-user_keys create_key_pair();
-unsigned char* sign_a_message(unsigned char* msg,size_t len,unsigned char* secret_key);
-int validate_a_message(unsigned char* signed_message,size_t signed_message_len,unsigned char* pk);
+	unsigned char SK[crypto_sign_SECRETKEYBYTES];
+	secret_key = memcpy(SK,secret_key,crypto_sign_SECRETKEYBYTES);
+	sigmsg.message = calloc(crypto_sign_BYTES+len, sizeof(unsigned char)); // assign space for message with sign
 
-
-unsigned char* sign_a_message(unsigned char* msg,size_t len,unsigned char* secret_key){
-	unsigned char *signed_message = calloc(crypto_sign_BYTES+len, sizeof(char));
-	unsigned long long signed_message_len;
-	crypto_sign(signed_message, &signed_message_len,
-            msg, len, secret_key);
-	printf("message signed!\n");
-	return signed_message;
+	unsigned long long signed_message_len; // to write len
+	crypto_sign(sigmsg.message, &signed_message_len,
+            msg, len, SK);
+	sigmsg.length = signed_message_len; // assign msg length
+	memset(SK,0,crypto_sign_SECRETKEYBYTES);
+	return sigmsg;
 }
 
-int validate_a_message(unsigned char* signed_message,size_t signed_message_len,unsigned char* pk){
-	unsigned char unsigned_message[signed_message_len];
-	unsigned long long unsigned_message_len;
-	if (crypto_sign_open(unsigned_message, &unsigned_message_len,
-                     signed_message, signed_message_len,(unsigned char*) "dasdasda") != 0) {
-    		/* incorrect signature! */
+int validate_a_message(signed_message_t sigmsg,unsigned char* pk){
+	unsigned char decoded_message[sigmsg.length - 64];
+	unsigned long long decoded_message_len;
+	
+	unsigned char PK[crypto_sign_PUBLICKEYBYTES];
+	memcpy(PK,pk,crypto_sign_PUBLICKEYBYTES);
+
+	if (crypto_sign_open(decoded_message, &decoded_message_len,
+                     sigmsg.message, sigmsg.length,(unsigned char*) PK) != 0) {
     		printf("incorrect signature!\n");
     		return -1;
 	}
