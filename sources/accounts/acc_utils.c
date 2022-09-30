@@ -29,8 +29,10 @@ int validate_a_message(signed_message_t sigmsg,unsigned char* pk){
 	if (crypto_sign_open(decoded_message, &decoded_message_len,
                      sigmsg.message, sigmsg.length,(unsigned char*) PK) != 0) {
     		printf("incorrect signature!\n");
+		memset(PK,0,crypto_sign_PUBLICKEYBYTES);
     		return -1;
 	}
+	memset(PK,0,crypto_sign_PUBLICKEYBYTES);
 	return 1;
 
 }

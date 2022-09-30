@@ -26,8 +26,9 @@ void test_valid_messages(){
 			free(somemsg.test_msg);
 			free(a_msg.message);
 			(result==1) ? printf("validated!\n") : printf("forged!\n");
+			if (!result) break;
 	}
-	if (i==14) printf("TEST PASSED, NO ERROR ORCCURED \n");
+	if (i==15) printf("TEST PASSED, NO ERROR ORCCURED \n");
 	else printf("TEST PASSED, ERROR ORCCURED!!!!!!!!!!!!! \n");
 
 }
