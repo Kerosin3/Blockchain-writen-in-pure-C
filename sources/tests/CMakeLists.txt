@@ -5,5 +5,6 @@ ADD_LIBRARY( tests STATIC
 TARGET_LINK_LIBRARIES(tests
 		      misc
 		      accounts
+		      hashing
 		      sodium
 		      )

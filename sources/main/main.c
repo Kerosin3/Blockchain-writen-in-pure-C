@@ -4,8 +4,7 @@
 #include "../tests/tests.h"
 
 int main(int argc, char *argv[]){
-//	
-	test_valid_messages();
-//	some();
+	tests();
+
 	return 0;
 }

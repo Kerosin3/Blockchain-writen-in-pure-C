@@ -17,6 +17,7 @@ typedef struct {
 typedef struct {
 	unsigned char* message;
 	unsigned long long length;
+	unsigned char public_key[crypto_sign_PUBLICKEYBYTES]; 
 } signed_message_t;
 
 typedef struct {
@@ -28,6 +29,7 @@ typedef struct {
 
 user_keys create_key_pair();
 
+void put_a_PK(signed_message_t* a_msg,unsigned char* PK);
 signed_message_t sign_a_message(unsigned char* msg,size_t len,unsigned char* secret_key);
 int validate_a_message(signed_message_t,unsigned char* pk);
 

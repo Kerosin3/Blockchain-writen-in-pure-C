@@ -2,7 +2,10 @@
 #include <assert.h>
 #include <sodium/crypto_sign.h>
 #include <string.h>
-
+/*
+ * return signed message without PK, message need cleanup
+ *
+ */
 signed_message_t sign_a_message(unsigned char* msg,size_t len,unsigned char* secret_key){
 	assert(len>0);
 	signed_message_t sigmsg;
@@ -19,6 +22,10 @@ signed_message_t sign_a_message(unsigned char* msg,size_t len,unsigned char* sec
 	return sigmsg;
 }
 
+void put_a_PK(signed_message_t* a_msg,unsigned char* PK){
+	memcpy(a_msg->public_key,PK,crypto_sign_SECRETKEYBYTES);
+}
+
 int validate_a_message(signed_message_t sigmsg,unsigned char* pk){
 	unsigned char decoded_message[sigmsg.length - 64];
 	unsigned long long decoded_message_len;
@@ -30,7 +37,7 @@ int validate_a_message(signed_message_t sigmsg,unsigned char* pk){
                      sigmsg.message, sigmsg.length,(unsigned char*) PK) != 0) {
     		printf("incorrect signature!\n");
 		memset(PK,0,crypto_sign_PUBLICKEYBYTES);
-    		return -1;
+    		return 0;
 	}
 	memset(PK,0,crypto_sign_PUBLICKEYBYTES);
 	return 1;
