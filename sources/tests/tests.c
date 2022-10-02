@@ -5,6 +5,9 @@
 #include <string.h>
 #include <time.h>
 
+int test_lvl2node_creation();
+int test_lvl3node_creation();
+
 void tests(){
 	int result = 0;
 	/*result+=test_valid_messages();
@@ -12,10 +15,97 @@ void tests(){
 	result+=test_hash();
 	test_hash_merging();*/
 //   	test_node_creation();
- 	test_Tnode_creation();
+// 	test_Tnode_creation();
+// 	test_lvl2node_creation();
+	test_lvl3node_creation();
 	(!result) ? printf("ALL TESTS PASSED OK\n") : printf("SOME ERRORS WHILE TESTING OCCURRED!\n");
 }
 
+int test_lvl3node_creation(){
+	
+        user_keys uk = create_key_pair();
+	signed_message_t *a_msg = get_a_signed_msg(uk);
+	hash_point_p aHP1 = create_hpoint_message(a_msg);	
+// 	DumpHex(aHP1->msg_hash,crypto_generichash_BYTES);
+	printf("\n");
+	if (!validate_a_message(*a_msg,uk.pk))
+		printf("validation error!\n");
+
+	user_keys uk2 = create_key_pair();
+	signed_message_t *a_msg2 = get_a_signed_msg(uk2);
+	hash_point_p aHP2 = create_hpoint_message(a_msg2);	
+// 	DumpHex(aHP2->msg_hash,crypto_generichash_BYTES);
+	printf("\n");
+	if (!validate_a_message(*a_msg2,uk2.pk))
+		printf("validation error!\n");
+	
+	//
+	hash_point_p MHP = create_hpoint_hashL1(aHP1, aHP2);
+	printf("1, level 2 hash:\n");
+	DumpHex(MHP->msg_hash,crypto_generichash_BYTES);
+
+	//-----------------------------------------------//
+	user_keys uk3 = create_key_pair();
+	signed_message_t *a_msg3 = get_a_signed_msg(uk3);
+	hash_point_p aHP3 = create_hpoint_message(a_msg3);	
+// 	DumpHex(aHP3->msg_hash,crypto_generichash_BYTES);
+	if (!validate_a_message(*a_msg3,uk3.pk))
+		printf("validation error!\n");
+
+	user_keys uk4 = create_key_pair();
+	signed_message_t *a_msg4 = get_a_signed_msg(uk4);
+	hash_point_p aHP4 = create_hpoint_message(a_msg4);	
+	if (!validate_a_message(*a_msg4,uk4.pk))
+		printf("validation error!\n");
+	
+	//
+	hash_point_p MHP1 = create_hpoint_hashL1(aHP3, aHP4);
+	printf("2, level 2 hash:\n");
+ 	DumpHex(MHP1->msg_hash,crypto_generichash_BYTES);
+
+
+	// merge to 3 level
+		
+	hash_point_p MHPX = create_hpoint_hashL1(MHP, MHP1);
+	printf("level 3 hash , prev 1:\n");
+	DumpHex(MHPX->dpointer.hashpointers.hpoint1,crypto_generichash_BYTES);
+	printf("level 3 hash , prev 2:\n");
+	DumpHex(MHPX->dpointer.hashpointers.hpoint2,crypto_generichash_BYTES);
+	printf("some message\n");
+	DumpHex( (MHPX->dpointer.hashpointers.hpoint2), size_t size)
+
+}
+
+
+
+int test_lvl2node_creation(){
+	
+        user_keys uk = create_key_pair();
+	signed_message_t *a_msg = get_a_signed_msg(uk);
+	hash_point_p aHP1 = create_hpoint_message(a_msg);	
+	DumpHex(aHP1->msg_hash,crypto_generichash_BYTES);
+	printf("\n");
+	if (!validate_a_message(*a_msg,uk.pk))
+		printf("validation error!\n");
+
+	user_keys uk2 = create_key_pair();
+	signed_message_t *a_msg2 = get_a_signed_msg(uk2);
+	hash_point_p aHP2 = create_hpoint_message(a_msg2);	
+	DumpHex(aHP2->msg_hash,crypto_generichash_BYTES);
+	printf("\n");
+	if (!validate_a_message(*a_msg2,uk2.pk))
+		printf("validation error!\n");
+	
+	//
+	hash_point_p MHP = create_hpoint_hashL1(aHP1, aHP2);
+	DumpHex(MHP->dpointer.hashpointers.hpoint1,crypto_generichash_BYTES);
+	DumpHex(MHP->dpointer.hashpointers.hpoint2,crypto_generichash_BYTES);
+	printf("\n");
+	DumpHex(MHP->msg_hash,crypto_generichash_BYTES);
+
+
+
+}
 
 int test_Tnode_creation(){
 	printf("CREATE TNODE\n");

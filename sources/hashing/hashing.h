@@ -23,7 +23,40 @@ typedef struct {
 	unsigned char hash[crypto_generichash_BYTES];
 } s_link;
 
+
+
+typedef struct {
+	hash_point_p hpoint1;
+	hash_point_p hpoint2;
+} hpointers;
+
+
+
+typedef union {
+	signed_message_t* dpointer;
+	hpointers hashpointers;
+} datapointer;
+
+
+
+typedef struct {
+	unsigned char msg_hash[crypto_generichash_BYTES];
+	datapointer dpointer;
+	unsigned long long len;
+} hash_point;
+typedef hash_point *hash_point_p;
+
+
 typedef s_link *s_link_p;
+
+
+typedef struct {
+	hash_point_p hpoint1;	
+	hash_point_p hpoint2;	
+} hash2_point;
+
+typedef hash2_point *hash2_point_p;
+
 
 typedef struct {
 	s_link_p leaf1;
@@ -33,6 +66,8 @@ typedef struct {
 
 typedef Tnode *Tnode_p;
 
+hash_point_p create_hpoint_message(signed_message_t* s_msg);
+hash_point_p create_hpoint_hashL1(hash_point_p hp1, hash_point_p hp2);
 Tnode_p create_node_dtable_LEVEL2(s_link_p node1 ,s_link_p node2);
 s_link_p create_node_dtable(signed_message_t s_messageN1,signed_message_t s_messageN2);
 unsigned char* merge_2hashses(unsigned char* hash1, unsigned char* hash2);

@@ -1,6 +1,7 @@
 #include "hashing.h"
 #include <sodium/crypto_generichash.h>
 #include <sodium/crypto_generichash_blake2b.h>
+#include <sodium/crypto_hash.h>
 #include <sodium/crypto_sign_ed25519.h>
 #include <stdlib.h>
 #include <string.h>
@@ -30,7 +31,31 @@ Tnode_p create_node_dtable_LEVEL2(s_link_p node1 ,s_link_p node2){
 	free(shash_p);
 	return tnode_ints_t;
 }
+// add vrify!!!!!!!!!!!
+hash_point_p create_hpoint_message(signed_message_t* s_msg){
+	hash_point_p hpoint = calloc(1,sizeof(hash_point));
+	hpoint->dpointer.dpointer = s_msg;
+	hpoint->len = s_msg->length;
+	unsigned char* hash = calc_hash(*s_msg);
+	memcpy(hpoint->msg_hash,hash,crypto_generichash_BYTES);
+	free(hash);
+	return hpoint;
+}
 
+hash_point_p create_hpoint_hashL1(hash_point_p hp1, hash_point_p hp2){
+	// calc S hash
+	unsigned char* Shash = merge_2hashses(hp1->msg_hash, hp1->msg_hash )		;
+	hash_point_p hpoint = calloc(1,sizeof(hash_point));
+	//copy hash
+	memcpy(hpoint->msg_hash,Shash,crypto_generichash_BYTES);
+	// assign pointers
+	hpoint->dpointer.hashpointers.hpoint1 = hp1;
+	hpoint->dpointer.hashpointers.hpoint2 = hp2;
+
+	hpoint->len = 0;
+	free(Shash);
+	return hpoint;
+}
 
 
 s_link_p create_node_dtable(signed_message_t s_messageN1,signed_message_t s_messageN2){

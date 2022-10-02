@@ -31,6 +31,7 @@ void put_a_PK(signed_message_t* a_msg,unsigned char* PK){
 	memcpy(a_msg->public_key,PK,crypto_sign_PUBLICKEYBYTES);
 }
 
+// 1 - OK
 int validate_a_message(signed_message_t sigmsg,unsigned char* pk){
 	unsigned char decoded_message[sigmsg.length - 64];
 	unsigned long long decoded_message_len;
