@@ -26,8 +26,8 @@ typedef struct {
 
 
 typedef struct {
-	hash_point_p hpoint1;
-	hash_point_p hpoint2;
+	void* hpoint1;
+	void* hpoint2;
 } hpointers;
 
 

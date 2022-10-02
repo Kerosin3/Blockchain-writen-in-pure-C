@@ -50,6 +50,7 @@ hash_point_p create_hpoint_hashL1(hash_point_p hp1, hash_point_p hp2){
 	memcpy(hpoint->msg_hash,Shash,crypto_generichash_BYTES);
 	// assign pointers
 	hpoint->dpointer.hashpointers.hpoint1 = hp1;
+	printf("pointer is %p\n",hpoint->dpointer.hashpointers.hpoint1);
 	hpoint->dpointer.hashpointers.hpoint2 = hp2;
 
 	hpoint->len = 0;
