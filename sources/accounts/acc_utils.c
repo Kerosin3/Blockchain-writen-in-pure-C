@@ -1,6 +1,7 @@
 #include "acc_utils.h"
 #include <assert.h>
 #include <sodium/crypto_sign.h>
+#include <stdlib.h>
 #include <string.h>
 /*
  * return signed message without PK, message need cleanup
@@ -22,8 +23,12 @@ signed_message_t sign_a_message(unsigned char* msg,size_t len,unsigned char* sec
 	return sigmsg;
 }
 
+void destroy_signed_message(signed_message_t a_msg){
+	free(a_msg.message);
+}
+
 void put_a_PK(signed_message_t* a_msg,unsigned char* PK){
-	memcpy(a_msg->public_key,PK,crypto_sign_SECRETKEYBYTES);
+	memcpy(a_msg->public_key,PK,crypto_sign_PUBLICKEYBYTES);
 }
 
 int validate_a_message(signed_message_t sigmsg,unsigned char* pk){

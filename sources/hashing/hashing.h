@@ -25,6 +25,15 @@ typedef struct {
 
 typedef s_link *s_link_p;
 
+typedef struct {
+	s_link_p leaf1;
+	s_link_p leaf2;
+	unsigned char hash[crypto_generichash_BYTES];
+} Tnode;
+
+typedef Tnode *Tnode_p;
+
+Tnode_p create_node_dtable_LEVEL2(s_link_p node1 ,s_link_p node2);
 s_link_p create_node_dtable(signed_message_t s_messageN1,signed_message_t s_messageN2);
 unsigned char* merge_2hashses(unsigned char* hash1, unsigned char* hash2);
 unsigned char* calc_hash(signed_message_t s_message);

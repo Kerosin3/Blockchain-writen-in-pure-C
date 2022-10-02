@@ -11,29 +11,82 @@ void tests(){
 	result+=test_INvalid_messages();
 	result+=test_hash();
 	test_hash_merging();*/
- 	test_node_creation();
+//   	test_node_creation();
+ 	test_Tnode_creation();
 	(!result) ? printf("ALL TESTS PASSED OK\n") : printf("SOME ERRORS WHILE TESTING OCCURRED!\n");
 }
 
+
+int test_Tnode_creation(){
+	printf("CREATE TNODE\n");
+	//create first level 1 node
+        user_keys uk = create_key_pair();
+
+	signed_message_t a_msg = *get_a_signed_msg(uk);
+
+        user_keys uk2 = create_key_pair();
+
+	signed_message_t a_msg2 = *get_a_signed_msg(uk2);
+	s_link_p alink;
+
+	if (!  (alink = create_node_dtable(a_msg,a_msg2))) return 0;
+
+	
+	//create second level 1 node
+	 user_keys uk3 = create_key_pair();
+	signed_message_t a_msg3 = *get_a_signed_msg(uk3);
+
+        user_keys uk4 = create_key_pair();
+	signed_message_t a_msg4 = *get_a_signed_msg(uk4);
+
+	s_link_p alink2;
+	if (!  (alink2 = create_node_dtable(a_msg3,a_msg4))) return 0;
+
+	Tnode_p tnode = create_node_dtable_LEVEL2(alink,alink2);
+
+	printf("tnode S hash:\n");
+	DumpHex(tnode->hash,crypto_generichash_BYTES);
+	printf("leaf 1 msg:\n");
+	DumpHex(tnode->leaf1->link1.s_msg.message, tnode->leaf1->link1.s_msg.length);
+
+ 	free(alink);
+ 	free(alink2);
+	free(tnode);
+	return 1;
+	
+}
 
 int test_node_creation(){
 	printf("TEST DATA MERGLE NODE CREATION\n");
         srand(time(NULL));
         user_keys uk = create_key_pair();
-	test_msg_t somemsg = get_test_msg(100);	
+	test_msg_t somemsg= get_test_msg(100);	
 	signed_message_t a_msg = sign_a_message((unsigned char*)somemsg.test_msg,somemsg.len, uk.sk);
 	//put a PK
 	put_a_PK(&a_msg,uk.pk);
+	printf("message1 is\n");
+	DumpHex(a_msg.message,a_msg.length);
 
 	user_keys uk2 = create_key_pair();
-	test_msg_t somemsg2 = get_test_msg(100);	
+	test_msg_t somemsg2 = get_test_msg(50);	
 	signed_message_t a_msg2 = sign_a_message((unsigned char*)somemsg2.test_msg,somemsg2.len, uk2.sk);
 	//put a PK
 	put_a_PK(&a_msg2,uk2.pk);
+	printf("message2 is\n");
+	DumpHex(a_msg2.message,a_msg2.length);
+
+
+	//create smart link
 	s_link_p alink;
 	if (!  (alink = create_node_dtable(a_msg,a_msg2))) return 0;
+	printf("message 1 in link:\n");
 	DumpHex(alink->link1.s_msg.message,alink->link1.s_msg.length);
-	
+	printf("message 2 in link:\n");
+	DumpHex(alink->link2.s_msg.message,alink->link2.s_msg.length);
+	printf("summary hash:\n");
+	DumpHex(alink->hash,crypto_generichash_BYTES);
+
+	free(alink);
 	return 1;
 }
 

@@ -13,6 +13,7 @@ int test_INvalid_messages();
 int test_hash();
 int test_hash_merging();
 int test_node_creation();
+int test_Tnode_creation();
 
 void tests();
 

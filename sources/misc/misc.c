@@ -1,4 +1,5 @@
 #include "misc.h"
+#include <sodium/crypto_sign.h>
 #include <stdlib.h>
 #include <time.h>
 
@@ -7,6 +8,20 @@ _Noreturn void die(const char *message)
     perror(message);
     exit(EXIT_FAILURE);
 }
+/*
+ * return a allocated memory with signed message
+ *
+ */
+signed_message_t* get_a_signed_msg(user_keys keys){
+	srand(time(NULL));
+	test_msg_t somemsg = get_test_msg(100);	
+	signed_message_t* a_msg = calloc(1,sizeof(signed_message_t));	
+	signed_message_t temp = sign_a_message((unsigned char*)somemsg.test_msg,somemsg.len, keys.sk);
+	memcpy(a_msg,&temp,sizeof(signed_message_t));
+	put_a_PK(a_msg,keys.pk);
+	return a_msg;
+}
+
 /*
  * for debugging
  * */
@@ -49,6 +64,8 @@ void DumpHex(const void *data, size_t size)
         }
     }
 }
+
+
 
 test_msg_t get_test_msg(size_t len){
     
