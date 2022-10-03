@@ -26,24 +26,27 @@ typedef struct {
 
 
 typedef struct {
-	void* hpoint1;
-	void* hpoint2;
-} hpointers;
+	signed_message_t* smsg_p1;
+	unsigned char hashMSG1[crypto_generichash_BYTES];
+	signed_message_t* smsg_p2;
+	unsigned char hashMSG2[crypto_generichash_BYTES];
+} smgs2;
 
 
 
-typedef union {
-	signed_message_t* dpointer;
-	hpointers hashpointers;
-} datapointer;
 
-
-
-typedef struct {
-	unsigned char msg_hash[crypto_generichash_BYTES];
-	datapointer dpointer;
+typedef struct hash_point_t{
+	unsigned char hash[crypto_generichash_BYTES];
+	union {
+		smgs2 messages;
+		struct {
+		void* hpoint1; // hash_point_t
+		void* hpoint2;
+		};
+	}; 
 	unsigned long long len;
 } hash_point;
+
 typedef hash_point *hash_point_p;
 
 
@@ -66,7 +69,7 @@ typedef struct {
 
 typedef Tnode *Tnode_p;
 
-hash_point_p create_hpoint_message(signed_message_t* s_msg);
+hash_point_p create_hpoint_message(signed_message_t* s_msg1, signed_message_t* s_msg2);
 hash_point_p create_hpoint_hashL1(hash_point_p hp1, hash_point_p hp2);
 Tnode_p create_node_dtable_LEVEL2(s_link_p node1 ,s_link_p node2);
 s_link_p create_node_dtable(signed_message_t s_messageN1,signed_message_t s_messageN2);

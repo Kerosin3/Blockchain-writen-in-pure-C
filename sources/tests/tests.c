@@ -41,6 +41,11 @@ int test_lvl3node_creation(){
 	
 	//
 	hash_point_p MHP = create_hpoint_hashL1(aHP1, aHP2);
+
+	DumpHex( ((hash_point_p)(MHP->dpointer.hashpointers.hpoint1) )->dpointer.dpointer->message,
+	 ((hash_point_p)(MHP->dpointer.hashpointers.hpoint1) )->dpointer.dpointer->length
+			);
+	
 	printf("1, level 2 hash:\n");
 	DumpHex(MHP->msg_hash,crypto_generichash_BYTES);
 
@@ -72,7 +77,8 @@ int test_lvl3node_creation(){
 	printf("level 3 hash , prev 2:\n");
 	DumpHex(MHPX->dpointer.hashpointers.hpoint2,crypto_generichash_BYTES);
 	printf("some message %p \n",(MHPX->dpointer.hashpointers.hpoint1));
-	DumpHex( ((hash_point_p)(MHPX->dpointer.hashpointers.hpoint2))->dpointer.dpointer->message, ((hash_point_p)(MHPX->dpointer.hashpointers.hpoint2))->dpointer.dpointer->length  );
+	printf("length is %llu\n",((hash_point_p)(MHPX->dpointer.hashpointers.hpoint1)) );
+	DumpHex( ((hash_point_p)(MHPX->dpointer.hashpointers.hpoint1))->dpointer.dpointer->message, );
 
 }
 

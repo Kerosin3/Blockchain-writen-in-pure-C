@@ -32,25 +32,36 @@ Tnode_p create_node_dtable_LEVEL2(s_link_p node1 ,s_link_p node2){
 	return tnode_ints_t;
 }
 // add vrify!!!!!!!!!!!
-hash_point_p create_hpoint_message(signed_message_t* s_msg){
+hash_point_p create_hpoint_message(signed_message_t* s_msg1, signed_message_t* s_msg2){
 	hash_point_p hpoint = calloc(1,sizeof(hash_point));
-	hpoint->dpointer.dpointer = s_msg;
-	hpoint->len = s_msg->length;
-	unsigned char* hash = calc_hash(*s_msg);
-	memcpy(hpoint->msg_hash,hash,crypto_generichash_BYTES);
-	free(hash);
+	hpoint->messages.smsg_p1 = s_msg1; // assign 1 msg
+	hpoint->messages.smsg_p2 = s_msg2; // assign 2 msg
+ 
+	
+	unsigned char* hash_msg1 = calc_hash(*s_msg1);
+	memcpy(hpoint->messages.hashMSG1,hash_msg1,crypto_generichash_BYTES);
+
+	unsigned char* hash_msg2 = calc_hash(*s_msg2);
+	memcpy(hpoint->messages.hashMSG2  ,hash_msg2,crypto_generichash_BYTES);
+
+	//assign S hash
+	unsigned char* shash_p = merge_2hashses(hpoint->messages.hashMSG1, hpoint->messages.hashMSG2  );
+
+	memcpy(hpoint->hash,shash_p,crypto_generichash_BYTES);
+	free(hash_msg1);
+	free(hash_msg2);
+	free(shash_p);
 	return hpoint;
 }
 
-hash_point_p create_hpoint_hashL1(hash_point_p hp1, hash_point_p hp2){
+hash_point_p create_hpoint_hashG(hash_point_p hp1, hash_point_p hp2){
 	// calc S hash
-	unsigned char* Shash = merge_2hashses(hp1->msg_hash, hp1->msg_hash )		;
+	unsigned char* Shash = merge_2hashses(hp1->hash ,hp2->hash );		;
 	hash_point_p hpoint = calloc(1,sizeof(hash_point));
 	//copy hash
-	memcpy(hpoint->msg_hash,Shash,crypto_generichash_BYTES);
+	memcpy(hpoint->hash,Shash,crypto_generichash_BYTES);
 	// assign pointers
 	hpoint->dpointer.hashpointers.hpoint1 = hp1;
-	printf("pointer is %p\n",hpoint->dpointer.hashpointers.hpoint1);
 	hpoint->dpointer.hashpointers.hpoint2 = hp2;
 
 	hpoint->len = 0;
