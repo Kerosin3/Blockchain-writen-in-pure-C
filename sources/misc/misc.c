@@ -21,6 +21,16 @@ signed_message_t* get_a_signed_msg(user_keys keys){
 	put_a_PK(a_msg,keys.pk);
 	return a_msg;
 }
+signed_message_t* ls_get_a_signed_msg(user_keys keys){
+	srand(time(NULL));
+	test_msg_t somemsg = ls_get_test_msg(100);	
+	signed_message_t* a_msg = calloc(1,sizeof(signed_message_t));	
+	signed_message_t temp = sign_a_message((unsigned char*)somemsg.test_msg,somemsg.len, keys.sk);
+	memcpy(a_msg,&temp,sizeof(signed_message_t));
+	put_a_PK(a_msg,keys.pk);
+	return a_msg;
+}
+
 
 /*
  * for debugging
@@ -69,7 +79,7 @@ void DumpHex(const void *data, size_t size)
 
 test_msg_t get_test_msg(size_t len){
     
-//    srand((long)time(0)); // define a seed for the random number generator
+    srand((long)time(0)); // define a seed for the random number generator
     const char ALLOWED[] = "abcdefghijklmnopqrstuvwxyz1234567890";
     unsigned char* random = calloc(len,sizeof(char));
     int i = 0;
@@ -85,4 +95,16 @@ test_msg_t get_test_msg(size_t len){
    msg.len = len;
    return msg; 
 }
+
+test_msg_t ls_get_test_msg(size_t len){
+    unsigned char* random = calloc(len,sizeof(char));
+    if (sodium_init() < 0 ) die("libsodium!"); 
+    randombytes_buf(random, len);
+   test_msg_t msg;
+   msg.test_msg = random;
+   msg.len = len;
+   return msg; 
+
+}
+
 

@@ -4,9 +4,10 @@
 #include <sodium/crypto_sign.h>
 #include <string.h>
 #include <time.h>
+#include <tgmath.h>
 
-int test_lvl2node_creation();
-int test_lvl3node_creation();
+int test_hpoint_from_2msg_creation();
+int test_hashG_node_creation();
 
 void tests(){
 	int result = 0;
@@ -14,13 +15,103 @@ void tests(){
 	result+=test_INvalid_messages();
 	result+=test_hash();
 	test_hash_merging();*/
-//   	test_node_creation();
-// 	test_Tnode_creation();
-// 	test_lvl2node_creation();
-	test_lvl3node_creation();
+//	test_hpoint_from_2msg_creation();
+//	test_hashG_node_creation();
+	test_process_messages();
 	(!result) ? printf("ALL TESTS PASSED OK\n") : printf("SOME ERRORS WHILE TESTING OCCURRED!\n");
 }
 
+
+int test_process_messages(){
+
+	user_keys uk = create_key_pair();
+	unsigned long long n_msg = (1LLU<< 9LLU);
+	printf("n msg :%llu\n",n_msg);
+	signed_message_t msg_arr[n_msg];
+	for (size_t i = 0; i<n_msg; i++) {
+		msg_arr[i] = *ls_get_a_signed_msg(uk); // generate random
+		//DumpHex(msg_arr[i].message, msg_arr[i].length);
+		validate_a_message(msg_arr[i],uk.pk);
+	}
+	//create zero layer
+	
+	layer_hp* L0 =  process_s_messages(n_msg,msg_arr);
+
+	hash_point_p* L0pointer = L0->main_pointer;
+	DumpHex( (*L0pointer)->messages.smsg_p1->message,(*L0pointer)->messages.smsg_p1->length );
+	printf("\n");
+	DumpHex( ( L0pointer[5]  )->messages.smsg_p1->message,( L0pointer[5]  )->messages.smsg_p1->length );
+	//DumpHex((L0pointer)->messages.smsg_p1->message,(L0pointer)->messages.smsg_p1->length);
+	/*
+	hash_point_p HP_arr[n_msg >> 1];
+	for (size_t i = 0; i< (n_msg >> 1); i++) {
+		HP_arr[i] = create_hpoint_message(msg_arr+i,msg_arr+(i+(n_msg>>1)) ); // create pair
+	}
+
+	hash_point_p HP_arr[n_msg >> 1];
+
+	hash_point_p GNODE = create_hpoint_hashG(aHP1,aHP2);
+	*/
+	destoroy_a_layer(L0);
+}
+
+
+int test_hashG_node_creation(){
+	// create 1 ground node with 2 msg
+	user_keys uk = create_key_pair();
+	signed_message_t *a_msg = get_a_signed_msg(uk);
+	printf("message 1 is \n");
+	DumpHex(a_msg->message,a_msg->length);
+	printf("\n");
+
+	signed_message_t *a_msg2 = get_a_signed_msg(uk);
+
+	if (!validate_a_message(*a_msg,uk.pk))
+		printf("validation error!\n");
+
+	if (!validate_a_message(*a_msg2,uk.pk))
+		printf("validation error!\n");
+	
+	hash_point_p aHP1 = create_hpoint_message(a_msg,a_msg2); // created
+								 //
+
+	// create 2 ground node with 2 msg
+	signed_message_t *a_msg3 = get_a_signed_msg(uk);
+
+	signed_message_t *a_msg4 = get_a_signed_msg(uk);
+
+	if (!validate_a_message(*a_msg3,uk.pk))
+		printf("validation error!\n");
+
+	if (!validate_a_message(*a_msg4,uk.pk))
+		printf("validation error!\n");
+	
+	hash_point_p aHP2 = create_hpoint_message(a_msg3,a_msg4); // created
+								  //
+	// crate G node 
+	hash_point_p GNODE = create_hpoint_hashG(aHP1,aHP2);
+	printf("test message 1 from GNODE\n");
+	if ((  ((hash_point_p) (GNODE->hpoint1))->messages.smsg_p1   ) == a_msg ) {
+		printf("validated msg1\n");
+	} else {  printf(" msg1 invalid"); }
+	if ((  ((hash_point_p) (GNODE->hpoint1))->messages.smsg_p2   ) == a_msg2 ) {
+		printf("validated msg2\n");
+	} else {  printf(" msg2 invalid"); }
+	if ((  ((hash_point_p) (GNODE->hpoint2))->messages.smsg_p1   ) == a_msg3 ) {
+		printf("validated msg3\n");
+	} else {  printf(" msg3 invalid"); }
+	if ((  ((hash_point_p) (GNODE->hpoint2))->messages.smsg_p2   ) == a_msg4 ) {
+		printf("validated msg4\n");
+	} else {  printf(" msg4 invalid"); }
+	return 1;
+
+	//DumpHex( ((hash_point_p) (GNODE->hpoint1))->messages.smsg_p1->message ,  ((hash_point_p) (GNODE->hpoint1))->messages.smsg_p1->length );
+	//printf("test message 2 from GNODE\n");
+	//DumpHex( ((hash_point_p) (GNODE->hpoint1))->messages.smsg_p1->message ,  ((hash_point_p) (GNODE->hpoint1))->messages.smsg_p1->length );
+
+	return 1;
+}
+/*
 int test_lvl3node_creation(){
 	
         user_keys uk = create_key_pair();
@@ -81,34 +172,38 @@ int test_lvl3node_creation(){
 	DumpHex( ((hash_point_p)(MHPX->dpointer.hashpointers.hpoint1))->dpointer.dpointer->message, );
 
 }
+*/
 
 
-
-int test_lvl2node_creation(){
+int test_hpoint_from_2msg_creation(){
 	
         user_keys uk = create_key_pair();
 	signed_message_t *a_msg = get_a_signed_msg(uk);
-	hash_point_p aHP1 = create_hpoint_message(a_msg);	
-	DumpHex(aHP1->msg_hash,crypto_generichash_BYTES);
-	printf("\n");
-	if (!validate_a_message(*a_msg,uk.pk))
-		printf("validation error!\n");
+	printf("message is\n");
+	DumpHex(a_msg->message,a_msg->length);
 
 	user_keys uk2 = create_key_pair();
 	signed_message_t *a_msg2 = get_a_signed_msg(uk2);
-	hash_point_p aHP2 = create_hpoint_message(a_msg2);	
-	DumpHex(aHP2->msg_hash,crypto_generichash_BYTES);
-	printf("\n");
+
+
+
+
+	if (!validate_a_message(*a_msg,uk.pk))
+		printf("validation error!\n");
+
 	if (!validate_a_message(*a_msg2,uk2.pk))
 		printf("validation error!\n");
 	
-	//
-	hash_point_p MHP = create_hpoint_hashL1(aHP1, aHP2);
-	DumpHex(MHP->dpointer.hashpointers.hpoint1,crypto_generichash_BYTES);
-	DumpHex(MHP->dpointer.hashpointers.hpoint2,crypto_generichash_BYTES);
-	printf("\n");
-	DumpHex(MHP->msg_hash,crypto_generichash_BYTES);
+	hash_point_p aHP1 = create_hpoint_message(a_msg,a_msg2);	
 
+	printf("check:\n");
+	DumpHex(aHP1->messages.smsg_p1->message ,aHP1->messages.smsg_p1->length);
+	if  ((a_msg)== aHP1->messages.smsg_p1 )  {
+		printf("valid!\n");
+		return 1;
+	} else {
+		return 0 ;
+	}
 
 
 }
