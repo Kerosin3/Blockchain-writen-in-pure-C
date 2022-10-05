@@ -79,6 +79,7 @@ void destoroy_a_layer(layer_hp* some_layer){
 
 layer_hp* create_a_h_layer(unsigned long long* size_d_layer, hash_point_p* start_hpointr){
 	if ((*size_d_layer) == 1) {
+	//	return 0;
 		// end
 	}
 	*(size_d_layer) >>=1LLU; // devide by 2 

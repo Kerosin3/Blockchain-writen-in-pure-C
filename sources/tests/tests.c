@@ -34,9 +34,21 @@ int test_create_level1(){
 	}
 	layer_hp* L0 =  process_s_messages(n_msg,msg_arr); // messages
 	n_msg>>=1LLU;	 // MESSAGES DONE!
-	hash_point_p* L0pointer = L0->main_pointer; // 
-	
-	layer_hp* L1 = create_a_h_layer(&n_msg,L0pointer);
+	printf("N OF LEVEL 0 HASH NODES %llu\n",n_msg);
+	hash_point_p* L0pointer = L0->main_pointer; // hash level 0-1
+	// 8 +1
+	layer_hp L_arrays[9];
+	//L_arrays[8]=*L0; // assign L9
+	//for (size_t k=n_msg; k!=0 ; k>>=1LLU ) { 
+	for (signed k=8; k>=0 ; --k ) { 
+		printf("k is %d \n",k);
+		if (k==8) {
+		L_arrays[k] =* create_a_h_layer(&n_msg,L0pointer);
+		continue;
+		}
+		L_arrays[k] = *create_a_h_layer(&n_msg,L_arrays[k+1].main_pointer );
+	}
+//	layer_hp* L1 = create_a_h_layer(&n_msg,L0pointer);
 
 }
 
