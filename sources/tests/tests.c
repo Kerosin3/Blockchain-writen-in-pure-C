@@ -8,6 +8,7 @@
 
 int test_hpoint_from_2msg_creation();
 int test_hashG_node_creation();
+int test_process_messages();
 
 void tests(){
 	int result = 0;
@@ -15,10 +16,28 @@ void tests(){
 	result+=test_INvalid_messages();
 	result+=test_hash();
 	test_hash_merging();*/
-//	test_hpoint_from_2msg_creation();
-//	test_hashG_node_creation();
-	test_process_messages();
+	//result+=test_process_messages();
+	test_create_level1();
 	(!result) ? printf("ALL TESTS PASSED OK\n") : printf("SOME ERRORS WHILE TESTING OCCURRED!\n");
+}
+
+int test_create_level1(){
+	//create messages
+	user_keys uk = create_key_pair();
+	unsigned long long n_msg = (1LLU<< 9LLU);
+	printf("n msg :%llu\n",n_msg);
+	signed_message_t msg_arr[n_msg]; // arr size /2
+	for (size_t i = 0; i<n_msg; i++) {
+		msg_arr[i] = *ls_get_a_signed_msg(uk); // generate random
+		validate_a_message(msg_arr[i],uk.pk);
+	//	DumpHex(msg_arr[i].message, msg_arr[i].length);
+	}
+	layer_hp* L0 =  process_s_messages(n_msg,msg_arr); // messages
+	n_msg>>=1LLU;	 // MESSAGES DONE!
+	hash_point_p* L0pointer = L0->main_pointer; // 
+	
+	layer_hp* L1 = create_a_h_layer(&n_msg,L0pointer);
+
 }
 
 
@@ -30,29 +49,35 @@ int test_process_messages(){
 	signed_message_t msg_arr[n_msg];
 	for (size_t i = 0; i<n_msg; i++) {
 		msg_arr[i] = *ls_get_a_signed_msg(uk); // generate random
-		//DumpHex(msg_arr[i].message, msg_arr[i].length);
 		validate_a_message(msg_arr[i],uk.pk);
+		DumpHex(msg_arr[i].message, msg_arr[i].length);
 	}
 	//create zero layer
 	
 	layer_hp* L0 =  process_s_messages(n_msg,msg_arr);
 
 	hash_point_p* L0pointer = L0->main_pointer;
-	DumpHex( (*L0pointer)->messages.smsg_p1->message,(*L0pointer)->messages.smsg_p1->length );
-	printf("\n");
-	DumpHex( ( L0pointer[5]  )->messages.smsg_p1->message,( L0pointer[5]  )->messages.smsg_p1->length );
-	//DumpHex((L0pointer)->messages.smsg_p1->message,(L0pointer)->messages.smsg_p1->length);
-	/*
-	hash_point_p HP_arr[n_msg >> 1];
-	for (size_t i = 0; i< (n_msg >> 1); i++) {
-		HP_arr[i] = create_hpoint_message(msg_arr+i,msg_arr+(i+(n_msg>>1)) ); // create pair
+
+	size_t msg_n_test = 0;
+	msg_link a_link;
+	get_s_msg_from_L0(L0,msg_n_test);
+
+	size_t ii = 0;
+	for (ii = 0; ii<L0->size; ii++) {
+
+		a_link = get_s_msg_from_L0(L0,ii);
+		if (!(a_link.msg1 == msg_arr+ii)){
+			break;
+		} else if (!( a_link.msg2 == msg_arr+(ii + L0->size ) )) {
+			break;
+		} else {
+			continue;
+		}
 	}
-
-	hash_point_p HP_arr[n_msg >> 1];
-
-	hash_point_p GNODE = create_hpoint_hashG(aHP1,aHP2);
-	*/
 	destoroy_a_layer(L0);
+	if (ii == L0->size) return 1;
+	return 0;
+
 }
 
 
@@ -207,7 +232,7 @@ int test_hpoint_from_2msg_creation(){
 
 
 }
-
+/*
 int test_Tnode_creation(){
 	printf("CREATE TNODE\n");
 	//create first level 1 node
@@ -280,7 +305,7 @@ int test_node_creation(){
 	free(alink);
 	return 1;
 }
-
+*/
 int test_hash_merging(){
 	
 	printf("TEST HASHIN MERGING\n");

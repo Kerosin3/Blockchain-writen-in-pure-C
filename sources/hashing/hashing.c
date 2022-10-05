@@ -16,21 +16,6 @@ unsigned char* calc_hash(signed_message_t s_message){
 	return out_hash;
 }
 
-/*
- * creates a Tnode with links to level 1 nodes
- *
- */ 
-Tnode_p create_node_dtable_LEVEL2(s_link_p node1 ,s_link_p node2){
-	// calc sum hash
-	unsigned char* shash_p = merge_2hashses(node1->hash,node2->hash  );
-	Tnode_p tnode_ints_t = calloc(1,sizeof(Tnode));
-	//copy hash
-	memcpy(tnode_ints_t->hash,shash_p, crypto_generichash_BYTES);
-	tnode_ints_t->leaf1 = node1;	
-	tnode_ints_t->leaf2 = node2;	
-	free(shash_p);
-	return tnode_ints_t;
-}
 // add verify!!!!!!!!!!!
 hash_point_p create_hpoint_message(signed_message_t* s_msg1, signed_message_t* s_msg2){
 	hash_point_p hpoint = calloc(1,sizeof(hash_point));
@@ -54,13 +39,10 @@ hash_point_p create_hpoint_message(signed_message_t* s_msg1, signed_message_t* s
 	free(shash_p);
 	return hpoint;
 }
-
-layer_hp* create_a_h_layer(unsigned long long* size_d_layer, hash_point_p start_hpointr){
-
-}
-
+// processing array of messages to a layer 0
 layer_hp* process_s_messages(unsigned long long s_msgN,signed_message_t* star_msg){
 	s_msgN>>=1; // devide by 2
+	printf("msg merged nodes %llu\n",s_msgN);
 	layer_hp* a_layer = calloc(1,sizeof(layer_hp));
 	a_layer->size = s_msgN; // assign size
 	// create storage for porinters
@@ -74,6 +56,19 @@ layer_hp* process_s_messages(unsigned long long s_msgN,signed_message_t* star_ms
 	return a_layer;
 }
 
+msg_link get_s_msg_from_L0(layer_hp* L0,size_t n){
+	msg_link a_link;
+	if (n >= L0->size){
+		a_link.msg1 = 0;
+		a_link.msg2 = 0;
+
+		return a_link; // not exists return 0
+	}
+	a_link.msg1 = ((L0->main_pointer)[n])->messages.smsg_p1;
+	a_link.msg2 = ((L0->main_pointer)[n])->messages.smsg_p2;
+	return a_link;
+}
+
 void destoroy_a_layer(layer_hp* some_layer){
 	for (size_t i = 0; i< some_layer->size ; i++) {
 		free( (some_layer->main_pointer)[i] );
@@ -81,30 +76,24 @@ void destoroy_a_layer(layer_hp* some_layer){
 	free(some_layer);
 }
 
-/*
-// N - n messages
-hash_point_p create_hpoint_hashG_rec(unsigned long long N,hash_point_p hp1, hash_point_p hp2){
-	N >>= 1; 
-	if (N == 1){ // finish
-		return 0;
+
+layer_hp* create_a_h_layer(unsigned long long* size_d_layer, hash_point_p* start_hpointr){
+	if ((*size_d_layer) == 1) {
+		// end
 	}
-
-	// calc S hash
-	unsigned char* Shash = merge_2hashses(hp1->hash ,hp2->hash );		;
-	hash_point_p hpoint = calloc(1,sizeof(hash_point));
-	//copy hash
-	memcpy(hpoint->hash,Shash,crypto_generichash_BYTES);
-	free(Shash);
-	// assign pointers to word
-	hpoint->hpoint1 = hp1 ;
-	hpoint->hpoint2 = hp2;
-
-	hpoint->FLAG0 = 0;
-	
-	return ( create_hpoint_hashG_rec(N,hp1+ ,hp2+ ) );
-
+	*(size_d_layer) >>=1LLU; // devide by 2 
+	printf("n nodes HASH:%llu\n",*size_d_layer);
+	layer_hp* a_layer = calloc(1,sizeof(layer_hp));
+	a_layer->size = *size_d_layer;
+	hash_point_p* beg_pointer = calloc(*size_d_layer,sizeof(hash_point_p));	
+	a_layer->main_pointer = beg_pointer;
+	for (size_t i =0; i < (*size_d_layer); i++) {
+		beg_pointer[i] = create_hpoint_hashG(start_hpointr[i], start_hpointr[*size_d_layer+i] );	
+	}
+	return a_layer;
 }
-*/
+
+
 hash_point_p create_hpoint_hashG(hash_point_p hp1, hash_point_p hp2){
 	// calc S hash
 	unsigned char* Shash = merge_2hashses(hp1->hash ,hp2->hash );		;
