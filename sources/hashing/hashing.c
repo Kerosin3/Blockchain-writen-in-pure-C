@@ -33,7 +33,7 @@ hash_point_p create_hpoint_message(signed_message_t* s_msg1, signed_message_t* s
 	unsigned char* shash_p = merge_2hashses(hpoint->messages.hashMSG1, hpoint->messages.hashMSG2  );
 
 	memcpy(hpoint->hash,shash_p,crypto_generichash_BYTES);
-	hpoint->FLAG0 = 1;
+	hpoint->FLAG0 = 0;
 	free(hash_msg1);
 	free(hash_msg2);
 	free(shash_p);
@@ -68,7 +68,7 @@ msg_link get_s_msg_from_L0(layer_hp* L0,size_t n){
 	a_link.msg2 = ((L0->main_pointer)[n])->messages.smsg_p2;
 	return a_link;
 }
-
+// allpied for all levels
 void destoroy_a_layer(layer_hp* some_layer){
 	for (size_t i = 0; i< some_layer->size ; i++) {
 		free( (some_layer->main_pointer)[i] );
@@ -77,13 +77,21 @@ void destoroy_a_layer(layer_hp* some_layer){
 }
 
 
+
+
 layer_hp* create_a_h_layer(unsigned long long* size_d_layer, hash_point_p* start_hpointr){
-	if ((*size_d_layer) == 1) {
-	//	return 0;
-		// end
-	}
 	*(size_d_layer) >>=1LLU; // devide by 2 
-	printf("n nodes HASH:%llu\n",*size_d_layer);
+
+	if ((*size_d_layer) == 1) {
+		printf("create root node\n");
+		layer_hp* a_layer = calloc(1,sizeof(layer_hp));
+		a_layer->size = *size_d_layer;
+		hash_point_p* beg_pointer = calloc(*size_d_layer,sizeof(hash_point_p));	
+		a_layer->main_pointer = beg_pointer;
+		*beg_pointer = create_hpoint_hashG(*start_hpointr, start_hpointr[1] );	
+		//return 0;
+	}
+	printf("creating n nodes HASH:%llu\n",*size_d_layer);
 	layer_hp* a_layer = calloc(1,sizeof(layer_hp));
 	a_layer->size = *size_d_layer;
 	hash_point_p* beg_pointer = calloc(*size_d_layer,sizeof(hash_point_p));	
@@ -94,7 +102,19 @@ layer_hp* create_a_h_layer(unsigned long long* size_d_layer, hash_point_p* start
 	return a_layer;
 }
 
-
+/*
+void create_inermmediate_layers(size_t n_layers,layer_hp* layer_beg){
+	
+	for (signed k=7; k>=0 ; --k ) { 
+		printf("k is %d \n",k);
+		if (k==7) {
+		layer_beg[k] =* create_a_h_layer(&n_msg,L0pointer);
+		continue;
+		}
+		L_arrays[k] = *create_a_h_layer(&n_msg,L_arrays[k+1].main_pointer );
+	}
+}
+*/
 hash_point_p create_hpoint_hashG(hash_point_p hp1, hash_point_p hp2){
 	// calc S hash
 	unsigned char* Shash = merge_2hashses(hp1->hash ,hp2->hash );		;
@@ -106,7 +126,7 @@ hash_point_p create_hpoint_hashG(hash_point_p hp1, hash_point_p hp2){
 	hpoint->hpoint1 = hp1 ;
 	hpoint->hpoint2 = hp2;
 
-	hpoint->FLAG0 = 0;
+	hpoint->FLAG0 = 1;
 	return hpoint;
 }
 

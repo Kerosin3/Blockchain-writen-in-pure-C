@@ -24,6 +24,7 @@ void tests(){
 int test_create_level1(){
 	//create messages
 	user_keys uk = create_key_pair();
+	unsigned long long MSG_EXPONENT = 9;
 	unsigned long long n_msg = (1LLU<< 9LLU);
 	printf("n msg :%llu\n",n_msg);
 	signed_message_t msg_arr[n_msg]; // arr size /2
@@ -32,22 +33,50 @@ int test_create_level1(){
 		validate_a_message(msg_arr[i],uk.pk);
 	//	DumpHex(msg_arr[i].message, msg_arr[i].length);
 	}
-	layer_hp* L0 =  process_s_messages(n_msg,msg_arr); // messages
+	layer_hp* L_arrays[MSG_EXPONENT];
+
+	L_arrays[MSG_EXPONENT-1] = process_s_messages(n_msg,msg_arr); // messages
 	n_msg>>=1LLU;	 // MESSAGES DONE!
 	printf("N OF LEVEL 0 HASH NODES %llu\n",n_msg);
-	hash_point_p* L0pointer = L0->main_pointer; // hash level 0-1
+	//hash_point_p* L0pointer = L0->main_pointer; // hash level 0-1
 	// 8 +1
-	layer_hp L_arrays[9];
-	//L_arrays[8]=*L0; // assign L9
-	//for (size_t k=n_msg; k!=0 ; k>>=1LLU ) { 
-	for (signed k=8; k>=0 ; --k ) { 
+	//L_arrays[8]= *L0; // assign mesage level
+	// MSG_EXPONENT min 1 min 1 8-1 = 7 till 0 inclusive
+	for (signed k=MSG_EXPONENT-2; k>=0 ; --k ) { 
 		printf("k is %d \n",k);
-		if (k==8) {
-		L_arrays[k] =* create_a_h_layer(&n_msg,L0pointer);
-		continue;
-		}
-		L_arrays[k] = *create_a_h_layer(&n_msg,L_arrays[k+1].main_pointer );
+		//if (k==7) {
+		//L_arrays[k] =* create_a_h_layer(&n_msg,L0pointer);
+		//continue;
+		//}
+		L_arrays[k] = create_a_h_layer(&n_msg,L_arrays[k+1]->main_pointer );
 	}
+	//check level 0 messages
+	size_t ii = 0;
+	msg_link a_link;
+	for (ii = 0; ii< L_arrays[MSG_EXPONENT-1]->size; ii++) {
+
+		a_link = get_s_msg_from_L0((*L_arrays)+(MSG_EXPONENT-1),ii);
+		if (!(a_link.msg1 == msg_arr+ii)){
+			break;
+		} else if (!( a_link.msg2 == msg_arr+(ii + L_arrays[(MSG_EXPONENT-1)]->size ) )) {
+			break;
+		} else {
+			continue;
+		}
+	}
+	//check others layer
+	DumpHex( ((hash_point_p)((  ((*L_arrays)->main_pointer)[0])->hpoint1))->hash , crypto_generichash_BYTES);
+	printf("\n");
+	DumpHex( ((hash_point_p)((  ((*L_arrays)->main_pointer)[0])->hpoint2))->hash , crypto_generichash_BYTES);
+
+	for (size_t i =0; i< MSG_EXPONENT; i++) {
+		destoroy_a_layer(L_arrays[i]);
+	}
+	/*
+	for (size_t i =0; i< n_msg; i++) {
+		free( msg_arr[i]. );
+	}
+*/
 //	layer_hp* L1 = create_a_h_layer(&n_msg,L0pointer);
 
 }
