@@ -17,6 +17,7 @@ set(CMAKE_C_FLAGS "-Wall -Wextra -Wpedantic ")
 set(EXECUTABLE_OUTPUT_PATH ${CMAKE_BINARY_DIR})
 
 add_subdirectory(sources/hashing)
+add_subdirectory(sources/block_data)
 add_subdirectory(sources/misc)
 add_subdirectory(sources/tests)
 add_subdirectory(sources/accounts)

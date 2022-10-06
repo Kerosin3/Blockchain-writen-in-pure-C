@@ -6,5 +6,6 @@ TARGET_LINK_LIBRARIES(tests
 		      misc
 		      accounts
 		      hashing
+		      blockdata
 		      sodium
 		      )
