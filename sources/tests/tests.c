@@ -28,7 +28,7 @@ int test_create_level1(){
 	unsigned long long n_msg = (1LLU<< 9LLU); // /2
 	printf("n msg :%llu\n",n_msg);
 	signed_message_t* msg_arr[n_msg]; // arr size /2
-	signed_message_t msg_arr_p[n_msg];
+	signed_message_t msg_arr_p[n_msg]; // array for pointers
 	for (size_t i = 0; i<n_msg; i++) {
 		msg_arr[i] =ls_get_a_signed_msg(uk); // generate random
 		validate_a_message(*msg_arr[i],uk.pk);
@@ -39,7 +39,7 @@ int test_create_level1(){
 	layer_hp L_arrays_p[MSG_EXPONENT];
 
 	L_arrays[MSG_EXPONENT-1] = process_s_messages(n_msg,msg_arr_p); // messages
-	n_msg>>=1LLU;	 // MESSAGES DONE!
+	n_msg>>=1LLU;	 // MESSAGES  LAYER DONE!
 	printf("N OF LEVEL 0 HASH NODES %llu\n",n_msg);
 	for (signed k=MSG_EXPONENT-2; k>=0 ; --k ) { 
 		printf("k is %d \n",k);
@@ -64,12 +64,20 @@ int test_create_level1(){
 	printf("ii is %lu\n",ii);
 	//---------------------------------------------
 	//check others layer
-	printf("getting msg from root node");	
+	printf("getting msg from root node\n");	
 	DumpHex(get_a_hashes_Hnode(L_arrays,0).Shash,crypto_generichash_BYTES);
 	printf("\n");
 	DumpHex(get_a_hashes_Hnode(L_arrays,0).hash1 ,crypto_generichash_BYTES);
 	printf("\n");
 	DumpHex(get_a_hashes_Hnode(L_arrays,0).hash2,crypto_generichash_BYTES);
+	//check others layer
+	printf("getting msg from root node\n");	
+	DumpHex(get_a_hashes_Hnode(L_arrays+1,5).Shash,crypto_generichash_BYTES);
+	printf("\n");
+	DumpHex(get_a_hashes_Hnode(L_arrays+1,5).hash1 ,crypto_generichash_BYTES);
+	printf("\n");
+	DumpHex(get_a_hashes_Hnode(L_arrays+1,5).hash2,crypto_generichash_BYTES);
+
 	/*
 	printf("root pointer\n");
 	DumpHex( (*(L_arrays[0]->main_pointer))->hash, crypto_generichash_BYTES);

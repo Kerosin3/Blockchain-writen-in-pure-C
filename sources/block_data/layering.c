@@ -34,6 +34,21 @@ layer_hp* create_a_h_layer(unsigned long long* size_d_layer, hash_point_p* start
 	return a_layer;
 }
 
+layer_hp* create_LEVEL0(unsigned long long N_exponent_msg,user_keys uk){
+	unsigned long long n_msg = (1LLU<< 9LLU); // level 0 
+	signed_message_t* msg_arr[n_msg]; // arr size /2
+	signed_message_t msg_arr_p[n_msg]; // array for pointers 
+	for (size_t i = 0; i<n_msg; i++) {
+		msg_arr[i] =ls_get_a_signed_msg(uk); // generate random
+		validate_a_message(*msg_arr[i],uk.pk);
+		msg_arr_p[i]= *msg_arr[i];
+	//	DumpHex(msg_arr[i].message, msg_arr[i].length);
+	}
+	layer_hp* msg_layer = process_s_messages(n_msg,msg_arr_p); // messages
+	return msg_layer;
+}
+
+
 
 hashes_hashNode get_a_hashes_Hnode(layer_hp** a_layer, size_t N){
 	hashes_hashNode a_hash_data;
