@@ -26,6 +26,7 @@ crypto_sign(signed_message, &signed_message_len,
             MESSAGE, MESSAGE_LEN, sk);
 unsigned char unsigned_message[MESSAGE_LEN];
 unsigned long long unsigned_message_len;
+
 if (crypto_sign_open(unsigned_message, &unsigned_message_len,
                      signed_message, signed_message_len,(unsigned char*) pk) != 0) {
     /* incorrect signature! */

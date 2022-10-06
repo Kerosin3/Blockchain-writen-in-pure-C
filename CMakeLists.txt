@@ -21,5 +21,6 @@ add_subdirectory(sources/block_data)
 add_subdirectory(sources/misc)
 add_subdirectory(sources/tests)
 add_subdirectory(sources/accounts)
+add_subdirectory(sources/inet_misc)
 add_subdirectory(sources/main)
 

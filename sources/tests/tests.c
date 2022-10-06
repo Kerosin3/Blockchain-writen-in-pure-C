@@ -10,6 +10,7 @@ int test_hpoint_from_2msg_creation();
 int test_hashG_node_creation();
 int test_process_messages();
 
+int test_create_tree();
 void tests(){
 	int result = 0;
 	/*result+=test_valid_messages();
@@ -17,35 +18,25 @@ void tests(){
 	result+=test_hash();
 	test_hash_merging();*/
 	//result+=test_process_messages();
-	test_create_level1();
+	test_create_tree();
 	(!result) ? printf("ALL TESTS PASSED OK\n") : printf("SOME ERRORS WHILE TESTING OCCURRED!\n");
 }
 
-int test_create_level1(){
+int test_create_tree(){
 	//create messages
 	user_keys uk = create_key_pair();
-	unsigned long long MSG_EXPONENT = 9LLU;
+	unsigned long long MSG_EXPONENT = 6LLU;
 	layer_hp* L_arrays[MSG_EXPONENT];
 	layer_hp L_arrays_p[MSG_EXPONENT]; // for free
 
 	unsigned long long n_msg = (1LLU<< MSG_EXPONENT); // level 0 
 	printf("N msg %llu\n",n_msg);
 
-	L_arrays[MSG_EXPONENT-1] = create_LEVEL0(&n_msg,uk);
+	L_arrays[MSG_EXPONENT-1] = create_LEVEL0(&n_msg,uk); // need to free messages!
 	L_arrays_p[MSG_EXPONENT-1] = *L_arrays[MSG_EXPONENT-1]; 
 	printf("N OF LEVEL 0 HASH NODES %llu\n",n_msg);
 
-	fill_intermediate_levels(MSG_EXPONENT, &n_msg,L_arrays,L_arrays_p);
-/*
-	for (signed k=MSG_EXPONENT-2; k>=0 ; --k ) { 
-		printf("k is %d \n",k);
-		L_arrays[k] = create_a_h_layer(&n_msg,L_arrays[k+1]->main_pointer );
-		L_arrays_p[k] = *L_arrays[k];
-	}*/
-
-
-	//---------------------------------------------
-	//check level 0 messages
+	fill_intermediate_levels(MSG_EXPONENT, &n_msg,L_arrays,L_arrays_p); // done
 	/*
 	size_t ii = 0;
 	msg_link a_link;
@@ -72,11 +63,11 @@ int test_create_level1(){
 	DumpHex(get_a_hashes_Hnode(L_arrays,0).hash2,crypto_generichash_BYTES);
 	//check others layer
 	printf("getting msg from root node\n");	
-	DumpHex(get_a_hashes_Hnode(L_arrays+1,5).Shash,crypto_generichash_BYTES);
+	DumpHex(get_a_hashes_Hnode(L_arrays+1,0).Shash,crypto_generichash_BYTES);
 	printf("\n");
-	DumpHex(get_a_hashes_Hnode(L_arrays+1,5).hash1 ,crypto_generichash_BYTES);
+	DumpHex(get_a_hashes_Hnode(L_arrays+1,0).hash1 ,crypto_generichash_BYTES);
 	printf("\n");
-	DumpHex(get_a_hashes_Hnode(L_arrays+1,5).hash2,crypto_generichash_BYTES);
+	DumpHex(get_a_hashes_Hnode(L_arrays+1,0).hash2,crypto_generichash_BYTES);
 
 	/*
 	printf("root pointer\n");
