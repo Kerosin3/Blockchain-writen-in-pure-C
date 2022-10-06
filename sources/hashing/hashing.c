@@ -61,6 +61,8 @@ hash_point_p create_hpoint_hashG(hash_point_p hp1, hash_point_p hp2){
 	hash_point_p hpoint = calloc(1,sizeof(hash_point));
 	//copy hash
 	memcpy(hpoint->hash,Shash,crypto_generichash_BYTES);
+	//printf("\n");
+	//DumpHex(hpoint->hash, crypto_generichash_BYTES);
 	free(Shash);
 	// assign pointers to word
 	hpoint->hpoint1 = hp1 ;

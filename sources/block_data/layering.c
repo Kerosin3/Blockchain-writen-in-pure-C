@@ -1,4 +1,5 @@
 #include "layering.h"
+#include <sodium/crypto_generichash.h>
 
 
 
@@ -13,7 +14,14 @@ layer_hp* create_a_h_layer(unsigned long long* size_d_layer, hash_point_p* start
 		hash_point_p* beg_pointer = calloc(*size_d_layer,sizeof(hash_point_p));	
 		a_layer->main_pointer = beg_pointer;
 		*beg_pointer = create_hpoint_hashG(*start_hpointr, start_hpointr[1] );	
-		//return 0;
+		printf("root hash:\n");
+		DumpHex( ((*(beg_pointer))->hash ), crypto_generichash_BYTES);
+		printf("side hash 1:\n");
+		DumpHex(  (((hash_point_p) ((*(beg_pointer))->hpoint1)))  , crypto_generichash_BYTES);
+		printf("side hash 2:\n");
+		DumpHex(  (((hash_point_p) ((*(beg_pointer))->hpoint2)))  , crypto_generichash_BYTES);
+		printf("root P is %p\n",a_layer->main_pointer);
+		return a_layer; 
 	}
 	printf("creating n nodes HASH:%llu\n",*size_d_layer);
 	layer_hp* a_layer = calloc(1,sizeof(layer_hp));
@@ -27,6 +35,13 @@ layer_hp* create_a_h_layer(unsigned long long* size_d_layer, hash_point_p* start
 }
 
 
+hashes_hashNode get_a_hashes_Hnode(layer_hp** a_layer, size_t N){
+	hashes_hashNode a_hash_data;
+	a_hash_data.Shash =  (*(a_layer[N]->main_pointer))->hash;
+	a_hash_data.hash1 =  (*(a_layer[N]->main_pointer))->hpoint1;
+	a_hash_data.hash2 =  (*(a_layer[N]->main_pointer))->hpoint2;
+	return a_hash_data;
+}
 
 // processing array of messages to a layer 0
 layer_hp* process_s_messages(unsigned long long s_msgN,signed_message_t* star_msg){
@@ -35,7 +50,6 @@ layer_hp* process_s_messages(unsigned long long s_msgN,signed_message_t* star_ms
 	layer_hp* a_layer = calloc(1,sizeof(layer_hp));
 	a_layer->size = s_msgN; // assign size
 	// create storage for porinters
-	
 	hash_point_p* beg_pointer = calloc(s_msgN,sizeof(hash_point_p));	
 	a_layer->main_pointer = beg_pointer;
 	for (size_t i =0; i < (s_msgN); i++) {

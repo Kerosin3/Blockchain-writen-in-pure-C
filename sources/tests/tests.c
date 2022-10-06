@@ -25,58 +25,67 @@ int test_create_level1(){
 	//create messages
 	user_keys uk = create_key_pair();
 	unsigned long long MSG_EXPONENT = 9;
-	unsigned long long n_msg = (1LLU<< 9LLU);
+	unsigned long long n_msg = (1LLU<< 9LLU); // /2
 	printf("n msg :%llu\n",n_msg);
-	signed_message_t msg_arr[n_msg]; // arr size /2
+	signed_message_t* msg_arr[n_msg]; // arr size /2
+	signed_message_t msg_arr_p[n_msg];
 	for (size_t i = 0; i<n_msg; i++) {
-		msg_arr[i] = *ls_get_a_signed_msg(uk); // generate random
-		validate_a_message(msg_arr[i],uk.pk);
+		msg_arr[i] =ls_get_a_signed_msg(uk); // generate random
+		validate_a_message(*msg_arr[i],uk.pk);
+		msg_arr_p[i]= *msg_arr[i];
 	//	DumpHex(msg_arr[i].message, msg_arr[i].length);
 	}
 	layer_hp* L_arrays[MSG_EXPONENT];
+	layer_hp L_arrays_p[MSG_EXPONENT];
 
-	L_arrays[MSG_EXPONENT-1] = process_s_messages(n_msg,msg_arr); // messages
+	L_arrays[MSG_EXPONENT-1] = process_s_messages(n_msg,msg_arr_p); // messages
 	n_msg>>=1LLU;	 // MESSAGES DONE!
 	printf("N OF LEVEL 0 HASH NODES %llu\n",n_msg);
-	//hash_point_p* L0pointer = L0->main_pointer; // hash level 0-1
-	// 8 +1
-	//L_arrays[8]= *L0; // assign mesage level
-	// MSG_EXPONENT min 1 min 1 8-1 = 7 till 0 inclusive
 	for (signed k=MSG_EXPONENT-2; k>=0 ; --k ) { 
 		printf("k is %d \n",k);
-		//if (k==7) {
-		//L_arrays[k] =* create_a_h_layer(&n_msg,L0pointer);
-		//continue;
-		//}
 		L_arrays[k] = create_a_h_layer(&n_msg,L_arrays[k+1]->main_pointer );
+		L_arrays_p[k] = *L_arrays[k];
 	}
+	//---------------------------------------------
 	//check level 0 messages
 	size_t ii = 0;
 	msg_link a_link;
 	for (ii = 0; ii< L_arrays[MSG_EXPONENT-1]->size; ii++) {
-
-		a_link = get_s_msg_from_L0((*L_arrays)+(MSG_EXPONENT-1),ii);
-		if (!(a_link.msg1 == msg_arr+ii)){
+		a_link = get_s_msg_from_L0( L_arrays[MSG_EXPONENT-1],ii );
+		if (!(a_link.msg1 == (msg_arr_p)+ii)){
 			break;
-		} else if (!( a_link.msg2 == msg_arr+(ii + L_arrays[(MSG_EXPONENT-1)]->size ) )) {
+		} else if (!( a_link.msg2 == msg_arr_p+(ii + L_arrays[(MSG_EXPONENT-1)]->size ) )) {
 			break;
 		} else {
 			continue;
 		}
 	}
+	if (ii != 256) return 0;
+	printf("ii is %lu\n",ii);
+	//---------------------------------------------
 	//check others layer
-	DumpHex( ((hash_point_p)((  ((*L_arrays)->main_pointer)[0])->hpoint1))->hash , crypto_generichash_BYTES);
+	printf("getting msg from root node");	
+	DumpHex(get_a_hashes_Hnode(L_arrays,0).Shash,crypto_generichash_BYTES);
 	printf("\n");
-	DumpHex( ((hash_point_p)((  ((*L_arrays)->main_pointer)[0])->hpoint2))->hash , crypto_generichash_BYTES);
-
+	DumpHex(get_a_hashes_Hnode(L_arrays,0).hash1 ,crypto_generichash_BYTES);
+	printf("\n");
+	DumpHex(get_a_hashes_Hnode(L_arrays,0).hash2,crypto_generichash_BYTES);
+	/*
+	printf("root pointer\n");
+	DumpHex( (*(L_arrays[0]->main_pointer))->hash, crypto_generichash_BYTES);
+	printf("check hash from ouside side 1\n");
+	DumpHex(  (((hash_point_p) ((*(L_arrays[0]->main_pointer))->hpoint1)))  , crypto_generichash_BYTES);
+	printf("check hash from ouside side 2\n");
+	DumpHex(  (((hash_point_p) ((*(L_arrays[0]->main_pointer))->hpoint2)))  , crypto_generichash_BYTES);
+	*/
 	for (size_t i =0; i< MSG_EXPONENT; i++) {
 		destoroy_a_layer(L_arrays[i]);
 	}
-	/*
+	
 	for (size_t i =0; i< n_msg; i++) {
-		free( msg_arr[i]. );
+		free( msg_arr_p[i].message );
 	}
-*/
+
 //	layer_hp* L1 = create_a_h_layer(&n_msg,L0pointer);
 
 }
@@ -115,6 +124,7 @@ int test_process_messages(){
 			continue;
 		}
 	}
+	printf("ii is %lu\n",ii);
 	destoroy_a_layer(L0);
 	if (ii == L0->size) return 1;
 	return 0;
