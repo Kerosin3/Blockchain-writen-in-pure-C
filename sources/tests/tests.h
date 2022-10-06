@@ -6,6 +6,7 @@
 #include "../hashing/hashing.h"
 #include "../block_data/blockdata.h"
 #include "../block_data/layering.h"
+#include "../puzzle/puzzle.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include <sodium.h>

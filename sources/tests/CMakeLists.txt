@@ -8,4 +8,5 @@ TARGET_LINK_LIBRARIES(tests
 		      hashing
 		      blockdata
 		      sodium
+		      puzzle
 		      )
