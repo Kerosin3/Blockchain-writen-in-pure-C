@@ -34,17 +34,26 @@ layer_hp* create_a_h_layer(unsigned long long* size_d_layer, hash_point_p* start
 	return a_layer;
 }
 
-layer_hp* create_LEVEL0(unsigned long long N_exponent_msg,user_keys uk){
-	unsigned long long n_msg = (1LLU<< 9LLU); // level 0 
-	signed_message_t* msg_arr[n_msg]; // arr size /2
-	signed_message_t msg_arr_p[n_msg]; // array for pointers 
-	for (size_t i = 0; i<n_msg; i++) {
+void fill_intermediate_levels(unsigned long long MSG_expt,unsigned long long* n_msg,layer_hp** L_arrays,layer_hp* L_arrays_p){
+	
+	for (signed k=MSG_expt-2; k>=0 ; --k ) { 
+		printf("k is %d \n",k);
+		L_arrays[k] = create_a_h_layer(n_msg,L_arrays[k+1]->main_pointer );
+		L_arrays_p[k] = *L_arrays[k];
+	}
+}
+
+layer_hp* create_LEVEL0(unsigned long long* n_msg,user_keys uk){
+	signed_message_t* msg_arr[*n_msg]; // arr size /2
+	signed_message_t msg_arr_p[*n_msg]; // array for pointers 
+	for (size_t i = 0; i<*n_msg; i++) {
 		msg_arr[i] =ls_get_a_signed_msg(uk); // generate random
 		validate_a_message(*msg_arr[i],uk.pk);
 		msg_arr_p[i]= *msg_arr[i];
 	//	DumpHex(msg_arr[i].message, msg_arr[i].length);
 	}
-	layer_hp* msg_layer = process_s_messages(n_msg,msg_arr_p); // messages
+	layer_hp* msg_layer = process_s_messages(*n_msg,msg_arr_p); // messages
+	(*n_msg)>>=1LLU;	 // MESSAGES  LAYER DONE!
 	return msg_layer;
 }
 

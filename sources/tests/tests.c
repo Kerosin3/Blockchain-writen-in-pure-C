@@ -24,30 +24,29 @@ void tests(){
 int test_create_level1(){
 	//create messages
 	user_keys uk = create_key_pair();
-	unsigned long long MSG_EXPONENT = 9;
-	unsigned long long n_msg = (1LLU<< 9LLU); // /2
-	printf("n msg :%llu\n",n_msg);
-	signed_message_t* msg_arr[n_msg]; // arr size /2
-	signed_message_t msg_arr_p[n_msg]; // array for pointers
-	for (size_t i = 0; i<n_msg; i++) {
-		msg_arr[i] =ls_get_a_signed_msg(uk); // generate random
-		validate_a_message(*msg_arr[i],uk.pk);
-		msg_arr_p[i]= *msg_arr[i];
-	//	DumpHex(msg_arr[i].message, msg_arr[i].length);
-	}
+	unsigned long long MSG_EXPONENT = 9LLU;
 	layer_hp* L_arrays[MSG_EXPONENT];
-	layer_hp L_arrays_p[MSG_EXPONENT];
+	layer_hp L_arrays_p[MSG_EXPONENT]; // for free
 
-	L_arrays[MSG_EXPONENT-1] = process_s_messages(n_msg,msg_arr_p); // messages
-	n_msg>>=1LLU;	 // MESSAGES  LAYER DONE!
+	unsigned long long n_msg = (1LLU<< MSG_EXPONENT); // level 0 
+	printf("N msg %llu\n",n_msg);
+
+	L_arrays[MSG_EXPONENT-1] = create_LEVEL0(&n_msg,uk);
+	L_arrays_p[MSG_EXPONENT-1] = *L_arrays[MSG_EXPONENT-1]; 
 	printf("N OF LEVEL 0 HASH NODES %llu\n",n_msg);
+
+	fill_intermediate_levels(MSG_EXPONENT, &n_msg,L_arrays,L_arrays_p);
+/*
 	for (signed k=MSG_EXPONENT-2; k>=0 ; --k ) { 
 		printf("k is %d \n",k);
 		L_arrays[k] = create_a_h_layer(&n_msg,L_arrays[k+1]->main_pointer );
 		L_arrays_p[k] = *L_arrays[k];
-	}
+	}*/
+
+
 	//---------------------------------------------
 	//check level 0 messages
+	/*
 	size_t ii = 0;
 	msg_link a_link;
 	for (ii = 0; ii< L_arrays[MSG_EXPONENT-1]->size; ii++) {
@@ -62,6 +61,7 @@ int test_create_level1(){
 	}
 	if (ii != 256) return 0;
 	printf("ii is %lu\n",ii);
+	*/
 	//---------------------------------------------
 	//check others layer
 	printf("getting msg from root node\n");	
@@ -89,11 +89,11 @@ int test_create_level1(){
 	for (size_t i =0; i< MSG_EXPONENT; i++) {
 		destoroy_a_layer(L_arrays[i]);
 	}
-	
+/*	
 	for (size_t i =0; i< n_msg; i++) {
 		free( msg_arr_p[i].message );
 	}
-
+*/
 //	layer_hp* L1 = create_a_h_layer(&n_msg,L0pointer);
 
 }

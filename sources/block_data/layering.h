@@ -22,6 +22,8 @@ hashes_hashNode get_a_hashes_Hnode(layer_hp** a_layer, size_t N);
 layer_hp* process_s_messages(unsigned long long s_msgN,signed_message_t* star_msg);
 layer_hp* create_a_h_layer(unsigned long long* size_d_layer, hash_point_p* start_hpointr);
 msg_link get_s_msg_from_L0(layer_hp* L0,size_t n);
+layer_hp* create_LEVEL0(unsigned long long* N_msg,user_keys uk);
+void fill_intermediate_levels(unsigned long long MSG_expt,unsigned long long* n_msg,layer_hp** L_arrays,layer_hp* L_arrays_p);
 
 void destoroy_a_layer(layer_hp* some_layer);
 #endif
