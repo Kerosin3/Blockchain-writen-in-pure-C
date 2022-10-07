@@ -4,6 +4,7 @@ ADD_LIBRARY( networking STATIC
 	event_loop.c
 	setup.c
 	start_server.c
+	setup_client.c
 	)
 
 TARGET_LINK_LIBRARIES(networking
