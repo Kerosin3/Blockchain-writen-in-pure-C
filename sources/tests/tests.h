@@ -7,6 +7,7 @@
 #include "../block_data/blockdata.h"
 #include "../block_data/layering.h"
 #include "../puzzle/puzzle.h"
+#include "../networking/start_server.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include <sodium.h>

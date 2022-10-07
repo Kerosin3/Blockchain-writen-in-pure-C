@@ -9,15 +9,20 @@ size_t *buffer_lengths; //current buffer length
 
 void setup_buffers()
 {
-    buffers = malloc(MAX_CONNECTIONS* BUFFER_SIZE);
+    buffers = malloc(MAX_CONNECTIONS* BUFFER_SIZE); // connection buffers for messages
     if (!buffers)
         die("malloc");
 
-    buffer_lengths = malloc(MAX_CONNECTIONS * sizeof(size_t));
+    buffer_lengths = malloc(MAX_CONNECTIONS * sizeof(size_t)); // buffers for storing current buffer size
     if (!buffer_lengths)
         die("malloc");
 }
 
+void destroy_buffers()
+{
+    free(buffers);
+    free(buffer_lengths);
+}
 
 int setup_serv_sock(uint16_t port)
 {

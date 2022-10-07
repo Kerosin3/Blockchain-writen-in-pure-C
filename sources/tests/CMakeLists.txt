@@ -9,4 +9,5 @@ TARGET_LINK_LIBRARIES(tests
 		      blockdata
 		      sodium
 		      puzzle
+		      networking
 		      )

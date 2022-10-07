@@ -19,7 +19,8 @@ void tests(){
 	test_hash_merging();*/
 	//result+=test_process_messages();
 //	test_create_tree();
-	solve_puzlev2(3);
+	//solve_puzlev2(2);
+	start_server(12345);	
 	(!result) ? printf("ALL TESTS PASSED OK\n") : printf("SOME ERRORS WHILE TESTING OCCURRED!\n");
 }
 
