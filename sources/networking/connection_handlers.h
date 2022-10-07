@@ -6,6 +6,7 @@
 #include "setup.h"
 #include "misc.h"
 #include <asm-generic/errno-base.h>
+#include <protobuf-c/protobuf-c.h>
 #include <errno.h>
 #include <fcntl.h>
 #include <liburing.h>

@@ -9,4 +9,5 @@ ADD_LIBRARY( networking STATIC
 
 TARGET_LINK_LIBRARIES(networking
 		      uring
+		      protobuf
 		      )

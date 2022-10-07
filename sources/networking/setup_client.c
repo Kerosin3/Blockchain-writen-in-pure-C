@@ -40,7 +40,7 @@ int setup_client(){
     perror("error connecting to socket\n");
     exit(1);
   }
-  printf("connection...\n")
+  printf("connection...\n");
 
 }
 
