@@ -2,6 +2,7 @@
 
 #define SETUP
 #include "settings.h"
+#include "transaction.pb-c.h"
 #include <dirent.h>
 #include <liburing.h>
 #include <netdb.h>
@@ -19,6 +20,7 @@
 
 extern char *buffers; // buffers for incomn connections
 extern size_t *buffer_lengths; //current buffer length
+extern char *buffer_transactions; 
 int setup_serv_sock(uint16_t port);
 
 void destroy_buffers();

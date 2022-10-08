@@ -1,13 +1,5 @@
-#include <sodium/crypto_sign.h>
-#include <stdint.h>
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
-#include <time.h>
-#include <unistd.h>
-#include "transaction.pb-c.h"
-#include "../accounts/acc_utils.h"
-
+#include "serdes.h"
+/*
 uint8_t puzzle_msg[10] = { 't','e','s','t','p','u','z','z','l','e' };
 
 uint8_t test_pubkey[5] = { 0xAA, 0xAA,0xAA ,0xAA,0xEE};
@@ -45,8 +37,12 @@ int main(int argc, char *argv[])
 
 }
 
+*/
+size_t get_timestamp(void* buffer);
 
-size_t serialize_data_v2(void* socket_buf,signed_message_t* a_message,char* msg_buf){
+
+
+size_t serialize_data_v2(void* socket_buf,signed_message_t* a_message,IpcMessage* msg_buf){
 	
 	int len = 0;
 	char* date[32];
@@ -54,7 +50,6 @@ size_t serialize_data_v2(void* socket_buf,signed_message_t* a_message,char* msg_
 	message = (IpcMessage*) msg_buf;
 	memset(message,0,sizeof(IpcMessage));
 	ipc_message__init(message);
-
 	message->has_transaction_msg = 1;
 
 	message->transaction_msg.data = a_message->message;
@@ -67,13 +62,38 @@ size_t serialize_data_v2(void* socket_buf,signed_message_t* a_message,char* msg_
 
 	message->status_code = IPC_MESSAGE__STATUS__OK;
 
-	get_timestamp(date);
-	message->timestamp = date;
+	size_t time_len = get_timestamp(date);
+	message->timestamp = date; // its ok
 
 	len = ipc_message__get_packed_size(message);
 	ipc_message__pack(message, socket_buf); // write to buffer
+	printf("serialization done!\n");
 	return len;
 
+}
+
+
+void print_serialized_data(void* buffer_in,size_t len){
+	printf("\n");
+// 	int len = 0;
+//	FILE *fp;
+//	fp = fopen("serialized","rb");
+// 	len = fread(buffer,sizeof(char),sizeof(buffer),fp);
+	IpcMessage *message;
+	message = ipc_message__unpack(0,len,buffer_in);
+	printf("status code:%d\n",message->status_code);
+	if(message->has_pubkey){
+		printf("has pubkey!\n");
+		DumpHex(message->pubkey.data,message->pubkey.len);
+	}
+	if(message->has_transaction_msg){
+		printf("decoded message:\n");
+		DumpHex(message->transaction_msg.data, message->transaction_msg.len);
+	}
+// 	DumpHex(message->transaction_msg.data, message->transaction_msg.len);
+//	printf("date: %s\n",message->timestamp);
+	
+	ipc_message__free_unpacked(message,NULL);
 }
 
 signed_message_t deserialize_data(int sock,void* deserialized_data){
@@ -109,7 +129,7 @@ size_t get_timestamp(void* buffer){
 	return n;
 }
 
-
+/*
 void serialize_data(void* buffer){
 //	void* buffer;
 	int len = 0;
@@ -145,7 +165,7 @@ void serialize_data(void* buffer){
 	printf("serialized!\n");
 
 }
-
+*/
 /*	
 	char buffer[1024];
 	int len = 0;

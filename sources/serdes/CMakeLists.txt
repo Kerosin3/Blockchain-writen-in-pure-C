@@ -1,13 +1,17 @@
-#ADD_LIBRARY( servapplib STATIC
-	#	     )
+cmake_minimum_required(VERSION 3.14)
+#project(serdes LANGUAGES C)
 
-     #TARGET_LINK_LIBRARIES( servapplib 
-	#picohttpparserlib
-	#	)
+ADD_LIBRARY( serdes STATIC
+	serdes.c
+	transaction.pb-c.c
+	)
 
-ADD_EXECUTABLE (a.out
-		main.c)
 
-TARGET_LINK_LIBRARIES(app.out
-	protobuf-c
-	      )
+#ADD_EXECUTABLE (a.out
+#		transaction.pb-c.c
+#		main.c
+#		)
+
+TARGET_LINK_LIBRARIES(serdes
+	              protobuf-c
+	      		)

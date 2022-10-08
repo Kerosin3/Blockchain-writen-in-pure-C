@@ -19,6 +19,7 @@ signed_message_t* get_a_signed_msg(user_keys keys){
 	signed_message_t temp = sign_a_message((unsigned char*)somemsg.test_msg,somemsg.len, keys.sk);
 	memcpy(a_msg,&temp,sizeof(signed_message_t));
 	put_a_PK(a_msg,keys.pk);
+	a_msg->length = 100;
 	return a_msg;
 }
 signed_message_t* ls_get_a_signed_msg(user_keys keys){
@@ -28,6 +29,7 @@ signed_message_t* ls_get_a_signed_msg(user_keys keys){
 	signed_message_t temp = sign_a_message((unsigned char*)somemsg.test_msg,somemsg.len, keys.sk);
 	memcpy(a_msg,&temp,sizeof(signed_message_t));
 	put_a_PK(a_msg,keys.pk);
+	a_msg->length = 100;
 	return a_msg;
 }
 

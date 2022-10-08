@@ -7,51 +7,6 @@
 #endif
 
 #include "transaction.pb-c.h"
-void   transaction__init
-                     (Transaction         *message)
-{
-  static const Transaction init_value = TRANSACTION__INIT;
-  *message = init_value;
-}
-size_t transaction__get_packed_size
-                     (const Transaction *message)
-{
-  assert(message->base.descriptor == &transaction__descriptor);
-  return protobuf_c_message_get_packed_size ((const ProtobufCMessage*)(message));
-}
-size_t transaction__pack
-                     (const Transaction *message,
-                      uint8_t       *out)
-{
-  assert(message->base.descriptor == &transaction__descriptor);
-  return protobuf_c_message_pack ((const ProtobufCMessage*)message, out);
-}
-size_t transaction__pack_to_buffer
-                     (const Transaction *message,
-                      ProtobufCBuffer *buffer)
-{
-  assert(message->base.descriptor == &transaction__descriptor);
-  return protobuf_c_message_pack_to_buffer ((const ProtobufCMessage*)message, buffer);
-}
-Transaction *
-       transaction__unpack
-                     (ProtobufCAllocator  *allocator,
-                      size_t               len,
-                      const uint8_t       *data)
-{
-  return (Transaction *)
-     protobuf_c_message_unpack (&transaction__descriptor,
-                                allocator, len, data);
-}
-void   transaction__free_unpacked
-                     (Transaction *message,
-                      ProtobufCAllocator *allocator)
-{
-  if(!message)
-    return;
-  assert(message->base.descriptor == &transaction__descriptor);
-  protobuf_c_message_free_unpacked ((ProtobufCMessage*)message, allocator);
-}
 void   ipc_message__init
                      (IpcMessage         *message)
 {
@@ -97,70 +52,6 @@ void   ipc_message__free_unpacked
   assert(message->base.descriptor == &ipc_message__descriptor);
   protobuf_c_message_free_unpacked ((ProtobufCMessage*)message, allocator);
 }
-static const ProtobufCFieldDescriptor transaction__field_descriptors[3] =
-{
-  {
-    "transaction",
-    1,
-    PROTOBUF_C_LABEL_REQUIRED,
-    PROTOBUF_C_TYPE_BYTES,
-    0,   /* quantifier_offset */
-    offsetof(Transaction, transaction),
-    NULL,
-    NULL,
-    0,             /* flags */
-    0,NULL,NULL    /* reserved1,reserved2, etc */
-  },
-  {
-    "pubkey",
-    2,
-    PROTOBUF_C_LABEL_REQUIRED,
-    PROTOBUF_C_TYPE_BYTES,
-    0,   /* quantifier_offset */
-    offsetof(Transaction, pubkey),
-    NULL,
-    NULL,
-    0,             /* flags */
-    0,NULL,NULL    /* reserved1,reserved2, etc */
-  },
-  {
-    "date",
-    3,
-    PROTOBUF_C_LABEL_REQUIRED,
-    PROTOBUF_C_TYPE_STRING,
-    0,   /* quantifier_offset */
-    offsetof(Transaction, date),
-    NULL,
-    NULL,
-    0,             /* flags */
-    0,NULL,NULL    /* reserved1,reserved2, etc */
-  },
-};
-static const unsigned transaction__field_indices_by_name[] = {
-  2,   /* field[2] = date */
-  1,   /* field[1] = pubkey */
-  0,   /* field[0] = transaction */
-};
-static const ProtobufCIntRange transaction__number_ranges[1 + 1] =
-{
-  { 1, 0 },
-  { 0, 3 }
-};
-const ProtobufCMessageDescriptor transaction__descriptor =
-{
-  PROTOBUF_C__MESSAGE_DESCRIPTOR_MAGIC,
-  "Transaction",
-  "Transaction",
-  "Transaction",
-  "",
-  sizeof(Transaction),
-  3,
-  transaction__field_descriptors,
-  transaction__field_indices_by_name,
-  1,  transaction__number_ranges,
-  (ProtobufCMessageInit) transaction__init,
-  NULL,NULL,NULL    /* reserved[123] */
-};
 static const ProtobufCEnumValue ipc_message__status__enum_values_by_number[5] =
 {
   { "TEST", "IPC_MESSAGE__STATUS__TEST", 0 },
@@ -195,11 +86,47 @@ const ProtobufCEnumDescriptor ipc_message__status__descriptor =
   ipc_message__status__value_ranges,
   NULL,NULL,NULL,NULL   /* reserved[1234] */
 };
-static const ProtobufCFieldDescriptor ipc_message__field_descriptors[2] =
+static const ProtobufCFieldDescriptor ipc_message__field_descriptors[4] =
 {
   {
-    "status_code",
+    "transaction_msg",
     1,
+    PROTOBUF_C_LABEL_OPTIONAL,
+    PROTOBUF_C_TYPE_BYTES,
+    offsetof(IpcMessage, has_transaction_msg),
+    offsetof(IpcMessage, transaction_msg),
+    NULL,
+    NULL,
+    0,             /* flags */
+    0,NULL,NULL    /* reserved1,reserved2, etc */
+  },
+  {
+    "pubkey",
+    2,
+    PROTOBUF_C_LABEL_OPTIONAL,
+    PROTOBUF_C_TYPE_BYTES,
+    offsetof(IpcMessage, has_pubkey),
+    offsetof(IpcMessage, pubkey),
+    NULL,
+    NULL,
+    0,             /* flags */
+    0,NULL,NULL    /* reserved1,reserved2, etc */
+  },
+  {
+    "timestamp",
+    3,
+    PROTOBUF_C_LABEL_REQUIRED,
+    PROTOBUF_C_TYPE_STRING,
+    0,   /* quantifier_offset */
+    offsetof(IpcMessage, timestamp),
+    NULL,
+    NULL,
+    0,             /* flags */
+    0,NULL,NULL    /* reserved1,reserved2, etc */
+  },
+  {
+    "status_code",
+    4,
     PROTOBUF_C_LABEL_REQUIRED,
     PROTOBUF_C_TYPE_ENUM,
     0,   /* quantifier_offset */
@@ -209,27 +136,17 @@ static const ProtobufCFieldDescriptor ipc_message__field_descriptors[2] =
     0,             /* flags */
     0,NULL,NULL    /* reserved1,reserved2, etc */
   },
-  {
-    "data",
-    2,
-    PROTOBUF_C_LABEL_REQUIRED,
-    PROTOBUF_C_TYPE_MESSAGE,
-    0,   /* quantifier_offset */
-    offsetof(IpcMessage, data),
-    &transaction__descriptor,
-    NULL,
-    0,             /* flags */
-    0,NULL,NULL    /* reserved1,reserved2, etc */
-  },
 };
 static const unsigned ipc_message__field_indices_by_name[] = {
-  1,   /* field[1] = data */
-  0,   /* field[0] = status_code */
+  1,   /* field[1] = pubkey */
+  3,   /* field[3] = status_code */
+  2,   /* field[2] = timestamp */
+  0,   /* field[0] = transaction_msg */
 };
 static const ProtobufCIntRange ipc_message__number_ranges[1 + 1] =
 {
   { 1, 0 },
-  { 0, 2 }
+  { 0, 4 }
 };
 const ProtobufCMessageDescriptor ipc_message__descriptor =
 {
@@ -239,7 +156,7 @@ const ProtobufCMessageDescriptor ipc_message__descriptor =
   "IpcMessage",
   "",
   sizeof(IpcMessage),
-  2,
+  4,
   ipc_message__field_descriptors,
   ipc_message__field_indices_by_name,
   1,  ipc_message__number_ranges,

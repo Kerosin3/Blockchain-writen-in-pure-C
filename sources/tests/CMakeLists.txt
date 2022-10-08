@@ -1,5 +1,6 @@
 ADD_LIBRARY( tests STATIC
 	tests.c
+	tests2.c
 	)
 
 TARGET_LINK_LIBRARIES(tests
@@ -10,4 +11,6 @@ TARGET_LINK_LIBRARIES(tests
 		      sodium
 		      puzzle
 		      networking
+		      protobuf-c
+		      serdes
 		      )

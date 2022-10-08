@@ -9,6 +9,7 @@
 #include "../puzzle/puzzle.h"
 #include "../networking/start_server.h"
 #include "../networking/setup_client.h"
+#include "../serdes/serdes.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include <sodium.h>
@@ -21,5 +22,6 @@ int test_node_creation();
 int test_Tnode_creation();
 
 void tests();
+void tests2();
 
 #endif 

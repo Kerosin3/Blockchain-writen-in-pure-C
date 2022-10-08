@@ -4,6 +4,7 @@
 #include "../tests/tests.h"
 
 int main(int argc, char *argv[]){
-	tests();
+	//tests();
+	tests2();
 	return 0;
 }

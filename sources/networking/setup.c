@@ -3,6 +3,7 @@
 
 char *buffers; // buffers for incomn connections
 size_t *buffer_lengths; //current buffer length
+char *buffer_transactions; // buffers for incomn connections
 
 
 
@@ -16,6 +17,11 @@ void setup_buffers()
     buffer_lengths = malloc(MAX_CONNECTIONS * sizeof(size_t)); // buffers for storing current buffer size
     if (!buffer_lengths)
         die("malloc");
+
+    buffer_transactions = calloc(MAX_CONNECTIONS, sizeof(IpcMessage)); // buffers for storing current buffer size
+    if (!buffer_lengths)
+        die("malloc");
+
 }
 
 void destroy_buffers()
