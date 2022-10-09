@@ -49,7 +49,7 @@ int setup_serv_sock(uint16_t port)
     return sockfd;
 }
 
-
+// POOLING ONLY WHEN ROOT
 void setup_iouring(struct io_uring *ring, int ncon, bool pooling)
 {
     int flag = pooling ? IORING_SETUP_SQPOLL | IORING_SETUP_SQ_AFF : 0;

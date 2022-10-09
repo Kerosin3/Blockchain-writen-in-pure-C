@@ -1,10 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "../accounts/activation.h"
-#include "../tests/tests.h"
+#include "setup_client.h"
 
 int main(int argc, char *argv[]){
-	tests();
-//	tests2();
+	setup_client_iouring();
 	return 0;
 }
