@@ -53,7 +53,7 @@ void set_flags(int socket)
 void add_ask_transaqtion_request(struct io_uring *ring, int client_fd)
 {
     struct io_uring_sqe *sqe = io_uring_get_sqe(ring); // add to ring
-    char* msg = "do you want some transaqtions\n";
+    char* msg = "do you want some transaqtions?";
     buffer_lengths[client_fd]= strlen(msg);
     int n = snprintf(get_client_buffer(client_fd), BUFFER_SIZE,"%s", msg) ;
     io_uring_prep_send(sqe, client_fd, get_client_buffer(client_fd), n, MSG_DONTWAIT ); // send a message
