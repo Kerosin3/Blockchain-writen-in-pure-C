@@ -31,15 +31,17 @@ void event_loop(int sockfd, struct io_uring *ring)
             		add_accept_request(ring, sockfd, &client_addr,
                                &client_addr_len); // add requst one more time  and set socket id
 			printf("current client socket: %d \n",cqe->res);
+             		current_client_fd = request_data_client_fd(cqe->res); // get current fd
+            	//	current_client_fd = request_data_client_fd(cqe->user_data); // get current fd
 	            	buffer_lengths[cqe->res] = 0;         // set current read buffer 0
-        	        set_flags(cqe->res);                  // set flags for the socket
-			add_ask_transaqtion_request(ring,cqe->res);
+        	        set_flags(cqe->res);                  // set flags for the socket OK??
+			request_ASK_NEED_MSG(ring,cqe->res); // send request ask MSG
 			break;
-        	case WAIT_ANSWER_FOR_TRANSACTIONS:
-			printf("ask for transaqtions\n");
-			printf("sended %d bytes:\n",cqe->res);
+        	case WAIT_RESPONSE_NEED_MSG: // wait response
+			printf("WAIT IF NEED MSG\n");
+// 			printf("sended %d bytes:\n",cqe->res);
 	            if (LIKELY(cqe->res)) {// non-empty request?  set fd test not zero read
-				handle_responce(ring, request_data_client_fd(cqe->user_data));
+				handle_response_IFNEED_MESSAGE(ring, request_data_client_fd(cqe->user_data));
 			}
 			break;
 		case FLAG_READ:
@@ -50,7 +52,15 @@ void event_loop(int sockfd, struct io_uring *ring)
 
 		    }
 	                break;
+		printf("out cycle\n");
 	}
+	/* when??
+        shutdown(current_client_fd, SHUT_RDWR);
+        int closeret = close(current_client_fd);
+        if (closeret < 0)
+               printf("error while closing socket %d, %s\n", current_client_fd, strerror(errno));
+ 
+ 	*/
         io_uring_cqe_seen(ring, cqe);
     }
 }

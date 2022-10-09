@@ -52,21 +52,25 @@ void   ipc_message__free_unpacked
   assert(message->base.descriptor == &ipc_message__descriptor);
   protobuf_c_message_free_unpacked ((ProtobufCMessage*)message, allocator);
 }
-static const ProtobufCEnumValue ipc_message__status__enum_values_by_number[5] =
+static const ProtobufCEnumValue ipc_message__status__enum_values_by_number[7] =
 {
   { "TEST", "IPC_MESSAGE__STATUS__TEST", 0 },
   { "OK", "IPC_MESSAGE__STATUS__OK", 1 },
   { "ERROR", "IPC_MESSAGE__STATUS__ERROR", 2 },
   { "FINISH", "IPC_MESSAGE__STATUS__FINISH", 3 },
   { "WAIT", "IPC_MESSAGE__STATUS__WAIT", 4 },
+  { "ASK_NEED_MSG", "IPC_MESSAGE__STATUS__ASK_NEED_MSG", 5 },
+  { "NEED_MORE", "IPC_MESSAGE__STATUS__NEED_MORE", 6 },
 };
 static const ProtobufCIntRange ipc_message__status__value_ranges[] = {
-{0, 0},{0, 5}
+{0, 0},{0, 7}
 };
-static const ProtobufCEnumValueIndex ipc_message__status__enum_values_by_name[5] =
+static const ProtobufCEnumValueIndex ipc_message__status__enum_values_by_name[7] =
 {
+  { "ASK_NEED_MSG", 5 },
   { "ERROR", 2 },
   { "FINISH", 3 },
+  { "NEED_MORE", 6 },
   { "OK", 1 },
   { "TEST", 0 },
   { "WAIT", 4 },
@@ -78,9 +82,9 @@ const ProtobufCEnumDescriptor ipc_message__status__descriptor =
   "Status",
   "IpcMessage__Status",
   "",
-  5,
+  7,
   ipc_message__status__enum_values_by_number,
-  5,
+  7,
   ipc_message__status__enum_values_by_name,
   1,
   ipc_message__status__value_ranges,

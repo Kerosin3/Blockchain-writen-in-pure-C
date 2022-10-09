@@ -34,6 +34,16 @@ signed_message_t* ls_get_a_signed_msg(user_keys keys){
 }
 
 
+size_t get_timestamp(void* buffer){
+	char date[32];
+        time_t t = time(NULL);
+    	struct tm* tm = gmtime(&t);
+    	strftime(date, sizeof(date), "%d/%m/%Y %H:%M:%S GMT", tm);
+	int n = snprintf(buffer, strlen(date)+1, "%s", date);
+	return n;
+}
+
+
 /*
  * for debugging
  * */

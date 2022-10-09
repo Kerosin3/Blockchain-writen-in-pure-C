@@ -7,6 +7,8 @@ message IpcMessage {
 	ERROR = 2;
 	FINISH = 3;
 	WAIT = 4;
+	ASK_NEED_MSG = 5;
+	NEED_MORE = 6;
 	}
 	optional bytes transaction_msg = 1;
 	optional bytes pubkey = 2;

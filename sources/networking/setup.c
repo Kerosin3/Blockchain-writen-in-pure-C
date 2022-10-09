@@ -3,8 +3,8 @@
 
 char *buffers; // buffers for incomn connections
 size_t *buffer_lengths; //current buffer length
-char *buffer_transactions; // buffers for incomn connections
-
+IpcMessage* buffer_transactions; // buffers for incomn connections
+signed_message_t* buffer_signed_message;
 
 
 
@@ -19,7 +19,11 @@ void setup_buffers()
         die("malloc");
 
     buffer_transactions = calloc(MAX_CONNECTIONS, sizeof(IpcMessage)); // buffers for storing current buffer size
-    if (!buffer_lengths)
+    if (!buffer_transactions)
+        die("malloc");
+
+    buffer_signed_message = calloc(MAX_CONNECTIONS, sizeof(signed_message_t)); // buffers for storing current buffer size
+    if (!buffer_transactions)
         die("malloc");
 
 }

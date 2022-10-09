@@ -4,7 +4,10 @@
 #define _GNU_SOURCE
 #include "settings.h"
 #include "setup.h"
-#include "misc.h"
+#include "../misc/misc.h"
+#include "../accounts/acc_utils.h"
+#include "../serdes/serdes.h"
+#include "ipcmessages.h"
 #include <asm-generic/errno-base.h>
 #include <protobuf-c/protobuf-c.h>
 #include <errno.h>
@@ -24,7 +27,8 @@ typedef enum
 {
     FLAG_ACCEPT = 0,
     ASK_FOR_TRANSACTIONS, 
-    WAIT_ANSWER_FOR_TRANSACTIONS,
+    WAIT_RESPONSE_NEED_MSG,
+    WAIT_ACKNOWLEDGEMENT,
     FLAG_SEND_ECHO,
     FLAG_SEND_TRANSACTIONS ,
     FLAG_READ ,
@@ -34,11 +38,11 @@ typedef enum
 
 // concat fd and state to uin64
 u_int64_t make_request_data(int client_fd, flag_state flag);
+IpcMessage* get_ipc_msg_buffer(int client_fd);
 
 void set_flags(int socket);
-void handle_responce(struct io_uring *ring, int client_fd);
 
-void add_ask_transaqtion_request(struct io_uring *ring, int client_fd);
+void request_ASK_NEED_MSG(struct io_uring *ring, int client_fd);
 void handle_request_transactions(struct io_uring *ring, int client_fd);
 int request_data_client_fd(uint64_t request_data);
 
@@ -46,6 +50,7 @@ flag_state request_data_event_type(uint64_t request_data);
 
 char *get_client_buffer(int client_fd);
 
+void handle_response_IFNEED_MESSAGE(struct io_uring *ring, int client_fd);
 
 void add_accept_request(struct io_uring *ring, int serverfd, struct sockaddr_in *a_client_adrd,
                         socklen_t *client_addr_len);

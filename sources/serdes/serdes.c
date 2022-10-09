@@ -119,16 +119,6 @@ signed_message_t deserialize_data(int sock,void* deserialized_data){
 
 }
 
-
-size_t get_timestamp(void* buffer){
-	char date[32];
-        time_t t = time(NULL);
-    	struct tm* tm = gmtime(&t);
-    	strftime(date, sizeof(date), "%d/%m/%Y %H:%M:%S GMT", tm);
-	int n = snprintf(buffer, strlen(date)+1, "%s", date);
-	return n;
-}
-
 /*
 void serialize_data(void* buffer){
 //	void* buffer;

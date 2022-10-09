@@ -5,6 +5,7 @@ ADD_LIBRARY( networking STATIC
 	setup.c
 	start_server.c
 	setup_client.c
+	ipcmessages.c
 	)
 
 TARGET_LINK_LIBRARIES(networking

@@ -1,7 +1,6 @@
 #include "setup_client.h"
-#include <liburing.h>
 
-void DumpHex(const void *data, size_t size);
+void DumpHex(const void *data, size_t size) ;
 
 
 
@@ -38,6 +37,8 @@ int setup_client_iouring(){
 	  return -1;
   }
   
+  IpcMessage* buffer_transactions = calloc(1, sizeof(IpcMessage)); // buffers for storing current buffer size
+
   struct io_uring ring;
   io_uring_queue_init(10,&ring,0);
 
@@ -55,29 +56,40 @@ int setup_client_iouring(){
 	  printf("connection established!\n");
   	  io_uring_cqe_seen(&ring,cqe_main);
   }
+  IpcMessage__Status FLAG_FROM_SERVER = IPC_MESSAGE__STATUS__ERROR; // set error default status
   size_t k = 0;
+  char* buffer[4096] = {0}; //buffer for messages
   for(;;){
-	if (k==1) break;
-	char* buffer[1024] = {0};
         sqe = io_uring_get_sqe(&ring); // return io entity
 	io_uring_prep_recv(sqe,s,buffer,sizeof(buffer),0); // recv data
         io_uring_submit(&ring);
 
   	struct io_uring_cqe* cqe;
 	io_uring_wait_cqe(&ring, &cqe); // return completion result
-	int ret = cqe->res; // readed bytes
-  	DumpHex(buffer,ret);
+	int ret = cqe->res; // N readed bytes
+	switch ( FLAG_FROM_SERVER = read_response_ONLY_STATUS(buffer, cqe->res)) {
+		case IPC_MESSAGE__STATUS__ASK_NEED_MSG:
+			printf("ASKED:%d\n",FLAG_FROM_SERVER);	
+			break;
+		case IPC_MESSAGE__STATUS__OK:
+			printf("got message!\n");
+			DumpHex(buffer, cqe->res);
+			break;
+	}
 
+	memset(buffer,0,ret); //set 0 
   	io_uring_cqe_seen(&ring,cqe);
 	k++;
   }
   io_uring_queue_exit(&ring);
 
   close(s);
-
+  free(buffer_transactions);
 }
 
+void send_need_more_msg(IpcMessage* msg){
 
+}
 
 
 /*
