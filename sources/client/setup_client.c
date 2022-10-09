@@ -3,6 +3,15 @@
 
 void DumpHex(const void *data, size_t size);
 
+
+/*
+u_int64_t make_request_data(int client_fd, flag_state flag)
+{
+    return (uint64_t)(flag) << 32 | client_fd;
+}
+*/
+
+
 int setup_client_iouring(){
   struct addrinfo hints, *res, *p;
   int status;
@@ -42,17 +51,45 @@ int setup_client_iouring(){
 
   struct io_uring_sqe* sqe = io_uring_get_sqe(&ring);
 	
-  io_uring_prep_connect(sqe, s, res->ai_addr, res->ai_addrlen);
-  io_uring_submit(&ring);
+  io_uring_prep_connect(sqe, s, res->ai_addr, res->ai_addrlen); // prep connect
 
-  struct io_uring_cqe* cqe;
-  io_uring_wait_cqe(&ring,&cqe);
+//  io_uring_sqe_set_data64(sqe, make_request_data(0, FLAG_ACCEPT));
 
-  io_uring_cqe_seen(&ring,cqe);
-  int ret = cqe->res;
+  if (io_uring_submit(&ring) < 0) // submit now!
+        printf("error submitting\n");
+  struct io_uring_cqe* cqe_main;
+  io_uring_wait_cqe(&ring, &cqe_main);
+  int ret = cqe_main->res;
+  if (!ret) {
+	  printf("connection established!\n");
+  	  io_uring_cqe_seen(&ring,cqe_main);
+  }
+  size_t k = 0;
+  for(;;){
+	if (k==1) break;
+//   	io_uring_submit(&ring);
+	char* buffer[1024] = {0};
+        sqe = io_uring_get_sqe(&ring); // return io entity
+	io_uring_prep_recv(sqe,s,buffer,sizeof(buffer),0); // recv data
+        io_uring_submit(&ring);
+
+  	struct io_uring_cqe* cqe;
+	io_uring_wait_cqe(&ring, &cqe); // return completion result
+	int ret = cqe->res; // readed bytes
+  	DumpHex(buffer,ret);
+
+  	io_uring_cqe_seen(&ring,cqe);
+	k++;
+  }
+  io_uring_queue_exit(&ring);
+
+//  io_uring_wait_cqe(&ring,&cqe);
+
+  //io_uring_cqe_seen(&ring,cqe);
+//   int ret = cqe->res;
 
 // 	io_uring_for_each_cqe(ring, head, cqe)
-  	
+  /*	
   char* buffer[1024];
   sqe = io_uring_get_sqe(&ring);
   io_uring_prep_recv(sqe,s,buffer,sizeof(buffer),0);
@@ -61,10 +98,10 @@ int setup_client_iouring(){
   printf("readed %d\n",cqe->res);
   io_uring_cqe_seen(&ring,cqe);
 
-  DumpHex(buffer,50);
 
   io_uring_queue_exit(&ring);
   printf("%d\n",ret);
+  */
   close(s);
   /*
   printf("setting up a socket for the client of %d\n",s);
@@ -79,6 +116,9 @@ int setup_client_iouring(){
   printf("connection...\n");
 
 }
+
+
+
 
 /*
  * for debugging
