@@ -83,7 +83,6 @@ int setup_client_iouring(){
 		case IPC_MESSAGE__STATUS__OK:
 			printf("got message! %d \n",cqe->res);
 			DumpHex(buffer, cqe->res); // print out response
-//			ret = send_ACKN_OK(&ring,s,buffer);
 			//printf("sended ACK\n");
 			//send_need_more_msg(&ring,cqe->res,buffer);
 			break;
@@ -91,6 +90,7 @@ int setup_client_iouring(){
 			printf("got signed message!\n");
 			if (1){
 
+			ret = send_ACKN_OK(&ring,s,buffer);
 			}
 			break;
 			

@@ -27,7 +27,7 @@ IpcMessage__Status read_ONLY_STATUS_response(void* buf,size_t len){
 	IpcMessage *message;
 	message = ipc_message__unpack(0,len,buf);
 	printf("STATUS CODE IS %d\n",message->status_code);
-	printf("TIMESTAMP:%s\n",message->timestamp );
+//	printf("TIMESTAMP:%s\n",message->timestamp );
 	status = message->status_code;
 	ipc_message__free_unpacked(message,NULL);
 	return status;

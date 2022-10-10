@@ -39,9 +39,9 @@ void event_loop(int sockfd, struct io_uring *ring)
 			request_ASK_NEED_MSG(ring,cqe->res); // send request ask MSG
 			break;
         	case READ_RESPONSE: // wait response
-			printf("sended request msg %d\n",cqe->res);
+    			printf("--message sended! size = %d \n",cqe->res);
 	            if (LIKELY(cqe->res)) {// received some bytes
-			printf("WAIT WAITING RESPONSE FROM %d \n",request_data_client_fd(cqe->user_data));
+			printf("WAIT WAITING RESPONSE FROM SOCKET: %d \n",request_data_client_fd(cqe->user_data));
 			READ_STATUS_RESPONSE(ring,request_data_client_fd(cqe->user_data)); // WILL BE WAIT TILL RECV WORKS
 			//printf("received %d\n",cqe->res);
 			//DumpHex(get_client_buffer(cqe->user_data),cqe->res);
@@ -58,17 +58,15 @@ void event_loop(int sockfd, struct io_uring *ring)
 			break;
 		case TEST_RESPONSE:
 	            if (LIKELY(cqe->res)) {// non-empty request?  set fd test not zero read
-			printf("TEST FOR RESPONSE, readed %d bytes \n",cqe->res);
-			DumpHex(get_client_buffer(cqe->user_data),cqe->res);
+			printf("TEST CLIENT RESPONSE (readed %d bytes) \n",cqe->res);
 			IpcMessage__Status STATUS;
 			switch ( STATUS = read_ONLY_STATUS_response(get_client_buffer(cqe->user_data),cqe->res)) {
 				case (IPC_MESSAGE__STATUS__NEED_MORE):
-					printf("NEED MORE MESSAGES!\n");
+					printf("CLIENT NEED MORE MESSAGES!\n");
 					handle_response_NEED_MORE_MSG(ring, cqe->user_data);
-					printf("SEND MESSAGE!\n");
 					break;
 				case (IPC_MESSAGE__STATUS__ACKN_OK):
-					printf("AKNOWLEDGED!\n");
+					printf("CLIENT ACKNOWLEDGED THE MESSAGE\n");
 					break;
 			}
 		    }
