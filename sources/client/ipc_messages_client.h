@@ -8,6 +8,7 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 #include <string.h>
 #include <unistd.h>
 #include <liburing.h>
@@ -18,5 +19,6 @@
 
 IpcMessage__Status read_response_ONLY_STATUS(void* buf,size_t len);
 size_t get_a_message(void* buf,size_t len,signed_message_t* a_msg);
+size_t send_ONLY_status_code( IpcMessage* message,void* socket_buf, IpcMessage__Status STATUS);
 
 #endif

@@ -27,7 +27,9 @@ typedef enum
 {
     FLAG_ACCEPT = 0,
     ASK_FOR_TRANSACTIONS, 
+    TEST_RESPONSE,
     WAIT_RESPONSE_NEED_MSG,
+    READ_RESPONSE,
     WAIT_ACKNOWLEDGEMENT,
     FLAG_SEND_ECHO,
     FLAG_SEND_TRANSACTIONS ,
@@ -39,8 +41,10 @@ typedef enum
 // concat fd and state to uin64
 u_int64_t make_request_data(int client_fd, flag_state flag);
 IpcMessage* get_ipc_msg_buffer(int client_fd);
+void READ_STATUS_RESPONSE(struct io_uring *ring, int client_fd);
 
 void set_flags(int socket);
+void WHETHER_ACK_OK(struct io_uring *ring, int client_fd);
 
 void request_ASK_NEED_MSG(struct io_uring *ring, int client_fd);
 void handle_request_transactions(struct io_uring *ring, int client_fd);
@@ -50,7 +54,7 @@ flag_state request_data_event_type(uint64_t request_data);
 
 char *get_client_buffer(int client_fd);
 
-void handle_response_IFNEED_MESSAGE(struct io_uring *ring, int client_fd);
+void handle_response_NEED_MORE_MSG(struct io_uring *ring, int client_fd);
 
 void add_accept_request(struct io_uring *ring, int serverfd, struct sockaddr_in *a_client_adrd,
                         socklen_t *client_addr_len);

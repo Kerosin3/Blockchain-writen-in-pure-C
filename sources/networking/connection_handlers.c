@@ -65,27 +65,30 @@ void request_ASK_NEED_MSG(struct io_uring *ring, int client_fd)
     IpcMessage* ipc_msg = get_ipc_msg_buffer(client_fd);
     buffer_lengths[client_fd] =  send_ONLY_status_code(ipc_msg, get_client_buffer(client_fd),IPC_MESSAGE__STATUS__ASK_NEED_MSG)	 ; // write to client buffer
     io_uring_prep_send(sqe, client_fd, get_client_buffer(client_fd), buffer_lengths[client_fd], MSG_DONTWAIT ); // send a message
-    io_uring_sqe_set_data64(sqe, make_request_data(client_fd, WAIT_RESPONSE_NEED_MSG));// set wait state
+    printf("DEBUG message sended! size = %zu \n",buffer_lengths[client_fd]);
+    io_uring_sqe_set_data64(sqe, make_request_data(client_fd, READ_RESPONSE));// set wait state
     if (io_uring_submit(ring) < 0)
         printf("error submitting\n");
 }
 
 //send serialized dta and wait ackn
-void handle_response_IFNEED_MESSAGE(struct io_uring *ring, int client_fd)
+void handle_response_NEED_MORE_MSG(struct io_uring *ring, int client_fd)
 {
     struct io_uring_sqe *sqe = io_uring_get_sqe(ring); // add to ring
     memset(get_client_buffer(client_fd),0,BUFFER_SIZE); // set current buffer to zero;
     buffer_lengths[client_fd] = 0; // set length to zero 
-    
-        user_keys uk = create_key_pair();
-	signed_message_t* msg =0;// get_signed_message_buffer(client_fd);
-	msg = ls_get_a_signed_msg(uk); // generate random
-    size_t n =   serialize_data_v2(get_client_buffer(client_fd),msg, get_ipc_msg_buffer(client_fd));	//write serialized data to buf;
+    signed_message_t* a_msg_p = get_signed_message_buffer(client_fd); 	  
+    user_keys uk = create_key_pair();
+    a_msg_p = ls_get_a_signed_msg(uk); // generate random
+    size_t n =   serialize_data_v2(get_client_buffer(client_fd),a_msg_p, get_ipc_msg_buffer(client_fd));	//write serialized data to buf;
     buffer_lengths[client_fd] = n;
     io_uring_prep_send(sqe, client_fd, get_client_buffer(client_fd) , n , MSG_DONTWAIT);// read answer
-    io_uring_sqe_set_data64(sqe, make_request_data(client_fd,WAIT_ACKNOWLEDGEMENT ));
+    printf("SIGNED message sended! size = %zu \n",buffer_lengths[client_fd]);
+    io_uring_sqe_set_data64(sqe, make_request_data(client_fd,READ_RESPONSE));
     if (io_uring_submit(ring) < 0)
         printf("error submitting\n");
+
+    //free(msg);
 }
 
 /*
@@ -100,6 +103,28 @@ void handle_response_IFNEED_MESSAGE(struct io_uring *ring, int client_fd)
         printf("error submitting\n");
 }
 */
+
+/*
+{
+    struct io_uring_sqe *sqe = io_uring_get_sqe(ring); // get entity 
+    io_uring_prep_recv(sqe, client_fd, get_client_buffer(client_fd) , BUFFER_SIZE ,0);// recv data
+    io_uring_sqe_set_data64(sqe, make_request_data(client_fd, FLAG_READ));
+    if (io_uring_submit(ring) < 0)
+        printf("error submitting\n");
+}
+*/
+
+
+void READ_STATUS_RESPONSE(struct io_uring *ring, int client_fd)
+{
+    struct io_uring_sqe *sqe = io_uring_get_sqe(ring); // add to ring
+    buffer_lengths[client_fd] = 0; // set length to zero
+    io_uring_prep_recv(sqe, client_fd, get_client_buffer(client_fd) , BUFFER_SIZE , 0);
+    io_uring_sqe_set_data64(sqe, make_request_data(client_fd, TEST_RESPONSE));
+    if (io_uring_submit(ring) < 0)
+        printf("error submitting\n");
+}
+
 
 
 

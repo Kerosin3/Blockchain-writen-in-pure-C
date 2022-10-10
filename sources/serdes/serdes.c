@@ -60,7 +60,7 @@ size_t serialize_data_v2(void* socket_buf,signed_message_t* a_message,IpcMessage
 	message->pubkey.data = a_message->public_key;
 	message->pubkey.len = crypto_sign_PUBLICKEYBYTES;
 
-	message->status_code = IPC_MESSAGE__STATUS__OK;
+	message->status_code = IPC_MESSAGE__STATUS__MESSAGE_SENDED;
 
 	size_t time_len = get_timestamp(date);
 	message->timestamp = date; // its ok

@@ -19,6 +19,7 @@
 #include <strings.h>
 #include <sys/socket.h>
 #include <sys/types.h>
+extern IpcMessage* buffer_transactions;
 
 int setup_client_iouring();
 

@@ -17,7 +17,7 @@ signed_message_t* get_a_signed_msg(user_keys keys){
 	test_msg_t somemsg = get_test_msg(100);	
 	signed_message_t* a_msg = calloc(1,sizeof(signed_message_t));	
 	signed_message_t temp = sign_a_message((unsigned char*)somemsg.test_msg,somemsg.len, keys.sk);
-	memcpy(a_msg,&temp,sizeof(signed_message_t));
+	memcpy(a_msg,&temp,sizeof(signed_message_t)); // copy all
 	put_a_PK(a_msg,keys.pk);
 	a_msg->length = 100;
 	return a_msg;

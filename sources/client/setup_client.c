@@ -1,8 +1,13 @@
 #include "setup_client.h"
+#include "ipc_messages_client.h"
+#include <liburing.h>
 
 void DumpHex(const void *data, size_t size) ;
 
+size_t send_need_more_msg(struct io_uring *ring,int sock,void* buffer_wr);
 
+size_t send_ACKN_OK(struct io_uring *ring,int sock,void* buffer_wr);
+IpcMessage* buffer_transactions;
 
 int setup_client_iouring(){
   struct addrinfo hints, *res, *p;
@@ -37,7 +42,7 @@ int setup_client_iouring(){
 	  return -1;
   }
   
-  IpcMessage* buffer_transactions = calloc(1, sizeof(IpcMessage)); // buffers for storing current buffer size
+  buffer_transactions = calloc(1, sizeof(IpcMessage)); // buffers for storing current buffer size
 
   struct io_uring ring;
   io_uring_queue_init(10,&ring,0);
@@ -56,10 +61,12 @@ int setup_client_iouring(){
 	  printf("connection established!\n");
   	  io_uring_cqe_seen(&ring,cqe_main);
   }
+  printf("main socket: %d\n",s);
   IpcMessage__Status FLAG_FROM_SERVER = IPC_MESSAGE__STATUS__ERROR; // set error default status
   size_t k = 0;
   char* buffer[4096] = {0}; //buffer for messages
   for(;;){
+	printf("cycle!\n");
         sqe = io_uring_get_sqe(&ring); // return io entity
 	io_uring_prep_recv(sqe,s,buffer,sizeof(buffer),0); // recv data
         io_uring_submit(&ring);
@@ -69,15 +76,27 @@ int setup_client_iouring(){
 	int ret = cqe->res; // N readed bytes
 	switch ( FLAG_FROM_SERVER = read_response_ONLY_STATUS(buffer, cqe->res)) {
 		case IPC_MESSAGE__STATUS__ASK_NEED_MSG:
-			printf("ASKED:%d\n",FLAG_FROM_SERVER);	
+			printf("ASKED IF NEED MESSAGE:%d\n",FLAG_FROM_SERVER);	
+			ret = send_need_more_msg(&ring,s,buffer); // SEND NEED
+//			printf("send need response\n");
 			break;
 		case IPC_MESSAGE__STATUS__OK:
-			printf("got message!\n");
-			DumpHex(buffer, cqe->res);
+			printf("got message! %d \n",cqe->res);
+			DumpHex(buffer, cqe->res); // print out response
+//			ret = send_ACKN_OK(&ring,s,buffer);
+			//printf("sended ACK\n");
+			//send_need_more_msg(&ring,cqe->res,buffer);
 			break;
+		case IPC_MESSAGE__STATUS__MESSAGE_SENDED:
+			printf("got signed message!\n");
+			if (1){
+
+			}
+			break;
+			
 	}
 
-	memset(buffer,0,ret); //set 0 
+	//memset(buffer,0,ret); //set 0 
   	io_uring_cqe_seen(&ring,cqe);
 	k++;
   }
@@ -87,9 +106,27 @@ int setup_client_iouring(){
   free(buffer_transactions);
 }
 
-void send_need_more_msg(IpcMessage* msg){
+size_t send_need_more_msg(struct io_uring *ring,int sock,void* buffer_wr)
+{
+    struct io_uring_sqe *sqe = io_uring_get_sqe(ring); // add to ring
+    size_t n = send_ONLY_status_code(buffer_transactions,buffer_wr,IPC_MESSAGE__STATUS__NEED_MORE);
+    io_uring_prep_send(sqe, sock, buffer_wr , n , MSG_DONTWAIT);// read answer
+    if (io_uring_submit(ring) < 0)
+        printf("error submitting\n");
+    return n;
+
 
 }
+
+size_t send_ACKN_OK(struct io_uring *ring,int sock,void* buffer_wr){
+    struct io_uring_sqe *sqe = io_uring_get_sqe(ring); // add to ring
+    size_t n = send_ONLY_status_code(buffer_transactions,buffer_wr,IPC_MESSAGE__STATUS__ACKN_OK);
+    io_uring_prep_send(sqe, sock, buffer_wr , n , MSG_DONTWAIT);// read answer
+    if (io_uring_submit(ring) < 0)
+        printf("error submitting\n");
+    return n;
+}
+
 
 
 /*
