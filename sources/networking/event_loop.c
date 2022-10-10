@@ -36,6 +36,7 @@ void event_loop(int sockfd, struct io_uring *ring)
              		current_client_fd = request_data_client_fd(cqe->res); // get current fd
 	            	//buffer_lengths[cqe->res] = 0;         // set current read buffer 0
         	        set_flags(cqe->res);                  // set flags for the socket OK??
+			printf("ASK IF NEED MESSAGE\n");
 			request_ASK_NEED_MSG(ring,cqe->res); // send request ask MSG
 			break;
         	case READ_RESPONSE: // wait response
@@ -67,8 +68,19 @@ void event_loop(int sockfd, struct io_uring *ring)
 					break;
 				case (IPC_MESSAGE__STATUS__ACKN_OK):
 					printf("CLIENT ACKNOWLEDGED THE MESSAGE\n");
+					request_ASK_NEED_MSG(ring,request_data_client_fd(cqe->user_data)); // send request ask MSG
+					printf("ASK IF NEED MESSAGE\n");
 					break;
+				case (IPC_MESSAGE__STATUS__ENOUGH):
+					printf("ENOUGH!\n");
+					request_SEND_STATUS(ring, request_data_client_fd(cqe->user_data), IPC_MESSAGE__STATUS__FINISH);
+//					shutdown(request_data_client_fd(cqe->user_data), SHUT_RDWR);
+//				        int closeret = close(request_data_client_fd(cqe->user_data)  );
+//				        if (closeret < 0)
+//				               printf("error while closing socket %d, %s\n", current_client_fd, strerror(errno));
+
 			}
+
 		    }
 	                break;
 		printf("out cycle\n");

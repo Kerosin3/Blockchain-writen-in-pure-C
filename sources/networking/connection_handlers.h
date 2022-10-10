@@ -38,6 +38,7 @@ typedef enum
     FLAG_ASK_MORE,
 } flag_state;
 
+void request_SEND_STATUS(struct io_uring *ring, int client_fd,IpcMessage__Status status);
 // concat fd and state to uin64
 u_int64_t make_request_data(int client_fd, flag_state flag);
 IpcMessage* get_ipc_msg_buffer(int client_fd);

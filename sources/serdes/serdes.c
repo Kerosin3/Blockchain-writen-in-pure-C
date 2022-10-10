@@ -41,7 +41,6 @@ int main(int argc, char *argv[])
 size_t get_timestamp(void* buffer);
 
 
-
 size_t serialize_data_v2(void* socket_buf,signed_message_t* a_message,IpcMessage* msg_buf){
 	
 	int len = 0;
