@@ -1,16 +1,14 @@
 #include "setup.h"
 
-
-char *buffers; // buffers for incomn connections
-size_t *buffer_lengths; //current buffer length
-IpcMessage* buffer_transactions; // buffers for incomn connections
-signed_message_t* buffer_signed_message;
+char *buffers;                   // buffers for incomn connections
+size_t *buffer_lengths;          // current buffer length
+IpcMessage *buffer_transactions; // buffers for incomn connections
+signed_message_t *buffer_signed_message;
 size_t *beffer_sended_N;
-
 
 void setup_buffers()
 {
-    buffers = malloc(MAX_CONNECTIONS* BUFFER_SIZE); // connection buffers for messages
+    buffers = malloc(MAX_CONNECTIONS * BUFFER_SIZE); // connection buffers for messages
     if (!buffers)
         die("malloc");
 
@@ -22,14 +20,13 @@ void setup_buffers()
     if (!buffer_transactions)
         die("malloc");
 
-    buffer_signed_message = calloc(MAX_CONNECTIONS, sizeof(signed_message_t)); // buffers for storing current buffer size
+    buffer_signed_message =
+        calloc(MAX_CONNECTIONS, sizeof(signed_message_t)); // buffers for storing current buffer size
     if (!buffer_transactions)
         die("malloc");
-    beffer_sended_N = calloc(MAX_CONNECTIONS , sizeof(size_t)); // buffers for storing current buffer size
+    beffer_sended_N = calloc(MAX_CONNECTIONS, sizeof(size_t)); // buffers for storing current buffer size
     if (!beffer_sended_N)
         die("malloc");
-
-
 }
 
 void destroy_buffers()

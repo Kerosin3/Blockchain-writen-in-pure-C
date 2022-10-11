@@ -30,7 +30,6 @@ signed_message_t* ls_get_a_signed_msg(user_keys keys){
 	*a_msg = sign_a_message(somemsg,keys.sk);
 	put_a_PK(a_msg,keys.pk);
 //	a_msg->length = 100;
-	printf("address msg %p\n",a_msg);
 	return a_msg;
 }
 

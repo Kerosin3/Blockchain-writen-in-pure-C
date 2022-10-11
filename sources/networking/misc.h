@@ -8,6 +8,6 @@
 #define UNLIKELY(x) __builtin_expect(!!(x), 0)
 void DumpHex(const void *data, size_t size);
 
-//static void die(const char *message);
+// static void die(const char *message);
 
 #endif

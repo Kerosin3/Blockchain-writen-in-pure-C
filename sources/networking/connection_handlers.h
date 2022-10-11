@@ -2,19 +2,19 @@
 #define CONNECTIONHANDLERS
 
 #define _GNU_SOURCE
-#include "settings.h"
-#include "setup.h"
-#include "../misc/misc.h"
 #include "../accounts/acc_utils.h"
+#include "../misc/misc.h"
 #include "../serdes/serdes.h"
 #include "ipcmessages.h"
+#include "settings.h"
+#include "setup.h"
 #include <asm-generic/errno-base.h>
-#include <protobuf-c/protobuf-c.h>
 #include <errno.h>
 #include <fcntl.h>
 #include <liburing.h>
 #include <limits.h>
 #include <netinet/in.h>
+#include <protobuf-c/protobuf-c.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -26,23 +26,23 @@
 typedef enum
 {
     FLAG_ACCEPT = 0,
-    ASK_FOR_TRANSACTIONS, 
+    ASK_FOR_TRANSACTIONS,
     TEST_RESPONSE,
     WAIT_RESPONSE_NEED_MSG,
     READ_RESPONSE,
     WAIT_ACKNOWLEDGEMENT,
     FLAG_SEND_ECHO,
-    FLAG_SEND_TRANSACTIONS ,
-    FLAG_READ ,
-    FLAG_WRITE ,
+    FLAG_SEND_TRANSACTIONS,
+    FLAG_READ,
+    FLAG_WRITE,
     FLAG_ASK_MORE,
 } flag_state;
-signed_message_t* get_signed_message_buffer(int client_fd);
+signed_message_t *get_signed_message_buffer(int client_fd);
 
-void request_SEND_STATUS(struct io_uring *ring, int client_fd,IpcMessage__Status status);
+void request_SEND_STATUS(struct io_uring *ring, int client_fd, IpcMessage__Status status);
 // concat fd and state to uin64
 u_int64_t make_request_data(int client_fd, flag_state flag);
-IpcMessage* get_ipc_msg_buffer(int client_fd);
+IpcMessage *get_ipc_msg_buffer(int client_fd);
 void READ_STATUS_RESPONSE(struct io_uring *ring, int client_fd);
 
 void set_flags(int socket);
