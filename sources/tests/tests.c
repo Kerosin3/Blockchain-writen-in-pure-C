@@ -21,8 +21,101 @@ void tests(){
 //	test_create_tree();
 	//solve_puzlev2(2);
 //	setup_client();
-	start_server(12345);	
+//	start_server(12345);	
+//
+//
+	//test_cleanup_message();
+	//test_message_creation_and_validation();
+//	test_create_and_destroy_hpoint();
+
+	test_process_messages_L1_v2();
 	(!result) ? printf("ALL TESTS PASSED OK\n") : printf("SOME ERRORS WHILE TESTING OCCURRED!\n");
+}
+//ok!
+int test_message_creation_and_validation(){
+
+	user_keys uk = create_key_pair();
+	signed_message_t** msg_arr = calloc(512,sizeof(signed_message_t*));
+	size_t i =0;
+	int rez = 0;
+	for (i = 0; i< 512; i++){
+		msg_arr[i] = ls_get_a_signed_msg(uk);
+		rez += validate_a_message(*msg_arr[i],uk.pk);
+	}
+	printf("rez is %d\n",rez);
+
+	for (i = 0; i< 512; i++){
+		destroy_signed_message(msg_arr[i]);
+	}
+	free(msg_arr);
+	return (rez == 512) ? 0 : 1; 
+}
+
+
+//ok!
+int test_cleanup_message(){
+
+	user_keys uk = create_key_pair();
+	signed_message_t* msg;
+	msg = ls_get_a_signed_msg(uk); // generate random
+	DumpHex(msg->message,msg->length);
+	validate_a_message(*msg,uk.pk);
+	destroy_signed_message(msg);
+}
+
+//ok!
+int test_create_and_destroy_hpoint(){
+
+	user_keys uk = create_key_pair();
+	signed_message_t* msg1;
+	msg1 = ls_get_a_signed_msg(uk); // generate random
+	printf("message 1\n");
+	DumpHex(msg1->message,msg1->length);
+	validate_a_message(*msg1,uk.pk);
+
+	user_keys uk2 = create_key_pair();
+	signed_message_t* msg2;
+	msg2 = ls_get_a_signed_msg(uk2); // generate random
+	printf("message 2\n");
+	DumpHex(msg2->message,msg2->length);
+	validate_a_message(*msg2,uk2.pk);
+
+	hash_point_p HASH_POINT = 0;
+	HASH_POINT = create_hpoint_message(msg1,msg2);
+	int rez = 0;
+	if (HASH_POINT->hpoint1 == msg1) rez++;
+	if (HASH_POINT->hpoint2 == msg2) rez++;
+	destroy_signed_message(msg1);
+	destroy_signed_message(msg2);
+	destroy_hpoint_message(HASH_POINT);
+	return (rez == 2) ? 0 : 1; 
+
+}
+
+int test_process_messages_L1_v2(){
+
+	unsigned long long n_msg = (1LLU<< 9LLU); //  create 2^9 messages
+	user_keys uk = create_key_pair();
+	signed_message_t** msg_arr = calloc(n_msg,sizeof(signed_message_t*));
+	size_t i =0;
+	int rez = 0;
+	for (i = 0; i< n_msg; i++){
+		msg_arr[i] = ls_get_a_signed_msg(uk); // pointer to message
+		if (i==0) printf("address for first msg %p\n",msg_arr);
+		rez += validate_a_message(*msg_arr[i],uk.pk);
+	}
+	printf("processing mesages!\n");
+	printf("-->address for first msg %p\n",msg_arr);
+	layer_hp* root_layer = process_s_messagesV2(n_msg,(*msg_arr) ) ;
+
+
+	destoroy_a_layer(root_layer);
+	printf("rez is %d\n",rez);
+	for (i = 0; i< n_msg; i++){
+		destroy_signed_message(msg_arr[i]);
+	}
+	free(msg_arr);
+
 }
 
 int test_create_tree(){
@@ -222,7 +315,7 @@ int test_hpoint_from_2msg_creation(){
 
 
 }
-
+/*
 int test_hash_merging(){
 	
 	printf("TEST HASHIN MERGING\n");
@@ -301,6 +394,7 @@ int test_valid_messages(){
 	else printf("TEST PASSED, ERROR OCCURRED!!!!!!!!!!!!! \n");
 	return 1;
 }
+
 //wrong keys
 int test_INvalid_messages(){
         user_keys uk = create_key_pair();
@@ -333,3 +427,4 @@ int test_INvalid_messages(){
 	else printf("TEST PASSED, ERROR OCCURRED!!!!!!!!!!!!! \n");
 	return 1;
 }
+*/

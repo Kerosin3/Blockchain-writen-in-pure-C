@@ -17,6 +17,7 @@ unsigned char* calc_hash(signed_message_t s_message){
 }
 
 // add verify!!!!!!!!!!!
+// store pointer to messages!
 hash_point_p create_hpoint_message(signed_message_t* s_msg1, signed_message_t* s_msg2){
 	hash_point_p hpoint = calloc(1,sizeof(hash_point));
 	hpoint->messages.smsg_p1 = s_msg1; // assign 1 msg
@@ -34,12 +35,17 @@ hash_point_p create_hpoint_message(signed_message_t* s_msg1, signed_message_t* s
 
 	memcpy(hpoint->hash,shash_p,crypto_generichash_BYTES);
 	hpoint->FLAG0 = 0;
-	free(hash_msg1);
-	free(hash_msg2);
-	free(shash_p);
+	free(hash_msg1); //ok
+	free(hash_msg2); //ok
+	free(shash_p);   //ok
+	hash_msg2 = NULL;
+	hash_msg1 = NULL;
+	shash_p = NULL;
 	return hpoint;
 }
-
+void destroy_hpoint_message(hash_point_p hpoint){
+	free (hpoint);
+}
 /*
 void create_inermmediate_layers(size_t n_layers,layer_hp* layer_beg){
 	

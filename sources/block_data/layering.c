@@ -82,6 +82,27 @@ layer_hp* process_s_messages(unsigned long long s_msgN,signed_message_t* star_ms
 	}
 	return a_layer;
 }
+
+// processing array of messages to a layer 0
+layer_hp* process_s_messagesV2(unsigned long long s_msgN,signed_message_t* star_msg){
+	s_msgN>>=1; // devide by 2
+	unsigned long long _n = s_msgN;
+	size_t level = 0;
+	layer_hp* a_layer = calloc(1,sizeof(layer_hp));
+	a_layer->size = s_msgN; // assign size
+	while(_n>>=1)  level++; // calc level
+	a_layer->level = level; // assign level
+	printf("msg merged nodes %llu, layer is %zu\n",s_msgN,level);
+	// create storage for porinters
+	hash_point_p beg_pointer = calloc(s_msgN,sizeof(hash_point_p));	
+	a_layer->main_pointer = beg_pointer;
+	for (size_t i =0; i < (s_msgN); i++) {
+		beg_pointer[i] = create_hpoint_message(star_msg+i, (star_msg+s_msgN+i ) ); // 0-512 1-513		
+	}
+	return a_layer;
+}
+
+
 // getting a messages from layer 0 
 msg_link get_s_msg_from_L0(layer_hp* L0,size_t n){
 	msg_link a_link;

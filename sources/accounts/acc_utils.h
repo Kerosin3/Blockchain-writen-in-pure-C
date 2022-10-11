@@ -1,6 +1,6 @@
 #ifndef ACCUTILS
 #define ACCUTILS
-
+//#include "../misc/misc.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -27,11 +27,15 @@ typedef struct {
 
 } unsigned_message_t;
 
+typedef struct {
+	unsigned char* test_msg;
+	unsigned long long len;
+} test_msg_t;
 user_keys create_key_pair();
 
-void destroy_signed_message(signed_message_t a_msg);
+signed_message_t sign_a_message(test_msg_t testmsg,unsigned char* secret_key);
+void destroy_signed_message(signed_message_t* a_msg);
 void put_a_PK(signed_message_t* a_msg,unsigned char* PK);
-signed_message_t sign_a_message(unsigned char* msg,size_t len,unsigned char* secret_key);
 int validate_a_message(signed_message_t,unsigned char* pk);
 
 #endif

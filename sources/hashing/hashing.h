@@ -41,6 +41,7 @@ typedef struct hash_point_t{
 } hash_point;
 typedef hash_point *hash_point_p;
 
+void destroy_hpoint_message(hash_point_p hpoint);
 
 hash_point_p create_hpoint_message(signed_message_t* s_msg1, signed_message_t* s_msg2);
 hash_point_p create_hpoint_hashG(hash_point_p hp1, hash_point_p hp2);

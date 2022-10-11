@@ -6,10 +6,12 @@
 #include <string.h>
 #include "../hashing/hashing.h"
 
+
 // struct for layering
 typedef struct {
 	hash_point_p* main_pointer;
 	size_t 	size;
+	size_t  level;
 } layer_hp;
 
 typedef struct {
@@ -18,6 +20,7 @@ typedef struct {
 	unsigned char* hash2;
 } hashes_hashNode;
 
+layer_hp* process_s_messagesV2(unsigned long long s_msgN,signed_message_t* star_msg);
 hashes_hashNode get_a_hashes_Hnode(layer_hp** a_layer, size_t N);
 layer_hp* process_s_messages(unsigned long long s_msgN,signed_message_t* star_msg);
 layer_hp* create_a_h_layer(unsigned long long* size_d_layer, hash_point_p* start_hpointr);

@@ -9,10 +9,6 @@
 #define LIKELY(x) __builtin_expect(!!(x), 1)
 #define UNLIKELY(x) __builtin_expect(!!(x), 0)
 
-typedef struct {
-	unsigned char* test_msg;
-	unsigned long long len;
-} test_msg_t;
 signed_message_t* ls_get_a_signed_msg(user_keys keys);
 
 size_t get_timestamp(void* buffer);

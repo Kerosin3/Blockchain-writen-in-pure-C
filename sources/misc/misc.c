@@ -16,20 +16,20 @@ signed_message_t* get_a_signed_msg(user_keys keys){
 	srand(time(NULL));
 	test_msg_t somemsg = get_test_msg(100);	
 	signed_message_t* a_msg = calloc(1,sizeof(signed_message_t));	
-	signed_message_t temp = sign_a_message((unsigned char*)somemsg.test_msg,somemsg.len, keys.sk);
-	memcpy(a_msg,&temp,sizeof(signed_message_t)); // copy all
+	*a_msg = sign_a_message(somemsg, keys.sk);
+	//memory for somemsg free here
+
 	put_a_PK(a_msg,keys.pk);
-	a_msg->length = 100;
+//	a_msg->length = 100;
 	return a_msg;
 }
 signed_message_t* ls_get_a_signed_msg(user_keys keys){
 	srand(time(NULL));
 	test_msg_t somemsg = ls_get_test_msg(100);	
 	signed_message_t* a_msg = calloc(1,sizeof(signed_message_t));	
-	signed_message_t temp = sign_a_message((unsigned char*)somemsg.test_msg,somemsg.len, keys.sk);
-	memcpy(a_msg,&temp,sizeof(signed_message_t));
+	*a_msg = sign_a_message(somemsg,keys.sk);
 	put_a_PK(a_msg,keys.pk);
-	a_msg->length = 100;
+//	a_msg->length = 100;
 	return a_msg;
 }
 
