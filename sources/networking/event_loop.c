@@ -68,6 +68,7 @@ void event_loop(int sockfd, struct io_uring *ring)
 					break;
 				case (IPC_MESSAGE__STATUS__ACKN_OK):
 					printf("CLIENT ACKNOWLEDGED THE MESSAGE\n");
+// 					destroy_signed_message(get_signed_message_buffer(request_data_client_fd(cqe->user_data))); // destroy previous message
 					request_ASK_NEED_MSG(ring,request_data_client_fd(cqe->user_data)); // send request ask MSG
 					printf("ASK IF NEED MESSAGE\n");
 					break;

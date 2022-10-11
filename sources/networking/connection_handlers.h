@@ -37,6 +37,7 @@ typedef enum
     FLAG_WRITE ,
     FLAG_ASK_MORE,
 } flag_state;
+signed_message_t* get_signed_message_buffer(int client_fd);
 
 void request_SEND_STATUS(struct io_uring *ring, int client_fd,IpcMessage__Status status);
 // concat fd and state to uin64

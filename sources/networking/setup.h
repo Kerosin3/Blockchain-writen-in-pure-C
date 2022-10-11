@@ -23,6 +23,7 @@ extern char *buffers; // buffers for incomn connections
 extern size_t *buffer_lengths; //current buffer length
 extern IpcMessage *buffer_transactions; 
 extern signed_message_t* buffer_signed_message;
+extern size_t *beffer_sended_N;
 int setup_serv_sock(uint16_t port);
 
 void destroy_buffers();

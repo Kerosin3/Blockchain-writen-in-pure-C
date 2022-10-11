@@ -84,7 +84,7 @@ layer_hp* process_s_messages(unsigned long long s_msgN,signed_message_t* star_ms
 }
 
 // processing array of messages to a layer 0
-layer_hp* process_s_messagesV2(unsigned long long s_msgN,signed_message_t* star_msg){
+layer_hp* process_s_messagesV2(unsigned long long s_msgN,signed_message_t** star_msg){
 	s_msgN>>=1; // devide by 2
 	unsigned long long _n = s_msgN;
 	size_t level = 0;
@@ -93,13 +93,31 @@ layer_hp* process_s_messagesV2(unsigned long long s_msgN,signed_message_t* star_
 	while(_n>>=1)  level++; // calc level
 	a_layer->level = level; // assign level
 	printf("msg merged nodes %llu, layer is %zu\n",s_msgN,level);
-	// create storage for porinters
 	hash_point_p* beg_pointer = calloc(s_msgN,sizeof(hash_point_p));	
 	a_layer->main_pointer = beg_pointer;
+
 	for (size_t i =0; i < (s_msgN); i++) {
-		beg_pointer[i] = create_hpoint_message(star_msg+i, (star_msg+s_msgN+i ) ); // 0-512 1-513		
+	
+		beg_pointer[i] = create_hpoint_message(star_msg[i], (star_msg[s_msgN+i] ) ); // 0-512 1-513		
 	}
 	return a_layer;
+}
+
+
+
+
+layer_hp* create_LEVEL_ROOT(unsigned long long* n_msg,user_keys uk){
+	signed_message_t* msg_arr[*n_msg]; // create arr size of /2
+	signed_message_t msg_arr_p[*n_msg]; // array for pointers 
+	for (size_t i = 0; i<*n_msg; i++) {
+		msg_arr[i] =ls_get_a_signed_msg(uk); // generate random
+		validate_a_message(*msg_arr[i],uk.pk);
+		msg_arr_p[i]= *msg_arr[i];
+	//	DumpHex(msg_arr[i].message, msg_arr[i].length);
+	}
+	layer_hp* msg_layer = process_s_messages(*n_msg,msg_arr_p); // messages
+	(*n_msg)>>=1LLU;	 // MESSAGES  LAYER DONE!
+	return msg_layer;
 }
 
 
@@ -119,8 +137,9 @@ msg_link get_s_msg_from_L0(layer_hp* L0,size_t n){
 // allpied for all levels
 void destoroy_a_layer(layer_hp* some_layer){
 	for (size_t i = 0; i< some_layer->size ; i++) {
-		free( (some_layer->main_pointer)[i] );
+		free( (some_layer->main_pointer)[i] ); // free HPOINTERS
 	}
-	free(some_layer);
+	free(some_layer->main_pointer); // free main pointer
+	free(some_layer); //free layer
 }
 

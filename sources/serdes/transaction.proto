@@ -12,6 +12,7 @@ message IpcMessage {
 	ACKN_OK = 7;
 	MESSAGE_SENDED = 8;
 	ENOUGH = 9;
+	ALL_BLOCK_MSG_SENDED = 10;
 	}
 	optional bytes transaction_msg = 1;
 	optional bytes pubkey = 2;

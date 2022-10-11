@@ -2,6 +2,7 @@
 #define EVENT_LOOP
 
 #include "connection_handlers.h"
+#include "../accounts/acc_utils.h"
 #include "misc.h"
 #include "setup.h"
 #include <liburing.h>

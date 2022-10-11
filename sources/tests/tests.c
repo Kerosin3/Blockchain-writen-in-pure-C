@@ -21,14 +21,15 @@ void tests(){
 //	test_create_tree();
 	//solve_puzlev2(2);
 //	setup_client();
-//	start_server(12345);	
+
+
+	start_server(12345);	
 //
 //
 	//test_cleanup_message();
 	//test_message_creation_and_validation();
 //	test_create_and_destroy_hpoint();
-
-	test_process_messages_L1_v2();
+	//test_process_messages_L1_v2();
 	(!result) ? printf("ALL TESTS PASSED OK\n") : printf("SOME ERRORS WHILE TESTING OCCURRED!\n");
 }
 //ok!
@@ -91,31 +92,28 @@ int test_create_and_destroy_hpoint(){
 	return (rez == 2) ? 0 : 1; 
 
 }
-
+//OK
 int test_process_messages_L1_v2(){
-
-	unsigned long long n_msg = (1LLU<< 9LLU); //  create 2^9 messages
+	unsigned long long n_msg = (1LLU<< 3LLU); //  create 2^9 messages
 	user_keys uk = create_key_pair();
 	signed_message_t** msg_arr = calloc(n_msg,sizeof(signed_message_t*));
 	size_t i =0;
 	int rez = 0;
 	for (i = 0; i< n_msg; i++){
 		msg_arr[i] = ls_get_a_signed_msg(uk); // pointer to message
-		if (i==0) printf("address for first msg %p\n",msg_arr);
 		rez += validate_a_message(*msg_arr[i],uk.pk);
 	}
-	printf("processing mesages!\n");
-	printf("-->address for first msg %p\n",msg_arr);
-	layer_hp* root_layer = process_s_messagesV2(n_msg,(*msg_arr) ) ;
+	layer_hp* root_layer = process_s_messagesV2(n_msg,msg_arr ) ;
 
 
-	destoroy_a_layer(root_layer);
-	printf("rez is %d\n",rez);
+	destoroy_a_layer(root_layer); // destroy level
+	printf("rez is %d\n",rez); // destoy created messages
 	for (i = 0; i< n_msg; i++){
 		destroy_signed_message(msg_arr[i]);
 	}
-	free(msg_arr);
-
+	free(msg_arr); //free conrainer for messages
+	
+	return (rez == n_msg) ? 0 : 1; 
 }
 
 int test_create_tree(){
