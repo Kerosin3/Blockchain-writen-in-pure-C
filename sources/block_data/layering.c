@@ -94,7 +94,7 @@ layer_hp* process_s_messagesV2(unsigned long long s_msgN,signed_message_t* star_
 	a_layer->level = level; // assign level
 	printf("msg merged nodes %llu, layer is %zu\n",s_msgN,level);
 	// create storage for porinters
-	hash_point_p beg_pointer = calloc(s_msgN,sizeof(hash_point_p));	
+	hash_point_p* beg_pointer = calloc(s_msgN,sizeof(hash_point_p));	
 	a_layer->main_pointer = beg_pointer;
 	for (size_t i =0; i < (s_msgN); i++) {
 		beg_pointer[i] = create_hpoint_message(star_msg+i, (star_msg+s_msgN+i ) ); // 0-512 1-513		
