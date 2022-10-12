@@ -68,13 +68,22 @@ int setup_client_iouring(){
   size_t k = 0;
   size_t count = 0;
   char* buffer[4096] = {0}; //buffer for messages
+  char* buffer2[4096] = {0}; //buffer for messages
+  int ifread = 0;
   for(;;){
+  	struct io_uring_cqe* cqe;
+	if (ifread == 0){
         sqe = io_uring_get_sqe(&ring); // return io entity
 	io_uring_prep_recv(sqe,s,buffer,sizeof(buffer),0); // recv data
         io_uring_submit(&ring);
-
-  	struct io_uring_cqe* cqe;
-	io_uring_wait_cqe(&ring, &cqe); // return completion result
+	io_uring_wait_cqe(&ring,&cqe);
+  	io_uring_cqe_seen(&ring,cqe);
+	ifread = 1;
+	printf("--->\n");
+	continue;
+	}
+	printf("cycle begin\n");
+	//io_uring_wait_cqe(&ring, &cqe); // return completion result
 	int ret = cqe->res; // N readed bytes
 	printf("readed %d\n",cqe->res);
 	printf("readed buffer:\n");
@@ -82,10 +91,12 @@ int setup_client_iouring(){
 	switch ( FLAG_FROM_SERVER = read_response_ONLY_STATUS(buffer, cqe->res)) {
 		case IPC_MESSAGE__STATUS__ASK_NEED_MSG:
 			printf("ASKED IF NEED MESSAGE:%d\n",FLAG_FROM_SERVER);	
-			memset(buffer,0,cqe->res); //set 0 
+			memset(buffer2,0,cqe->res); //set 0 ?????????????????????
 			//ret = send_need_more_msg(&ring,s,buffer); // SEND NEED
-			ret = send_STATUS(&ring,s,buffer,IPC_MESSAGE__STATUS__NEED_MORE);
-//			printf("send need response\n");
+			ret = send_STATUS(&ring,s,buffer2,IPC_MESSAGE__STATUS__NEED_MORE);
+			cqe->user_data = 1;
+			printf("send need response\n");
+			ifread = 0;
 			break;
 		case IPC_MESSAGE__STATUS__OK:
 			printf("got message! %d \n",cqe->res);
@@ -114,11 +125,11 @@ int setup_client_iouring(){
 			
 	}
 
-	io_uring_wait_cqe(&ring, &cqe); // return completion result
+	//io_uring_wait_cqe(&ring, &cqe); // return completion result
 	//memset(buffer,0,ret); //set 0 
+	printf("cycle!\n");
   	io_uring_cqe_seen(&ring,cqe);
 	k++;
-	printf("cycle!\n");
   }
   io_uring_queue_exit(&ring);
 
@@ -151,7 +162,7 @@ size_t send_ACKN_OK(struct io_uring *ring,int sock,void* buffer_wr){
 size_t send_STATUS(struct io_uring *ring,int sock,void* buffer_wr, IpcMessage__Status status_msg){
     struct io_uring_sqe *sqe = io_uring_get_sqe(ring); // add to ring
     size_t n = send_ONLY_status_code(buffer_transactions,buffer_wr,status_msg);
-    printf("sending\n");
+    printf("sending status code %d\n",status_msg);
     DumpHex(buffer_wr, n);
     io_uring_prep_send(sqe, sock, buffer_wr , n , MSG_DONTWAIT);// read answer
     if (io_uring_submit(ring) < 0)

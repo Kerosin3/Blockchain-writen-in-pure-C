@@ -15,8 +15,6 @@ size_t get_timestamp(void* buffer){
 IpcMessage__Status read_response_ONLY_STATUS(void* buf,size_t len){
 	IpcMessage__Status status;	
 	IpcMessage *message;
-	printf("hehe\n");
-	DumpHex(buf,len);
 	message = ipc_message__unpack(0,len,buf);
 	printf(" TESTING STATUS CODE IS %d\n",message->status_code);
 //	printf("TIMESTAMP:%s\n",message->timestamp );
