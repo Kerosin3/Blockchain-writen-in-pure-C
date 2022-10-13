@@ -58,7 +58,7 @@ void event_loop(int sockfd, struct io_uring *ring)
             //			request_ASK_NEED_MSG(ring,cqe->res); // send request ask MSG
 
             break;
-   /*     case TEST_RESPONSE:
+        case TEST_RESPONSE:
             if ((cqe->res)>0)
             { // non-empty request?  set fd test not zero read
                 printf("TEST CLIENT RESPONSE (readed %d bytes) \n", cqe->res);
@@ -84,13 +84,20 @@ void event_loop(int sockfd, struct io_uring *ring)
                     //				        if (closeret < 0)
                     //				               printf("error while closing socket %d, %s\n", current_client_fd,
                     //strerror(errno));
+		    break;
+		case (IPC_MESSAGE__STATUS__ALL_BLOCK_RECEIVED):
+		    printf("OK, WAITING......\n");
+		    break;
+		default:
+		    printf("default!\n");
+		    break;
                 }
             } else {
 		printf("Error while processing, %d\n",cqe->res);
 	    }
             break;
             printf("out cycle\n");
-	    */
+	    
         }
         /* when??
             shutdown(current_client_fd, SHUT_RDWR);

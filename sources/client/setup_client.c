@@ -2,6 +2,7 @@
 #include "ipc_messages_client.h"
 #include <liburing.h>
 
+#define BUFSIZE 4096
 void DumpHex(const void *data, size_t size) ;
 
 size_t send_need_more_msg(struct io_uring *ring,int sock,void* buffer_wr);
@@ -66,15 +67,20 @@ int setup_client_iouring(){
   printf("main socket: %d\n",s);
   IpcMessage__Status FLAG_FROM_SERVER = IPC_MESSAGE__STATUS__ERROR; // set error default status
   size_t k = 0;
+  int flag_block_filled = 0;
   size_t count = 0;
-  char* buffer[4096] = {0}; //buffer for messages
-  char* buffer2[4096] = {0}; //buffer for messages
+  char* buffer = calloc(BUFSIZE, sizeof(char));
+  char* buffer2 = calloc(BUFSIZE, sizeof(char));
   int ifread = 0;
   for(;;){
   	struct io_uring_cqe* cqe;
+	if (flag_block_filled) {
+		printf("block aquired!\n");
+		break;
+	}
 	if (ifread == 0){
         sqe = io_uring_get_sqe(&ring); // return io entity
-	io_uring_prep_recv(sqe,s,buffer,sizeof(buffer),0); // recv data
+	io_uring_prep_recv(sqe,s,buffer,BUFSIZE*sizeof(char),0); // recv data
         io_uring_submit(&ring);
 	io_uring_wait_cqe(&ring,&cqe);
   	io_uring_cqe_seen(&ring,cqe);
@@ -82,6 +88,7 @@ int setup_client_iouring(){
 	printf("--->\n");
 	continue;
 	}
+	ifread = 0;
 	printf("cycle begin\n");
 	//io_uring_wait_cqe(&ring, &cqe); // return completion result
 	int ret = cqe->res; // N readed bytes
@@ -91,12 +98,11 @@ int setup_client_iouring(){
 	switch ( FLAG_FROM_SERVER = read_response_ONLY_STATUS(buffer, cqe->res)) {
 		case IPC_MESSAGE__STATUS__ASK_NEED_MSG:
 			printf("ASKED IF NEED MESSAGE:%d\n",FLAG_FROM_SERVER);	
-			memset(buffer2,0,cqe->res); //set 0 ?????????????????????
+		//	memset(buffer2,0,cqe->res); //set 0 ?????????????????????
 			//ret = send_need_more_msg(&ring,s,buffer); // SEND NEED
 			ret = send_STATUS(&ring,s,buffer2,IPC_MESSAGE__STATUS__NEED_MORE);
-			cqe->user_data = 1;
+//			cqe->user_data = 1;
 			printf("send need response\n");
-			ifread = 0;
 			break;
 		case IPC_MESSAGE__STATUS__OK:
 			printf("got message! %d \n",cqe->res);
@@ -106,18 +112,24 @@ int setup_client_iouring(){
 			break;
 		case IPC_MESSAGE__STATUS__MESSAGE_SENDED:
 			printf("got signed message!\n");
-			if (count!=512){
-			printf("----%d-----\n",count);
+			if (count!=511){
+			printf("----%zu-----\n",count);
 			count++;
 			//ret = send_ACKN_OK(&ring,s,buffer);
 			ret = send_STATUS(&ring,s,buffer,IPC_MESSAGE__STATUS__ACKN_OK);
 			} else {
 				printf("--------count is %zu--------\n",count);
-				ret = send_STATUS(&ring,s,buffer,IPC_MESSAGE__STATUS__ENOUGH);
+				ret = send_STATUS(&ring,s,buffer2,IPC_MESSAGE__STATUS__ENOUGH); // 512 blocks acquired
+				flag_block_filled = 1;
 			}
 			break;
 		case IPC_MESSAGE__STATUS__FINISH:
 			printf("STOP ACCEPTING\n");
+			break;
+		case IPC_MESSAGE__STATUS__ALL_BLOCK_MSG_SENDED:
+			printf("ALL BLOCKS ARE AQUIRED,exiting\n");
+			ret = send_STATUS(&ring,s,buffer2,IPC_MESSAGE__STATUS__ALL_BLOCK_RECEIVED);
+			flag_block_filled = 1;
 			break;
 		default:
 			printf("default!\n");
@@ -132,7 +144,8 @@ int setup_client_iouring(){
 	k++;
   }
   io_uring_queue_exit(&ring);
-
+  free(buffer);
+  free(buffer2);
   close(s);
   free(buffer_transactions);
 }

@@ -13,6 +13,7 @@ message IpcMessage {
 	MESSAGE_SENDED = 8;
 	ENOUGH = 9;
 	ALL_BLOCK_MSG_SENDED = 10;
+	ALL_BLOCK_RECEIVED = 11;
 	}
 	optional bytes transaction_msg = 1;
 	optional bytes pubkey = 2;

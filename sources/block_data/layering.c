@@ -6,11 +6,14 @@
 // create a level
 layer_hp* create_a_h_layer(unsigned long long* size_d_layer, hash_point_p* start_hpointr){
 	*(size_d_layer) >>=1LLU; // devide by 2 
-
+	unsigned long long _n = *size_d_layer;	
+	size_t level=0;
+	while(_n>>=1)  level++; // calc level
 	if ((*size_d_layer) == 1) {
 		printf("create root node\n");
 		layer_hp* a_layer = calloc(1,sizeof(layer_hp));
 		a_layer->size = *size_d_layer;
+		a_layer->level = level;
 		hash_point_p* beg_pointer = calloc(*size_d_layer,sizeof(hash_point_p));	
 		a_layer->main_pointer = beg_pointer;
 		*beg_pointer = create_hpoint_hashG(*start_hpointr, start_hpointr[1] );	
