@@ -12,6 +12,12 @@ size_t send_STATUS(struct io_uring *ring,int sock,void* buffer_wr, IpcMessage__S
 size_t send_ACKN_OK(struct io_uring *ring,int sock,void* buffer_wr);
 IpcMessage* buffer_transactions;
 
+
+void teardown_server_sock(int sock)
+{
+    shutdown(sock, SHUT_RDWR);
+}
+
 int setup_client_iouring(){
   struct addrinfo hints, *res, *p;
   int status;
@@ -119,6 +125,7 @@ int setup_client_iouring(){
 			ret = send_STATUS(&ring,s,buffer,IPC_MESSAGE__STATUS__ACKN_OK);
 			} else {
 				printf("--------count is %zu--------\n",count);
+				printf("STOP ACCEPTING\n");
 				ret = send_STATUS(&ring,s,buffer2,IPC_MESSAGE__STATUS__ENOUGH); // 512 blocks acquired
 				flag_block_filled = 1;
 			}
@@ -146,8 +153,10 @@ int setup_client_iouring(){
   io_uring_queue_exit(&ring);
   free(buffer);
   free(buffer2);
+  teardown_server_sock(s);
   close(s);
   free(buffer_transactions);
+  freeaddrinfo(res);
 }
 
 size_t send_need_more_msg(struct io_uring *ring,int sock,void* buffer_wr)

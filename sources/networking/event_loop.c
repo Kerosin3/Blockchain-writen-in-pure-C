@@ -58,8 +58,16 @@ void event_loop(int sockfd, struct io_uring *ring)
             //			request_ASK_NEED_MSG(ring,cqe->res); // send request ask MSG
 
             break;
+        case FLAG_CLOSE_CONNECTION:
+            printf("CLOSING CONNECTION!\n");
+            shutdown(current_client_fd, SHUT_RDWR);
+            int closeret = close(current_client_fd);
+            if (closeret < 0)
+                printf("error while closing socket %d, %s\n", current_client_fd, strerror(errno));
+    		beffer_sended_N[request_data_client_fd(cqe->user_data)] =0; // add sended
+            break;
         case TEST_RESPONSE:
-            if ((cqe->res)>0)
+            if ((cqe->res) > 0)
             { // non-empty request?  set fd test not zero read
                 printf("TEST CLIENT RESPONSE (readed %d bytes) \n", cqe->res);
                 IpcMessage__Status STATUS;
@@ -78,26 +86,30 @@ void event_loop(int sockfd, struct io_uring *ring)
                     break;
                 case (IPC_MESSAGE__STATUS__ENOUGH):
                     printf("ENOUGH!\n");
-                    request_SEND_STATUS(ring, request_data_client_fd(cqe->user_data), IPC_MESSAGE__STATUS__FINISH);
+                    FINISH_SENDING(ring, request_data_client_fd(cqe->user_data));
+                    // request_SEND_STATUS(ring, request_data_client_fd(cqe->user_data), IPC_MESSAGE__STATUS__FINISH);
                     //					shutdown(request_data_client_fd(cqe->user_data), SHUT_RDWR);
                     //				        int closeret = close(request_data_client_fd(cqe->user_data)  );
                     //				        if (closeret < 0)
                     //				               printf("error while closing socket %d, %s\n", current_client_fd,
-                    //strerror(errno));
-		    break;
-		case (IPC_MESSAGE__STATUS__ALL_BLOCK_RECEIVED):
-		    printf("OK, WAITING......\n");
-		    break;
-		default:
-		    printf("default!\n");
-		    break;
+                    // strerror(errno));
+                    printf("WHOLE BLOCK SENDED\n");
+                    break;
+                case (IPC_MESSAGE__STATUS__ALL_BLOCK_RECEIVED):
+                    printf("OK, WAITING......\n");
+                    break;
+
+                default:
+                    printf("default!\n");
+                    break;
                 }
-            } else {
-		printf("Error while processing, %d\n",cqe->res);
-	    }
+            }
+            else
+            {
+                printf("Error while processing, %d\n", cqe->res);
+            }
             break;
             printf("out cycle\n");
-	    
         }
         /* when??
             shutdown(current_client_fd, SHUT_RDWR);

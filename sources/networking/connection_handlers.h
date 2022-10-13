@@ -33,12 +33,14 @@ typedef enum
     WAIT_ACKNOWLEDGEMENT,
     FLAG_SEND_ECHO,
     FLAG_SEND_TRANSACTIONS,
+    FLAG_CLOSE_CONNECTION,
     FLAG_READ,
     FLAG_WRITE,
     FLAG_ASK_MORE,
 } flag_state;
 signed_message_t *get_signed_message_buffer(int client_fd);
 
+void FINISH_SENDING(struct io_uring *ring, int client_fd);
 void request_SEND_STATUS(struct io_uring *ring, int client_fd, IpcMessage__Status status);
 // concat fd and state to uin64
 u_int64_t make_request_data(int client_fd, flag_state flag);
