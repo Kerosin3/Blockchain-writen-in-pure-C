@@ -101,7 +101,8 @@ void FINISH_SENDING(struct io_uring *ring, int client_fd)
 void handle_response_NEED_MORE_MSG(struct io_uring *ring, int client_fd)
 {
     printf("SENDED TO CURRENT CLIENT %lu\n", beffer_sended_N[client_fd]);
-    if (beffer_sended_N[client_fd] >= (1LU << 9LU))
+    if (beffer_sended_N[client_fd] >= 512 )
+//     if (beffer_sended_N[client_fd] >= (1LU << 9LU))
     { // block filled
         request_SEND_STATUS(ring, client_fd, IPC_MESSAGE__STATUS__ALL_BLOCK_MSG_SENDED);
         return;
@@ -119,7 +120,7 @@ void handle_response_NEED_MORE_MSG(struct io_uring *ring, int client_fd)
     printf("SERDATA:%zu\n", n);
     DumpHex(get_client_buffer(client_fd), n);
     io_uring_prep_send(sqe, client_fd, get_client_buffer(client_fd), n, MSG_CONFIRM); // read answer
-    printf("SIGNED message sended! size = %zu \n", buffer_lengths[client_fd]);
+    printf("SIGNED message sended! size = %zu serial: %lu \n", buffer_lengths[client_fd],beffer_sended_N[client_fd]);
     io_uring_sqe_set_data64(sqe, make_request_data(client_fd, READ_RESPONSE));
     if (io_uring_submit(ring) < 0)
         printf("error submitting\n");

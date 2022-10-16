@@ -23,14 +23,14 @@ void tests()
     // solve_puzlev2(2);
     //	setup_client();
 
-     start_server(12345);
+      start_server(12345);
     //
     //
     // test_cleanup_message();
     // test_message_creation_and_validation();
     //	test_create_and_destroy_hpoint();
     // test_process_messages_L1_v2();
-//     create_test_messages(10);
+//       create_test_messages(9);
     (!result) ? printf("ALL TESTS PASSED OK\n") : printf("SOME ERRORS WHILE TESTING OCCURRED!\n");
 }
 // ok!

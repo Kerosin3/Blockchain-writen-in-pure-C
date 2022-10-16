@@ -23,6 +23,32 @@ size_t send_need_more_msg(struct io_uring *ring,int sock,void* buffer_wr)
 
 }
 
+
+signed_message_t deserialize_data_from_server(char* buff, unsigned len){
+	signed_message_t a_msg;
+	printf("data inside:\n");
+	DumpHex(buff, len);
+	IpcMessage *message;
+	message = ipc_message__unpack(0,len,buff);
+	if ((message->status_code) ==IPC_MESSAGE__STATUS__OK )
+		printf("OK!\n");
+	if(message->has_pubkey){
+		memcpy(a_msg.public_key,message->pubkey.data,crypto_sign_PUBLICKEYBYTES);
+	}
+	if(message->has_transaction_msg){
+		a_msg.length = (unsigned long long) message->transaction_msg.len;
+		memcpy(a_msg.message,message->transaction_msg.data,a_msg.length);
+		printf("date: %s\n",message->timestamp);
+		printf("from epoh:%llu\n",message->time_num);
+	}
+	ipc_message__free_unpacked(message,NULL);
+		
+	return a_msg;
+
+}
+
+
+
 size_t send_ACKN_OK(struct io_uring *ring,int sock,void* buffer_wr){
     struct io_uring_sqe *sqe = io_uring_get_sqe(ring); // add to ring
     size_t n = send_ONLY_status_code(buffer_transactions,buffer_wr,IPC_MESSAGE__STATUS__ACKN_OK);

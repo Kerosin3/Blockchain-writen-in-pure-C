@@ -6,6 +6,7 @@ ADD_EXECUTABLE (client.out
 		setup_client.c
 		ipc_messages_client.c
 		../serdes/transaction.pb-c.c
+		block_process.c
 		main.c
 		)
 

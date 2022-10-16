@@ -20,6 +20,7 @@
 
 extern IpcMessage* buffer_transactions;
 
+signed_message_t deserialize_data_from_server(char* buff, unsigned len);
 long long get_date_usec_rec();
 IpcMessage__Status read_response_ONLY_STATUS(void* buf,size_t len);
 size_t get_a_message(void* buf,size_t len,signed_message_t* a_msg);

@@ -1,7 +1,7 @@
 #include "setup_client.h"
 
 #define BUFSIZE 4096
-
+#define BLOCKSIZE 512
 //size_t send_need_more_msg(struct io_uring *ring,int sock,void* buffer_wr);
 
 //size_t send_STATUS(struct io_uring *ring,int sock,void* buffer_wr, IpcMessage__Status status_msg);
@@ -75,6 +75,10 @@ int setup_client_iouring(){
   size_t count = 0;
   char* buffer = calloc(BUFSIZE, sizeof(char));
   char* buffer2 = calloc(BUFSIZE, sizeof(char));
+
+  signed_message_t* msg_arr = calloc(BLOCKSIZE, sizeof(signed_message_t));
+  
+
   int ifread = 0;
   for(;;){
   	struct io_uring_cqe* cqe;
@@ -94,8 +98,7 @@ int setup_client_iouring(){
 	}
 	ifread = 0;
 	int ret = cqe->res; // N readed bytes
-	printf("readed %d\n",cqe->res);
-	DumpHex(buffer, cqe->res);
+// 	printf("readed %d\n",cqe->res);
 	switch ( FLAG_FROM_SERVER = read_response_ONLY_STATUS(buffer, cqe->res)) {
 		case IPC_MESSAGE__STATUS__ASK_NEED_MSG:
 			printf("ASKED IF NEED MESSAGE:%d\n",FLAG_FROM_SERVER);	
@@ -106,17 +109,25 @@ int setup_client_iouring(){
 			send_need_more_msg(&ring,cqe->res,buffer);
 			break;
 		case IPC_MESSAGE__STATUS__MESSAGE_SENDED:
-			printf("got signed message!\n");
-			if (count!=511){
+			if (count < BLOCKSIZE-1){
+			printf("got signed message!n =%lu \n",count);
+	                DumpHex(buffer, cqe->res);
+
 			printf("----%zu-----\n",count);
+			msg_arr[count] = deserialize_data_from_server(buffer,cqe->res);
 			count++;
 			//ret = send_ACKN_OK(&ring,s,buffer);
 			ret = send_STATUS(&ring,s,buffer,IPC_MESSAGE__STATUS__ACKN_OK);
-			} else {
-				printf("--------count is %zu--------\n",count);
+			} else if (count == BLOCKSIZE-1) {
+				printf("--------count is %zu--------,readed %lu\n",count,cqe->res);
+	                	DumpHex(buffer, cqe->res);
+				msg_arr[count] = deserialize_data_from_server(buffer,cqe->res); // all last
 				printf("STOP ACCEPTING\n");
 				ret = send_STATUS(&ring,s,buffer2,IPC_MESSAGE__STATUS__ENOUGH); // 512 blocks acquired
 				flag_block_filled = 1;
+			} else {
+				ret = send_STATUS(&ring,s,buffer2,IPC_MESSAGE__STATUS__ERROR); // 512 blocks acquired
+
 			}
 			break;
 		case IPC_MESSAGE__STATUS__FINISH:
