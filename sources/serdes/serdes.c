@@ -60,6 +60,9 @@ size_t serialize_data_v2(void* socket_buf,signed_message_t* a_message,IpcMessage
 	message->pubkey.len = crypto_sign_PUBLICKEYBYTES;
 
 	message->status_code = IPC_MESSAGE__STATUS__MESSAGE_SENDED;
+	
+	message->time_num = get_epoch_ns();
+	printf("SEREALIZED MESSAGE TIMESTAMP %lu",message->time_num);
 
 	size_t time_len = get_timestamp(date);
 	message->timestamp = date; // its ok

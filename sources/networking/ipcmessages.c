@@ -12,7 +12,7 @@ size_t send_ONLY_status_code(IpcMessage *message, void *socket_buf, IpcMessage__
 
     size_t time_len = get_timestamp(date);
     message->timestamp = date; // its ok
-                               //
+    message->time_num = get_epoch_ns();                               //
     message->status_code = STATUS;
 
     len = ipc_message__get_packed_size(message);
@@ -26,6 +26,7 @@ IpcMessage__Status read_ONLY_STATUS_response(void *buf, size_t len)
     IpcMessage *message;
     message = ipc_message__unpack(0, len, buf);
     printf("STATUS CODE IS %d\n", message->status_code);
+    printf("READED MESSAGE TIMESTAMP:%llu\n",message->time_num);
     //	printf("TIMESTAMP:%s\n",message->timestamp );
     status = message->status_code;
     ipc_message__free_unpacked(message, NULL);

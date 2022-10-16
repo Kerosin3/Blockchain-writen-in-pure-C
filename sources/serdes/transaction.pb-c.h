@@ -46,11 +46,12 @@ struct  IpcMessage
   protobuf_c_boolean has_pubkey;
   ProtobufCBinaryData pubkey;
   char *timestamp;
+  uint64_t time_num;
   IpcMessage__Status status_code;
 };
 #define IPC_MESSAGE__INIT \
  { PROTOBUF_C_MESSAGE_INIT (&ipc_message__descriptor) \
-    , 0, {0,NULL}, 0, {0,NULL}, NULL, IPC_MESSAGE__STATUS__TEST }
+    , 0, {0,NULL}, 0, {0,NULL}, NULL, 0, IPC_MESSAGE__STATUS__TEST }
 
 
 /* IpcMessage methods */

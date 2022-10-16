@@ -100,7 +100,7 @@ const ProtobufCEnumDescriptor ipc_message__status__descriptor =
   ipc_message__status__value_ranges,
   NULL,NULL,NULL,NULL   /* reserved[1234] */
 };
-static const ProtobufCFieldDescriptor ipc_message__field_descriptors[4] =
+static const ProtobufCFieldDescriptor ipc_message__field_descriptors[5] =
 {
   {
     "transaction_msg",
@@ -139,8 +139,20 @@ static const ProtobufCFieldDescriptor ipc_message__field_descriptors[4] =
     0,NULL,NULL    /* reserved1,reserved2, etc */
   },
   {
-    "status_code",
+    "time_num",
     4,
+    PROTOBUF_C_LABEL_REQUIRED,
+    PROTOBUF_C_TYPE_UINT64,
+    0,   /* quantifier_offset */
+    offsetof(IpcMessage, time_num),
+    NULL,
+    NULL,
+    0,             /* flags */
+    0,NULL,NULL    /* reserved1,reserved2, etc */
+  },
+  {
+    "status_code",
+    5,
     PROTOBUF_C_LABEL_REQUIRED,
     PROTOBUF_C_TYPE_ENUM,
     0,   /* quantifier_offset */
@@ -153,14 +165,15 @@ static const ProtobufCFieldDescriptor ipc_message__field_descriptors[4] =
 };
 static const unsigned ipc_message__field_indices_by_name[] = {
   1,   /* field[1] = pubkey */
-  3,   /* field[3] = status_code */
+  4,   /* field[4] = status_code */
+  3,   /* field[3] = time_num */
   2,   /* field[2] = timestamp */
   0,   /* field[0] = transaction_msg */
 };
 static const ProtobufCIntRange ipc_message__number_ranges[1 + 1] =
 {
   { 1, 0 },
-  { 0, 4 }
+  { 0, 5 }
 };
 const ProtobufCMessageDescriptor ipc_message__descriptor =
 {
@@ -170,7 +183,7 @@ const ProtobufCMessageDescriptor ipc_message__descriptor =
   "IpcMessage",
   "",
   sizeof(IpcMessage),
-  4,
+  5,
   ipc_message__field_descriptors,
   ipc_message__field_indices_by_name,
   1,  ipc_message__number_ranges,

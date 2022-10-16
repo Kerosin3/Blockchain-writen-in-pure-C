@@ -11,6 +11,37 @@ size_t get_timestamp(void* buffer){
 }
 
 
+u_int64_t  get_epoch_ns(){
+	long int ns;
+	u_int64_t all;
+	time_t sec;
+	unsigned long one_bill = 1000000000L;
+	struct timespec spec;
+	
+	if (clock_gettime(CLOCK_REALTIME,&spec)!=0){
+		printf("ERROR GETTING EPOCH TIMESTAMP\n");
+		all = 0;
+		return all;
+	}
+	sec = spec.tv_sec;
+	ns = spec.tv_nsec;
+	all = (u_int64_t) sec *  one_bill + (u_int64_t) ns;
+	return all;
+}
+
+
+long long get_date_usec_rec(){
+
+	struct timeval ts;
+	if (gettimeofday(&ts,NULL)) {
+		printf("Error getting timestamp!\n");
+		long long ret = 0;
+		return ret;
+	}
+	long long ret = ts.tv_sec*1000LL + ts.tv_usec/1000;
+	return ret;
+}
+
 
 IpcMessage__Status read_response_ONLY_STATUS(void* buf,size_t len){
 	IpcMessage__Status status;	
@@ -19,6 +50,7 @@ IpcMessage__Status read_response_ONLY_STATUS(void* buf,size_t len){
 	printf(" TESTING STATUS CODE IS %d\n",message->status_code);
 //	printf("TIMESTAMP:%s\n",message->timestamp );
 	status = message->status_code;
+        printf("TIMESTAMP:%ld\n",message->time_num);
 	ipc_message__free_unpacked(message,NULL);
 	return status;
 }
@@ -52,8 +84,9 @@ size_t send_ONLY_status_code( IpcMessage* message,void* socket_buf, IpcMessage__
 	
 	size_t time_len = get_timestamp(date);
 	message->timestamp = date; // its ok
-				   //
+	message->time_num = get_epoch_ns();
 	message->status_code = STATUS;
+        printf("TIMESTAMP SENDED MESSAGE:%ld\n",message->time_num);
 	
 	len = ipc_message__get_packed_size(message);
 	ipc_message__pack(message, socket_buf); // write to buffer

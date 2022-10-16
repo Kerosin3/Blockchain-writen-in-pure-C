@@ -1,6 +1,7 @@
 #include "misc.h"
 #include <sodium/crypto_sign.h>
 #include <stdlib.h>
+#include <sys/types.h>
 #include <time.h>
 
 _Noreturn void die(const char *message)
@@ -43,6 +44,35 @@ size_t get_timestamp(void* buffer){
 	return n;
 }
 
+u_int64_t  get_epoch_ns(){
+	long int ns;
+	u_int64_t all;
+	time_t sec;
+	unsigned long one_bill = 1000000000L;
+	struct timespec spec;
+	
+	if (clock_gettime(CLOCK_REALTIME,&spec)!=0){
+		printf("ERROR GETTING EPOCH TIMESTAMP\n");
+		all = 0;
+		return all;
+	}
+	sec = spec.tv_sec;
+	ns = spec.tv_nsec;
+	all = (u_int64_t) sec *  one_bill + (u_int64_t) ns;
+	return all;
+}
+
+long long get_date_usec_rec(){
+
+	struct timeval ts;
+	if (gettimeofday(&ts,NULL)) {
+		printf("Error getting timestamp!\n");
+		long long ret = 0;
+		return ret;
+	}
+	long long ret = ts.tv_sec*1000LL + ts.tv_usec/1000;
+	return ret;
+}
 
 /*
  * for debugging

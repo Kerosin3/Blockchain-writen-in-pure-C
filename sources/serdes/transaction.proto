@@ -18,5 +18,6 @@ message IpcMessage {
 	optional bytes transaction_msg = 1;
 	optional bytes pubkey = 2;
 	required string timestamp = 3;
-	required Status status_code = 4;
+	required uint64 time_num = 4;
+	required Status status_code = 5;
 }
