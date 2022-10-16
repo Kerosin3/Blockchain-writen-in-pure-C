@@ -82,7 +82,6 @@ int setup_client_iouring(){
   	msg_arr[i].message = (unsigned char*) calloc(BUFSIZEFORMESSAGE,sizeof(char));// asign pointer
   }
   
-
   int ifread = 0;
   for(;;){
   	struct io_uring_cqe* cqe;
@@ -160,7 +159,7 @@ int setup_client_iouring(){
   freeaddrinfo(res);
 
 
-  calc_merkle_tree(msg_arr); 
+//  calc_merkle_tree(msg_arr); 
 //DumpHex(msg_arr[0].message,msg_arr[0].length);
 
   for (size_t i = 0 ; i<BLOCKSIZE; i++) {

@@ -59,6 +59,7 @@ u_int64_t  get_epoch_ns(){
 	sec = spec.tv_sec;
 	ns = spec.tv_nsec;
 	all = (u_int64_t) sec *  one_bill + (u_int64_t) ns;
+	printf("EPOH %lu\n",all);
 	return all;
 }
 

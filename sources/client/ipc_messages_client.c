@@ -132,7 +132,26 @@ size_t get_a_message(void* buf,size_t len,signed_message_t* a_msg){
 
 }
 
-
+/*
+u_int64_t  get_epoch_ns_cl(){
+	long int ns;
+	u_int64_t all;
+	time_t sec;
+	unsigned long one_bill = 1000000000L;
+	struct timespec spec;
+	
+	if (clock_gettime(CLOCK_REALTIME,&spec)!=0){
+		printf("ERROR GETTING EPOCH TIMESTAMP\n");
+		all = 0;
+		return all;
+	}
+	sec = spec.tv_sec;
+	ns = spec.tv_nsec;
+	all = (u_int64_t) sec *  one_bill + (u_int64_t) ns;
+	printf("EPOH %lu\n",all);
+	return all;
+}
+*/
 size_t send_ONLY_status_code( IpcMessage* message,void* socket_buf, IpcMessage__Status STATUS){
 	int len = 0;
 	char* date[32];
@@ -144,7 +163,8 @@ size_t send_ONLY_status_code( IpcMessage* message,void* socket_buf, IpcMessage__
 	
 	size_t time_len = get_timestamp(date);
 	message->timestamp = date; // its ok
-	message->time_num = get_epoch_ns();
+	uint64_t epoch_ns = get_epoch_ns(); 
+	message->time_num = epoch_ns;
 	message->status_code = STATUS;
         printf("TIMESTAMP SENDED MESSAGE:%ld\n",message->time_num);
 	

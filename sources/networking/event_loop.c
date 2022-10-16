@@ -17,6 +17,9 @@ void event_loop(int sockfd, struct io_uring *ring)
     if ((err = setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR | SO_RCVBUF, (char *)&sndsize, (int)sizeof(sndsize))))
         strerror(err);
     unsigned long long ii = 0;
+    ring_buffer M_ringbuf;
+    M_ringbuf.filled_size = 512;
+    M_ringbuf.filled_size = 0;
     add_accept_request(ring, sockfd, &client_addr, &client_addr_len);
     for (;;)
     {
@@ -87,12 +90,6 @@ void event_loop(int sockfd, struct io_uring *ring)
                 case (IPC_MESSAGE__STATUS__ENOUGH):
                     printf("ENOUGH!\n");
                     FINISH_SENDING(ring, request_data_client_fd(cqe->user_data));
-                    // request_SEND_STATUS(ring, request_data_client_fd(cqe->user_data), IPC_MESSAGE__STATUS__FINISH);
-                    //					shutdown(request_data_client_fd(cqe->user_data), SHUT_RDWR);
-                    //				        int closeret = close(request_data_client_fd(cqe->user_data)  );
-                    //				        if (closeret < 0)
-                    //				               printf("error while closing socket %d, %s\n", current_client_fd,
-                    // strerror(errno));
                     printf("WHOLE BLOCK SENDED\n");
                     break;
                 case (IPC_MESSAGE__STATUS__ALL_BLOCK_RECEIVED):

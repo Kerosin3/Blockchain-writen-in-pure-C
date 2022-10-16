@@ -10,7 +10,6 @@ size_t send_ONLY_status_code(IpcMessage *message, void *socket_buf, IpcMessage__
     message->has_pubkey = 0;
     message->has_transaction_msg = 0;
 
-    size_t time_len = get_timestamp(date);
     message->timestamp = date; // its ok
     message->time_num = get_epoch_ns();                               //
     message->status_code = STATUS;
