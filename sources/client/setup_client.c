@@ -1,15 +1,12 @@
 #include "setup_client.h"
-#include "ipc_messages_client.h"
-#include <liburing.h>
 
 #define BUFSIZE 4096
-void DumpHex(const void *data, size_t size) ;
 
-size_t send_need_more_msg(struct io_uring *ring,int sock,void* buffer_wr);
+//size_t send_need_more_msg(struct io_uring *ring,int sock,void* buffer_wr);
 
-size_t send_STATUS(struct io_uring *ring,int sock,void* buffer_wr, IpcMessage__Status status_msg);
+//size_t send_STATUS(struct io_uring *ring,int sock,void* buffer_wr, IpcMessage__Status status_msg);
 
-size_t send_ACKN_OK(struct io_uring *ring,int sock,void* buffer_wr);
+//size_t send_ACKN_OK(struct io_uring *ring,int sock,void* buffer_wr);
 IpcMessage* buffer_transactions;
 
 
@@ -47,7 +44,7 @@ int setup_client_iouring(){
   int s = socket(res->ai_family, res->ai_socktype,
                  res->ai_protocol); // get a socket
   if (s==-1){
-	  printf("cennot setup a client socket\n");
+	  printf("cannot setup a client socket\n");
 	  return -1;
   }
   
@@ -60,6 +57,7 @@ int setup_client_iouring(){
   struct io_uring_sqe* sqe = io_uring_get_sqe(&ring);
 	
   io_uring_prep_connect(sqe, s, res->ai_addr, res->ai_addrlen); // prep connect
+  printf("-->%d\n",s);
 
   if (io_uring_submit(&ring) < 0) // submit now!
         printf("error submitting\n");
@@ -95,25 +93,16 @@ int setup_client_iouring(){
 	continue;
 	}
 	ifread = 0;
-	printf("cycle begin\n");
-	//io_uring_wait_cqe(&ring, &cqe); // return completion result
 	int ret = cqe->res; // N readed bytes
 	printf("readed %d\n",cqe->res);
-	printf("readed buffer:\n");
 	DumpHex(buffer, cqe->res);
 	switch ( FLAG_FROM_SERVER = read_response_ONLY_STATUS(buffer, cqe->res)) {
 		case IPC_MESSAGE__STATUS__ASK_NEED_MSG:
 			printf("ASKED IF NEED MESSAGE:%d\n",FLAG_FROM_SERVER);	
-		//	memset(buffer2,0,cqe->res); //set 0 ?????????????????????
-			//ret = send_need_more_msg(&ring,s,buffer); // SEND NEED
 			ret = send_STATUS(&ring,s,buffer2,IPC_MESSAGE__STATUS__NEED_MORE);
-//			cqe->user_data = 1;
-			printf("send need response\n");
 			break;
 		case IPC_MESSAGE__STATUS__OK:
 			printf("got message! %d \n",cqe->res);
-			DumpHex(buffer, cqe->res); // print out response
-			//printf("sended ACK\n");
 			send_need_more_msg(&ring,cqe->res,buffer);
 			break;
 		case IPC_MESSAGE__STATUS__MESSAGE_SENDED:
@@ -144,9 +133,6 @@ int setup_client_iouring(){
 			
 	}
 
-	//io_uring_wait_cqe(&ring, &cqe); // return completion result
-	//memset(buffer,0,ret); //set 0 
-	printf("cycle!\n");
   	io_uring_cqe_seen(&ring,cqe);
 	k++;
   }
@@ -159,70 +145,3 @@ int setup_client_iouring(){
   freeaddrinfo(res);
 }
 
-size_t send_need_more_msg(struct io_uring *ring,int sock,void* buffer_wr)
-{
-    struct io_uring_sqe *sqe = io_uring_get_sqe(ring); // add to ring
-    size_t n = send_ONLY_status_code(buffer_transactions,buffer_wr,IPC_MESSAGE__STATUS__NEED_MORE);
-    io_uring_prep_send(sqe, sock, buffer_wr , n , MSG_DONTWAIT);// read answer
-    if (io_uring_submit(ring) < 0)
-        printf("error submitting\n");
-    return n;
-
-
-}
-
-size_t send_ACKN_OK(struct io_uring *ring,int sock,void* buffer_wr){
-    struct io_uring_sqe *sqe = io_uring_get_sqe(ring); // add to ring
-    size_t n = send_ONLY_status_code(buffer_transactions,buffer_wr,IPC_MESSAGE__STATUS__ACKN_OK);
-    io_uring_prep_send(sqe, sock, buffer_wr , n , MSG_DONTWAIT);// read answer
-    if (io_uring_submit(ring) < 0)
-        printf("error submitting\n");
-    return n;
-}
-
-
-size_t send_STATUS(struct io_uring *ring,int sock,void* buffer_wr, IpcMessage__Status status_msg){
-    struct io_uring_sqe *sqe = io_uring_get_sqe(ring); // add to ring
-    size_t n = send_ONLY_status_code(buffer_transactions,buffer_wr,status_msg);
-    printf("sending status code %d\n",status_msg);
-    DumpHex(buffer_wr, n);
-    io_uring_prep_send(sqe, sock, buffer_wr , n , MSG_DONTWAIT);// read answer
-    if (io_uring_submit(ring) < 0)
-        printf("error submitting\n");
-    return n;
-}
-
-
-
-/*
- * for debugging
- * */
-void DumpHex(const void *data, size_t size) {
-  char ascii[17];
-  size_t i, j;
-  ascii[16] = '\0';
-  for (i = 0; i < size; ++i) {
-    printf("%02X ", ((unsigned char *)data)[i]);
-    if (((unsigned char *)data)[i] >= ' ' &&
-        ((unsigned char *)data)[i] <= '~') {
-      ascii[i % 16] = ((unsigned char *)data)[i];
-    } else {
-      ascii[i % 16] = '.';
-    }
-    if ((i + 1) % 8 == 0 || i + 1 == size) {
-      printf(" ");
-      if ((i + 1) % 16 == 0) {
-        printf("|  %s \n", ascii);
-      } else if (i + 1 == size) {
-        ascii[(i + 1) % 16] = '\0';
-        if ((i + 1) % 16 <= 8) {
-          printf(" ");
-        }
-        for (j = (i + 1) % 16; j < 16; ++j) {
-          printf("   ");
-        }
-        printf("|  %s \n", ascii);
-      }
-    }
-  }
-}

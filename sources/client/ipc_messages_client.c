@@ -11,6 +11,41 @@ size_t get_timestamp(void* buffer){
 }
 
 
+size_t send_need_more_msg(struct io_uring *ring,int sock,void* buffer_wr)
+{
+    struct io_uring_sqe *sqe = io_uring_get_sqe(ring); // add to ring
+    size_t n = send_ONLY_status_code(buffer_transactions,buffer_wr,IPC_MESSAGE__STATUS__NEED_MORE);
+    io_uring_prep_send(sqe, sock, buffer_wr , n , MSG_DONTWAIT);// read answer
+    if (io_uring_submit(ring) < 0)
+        printf("error submitting\n");
+    return n;
+
+
+}
+
+size_t send_ACKN_OK(struct io_uring *ring,int sock,void* buffer_wr){
+    struct io_uring_sqe *sqe = io_uring_get_sqe(ring); // add to ring
+    size_t n = send_ONLY_status_code(buffer_transactions,buffer_wr,IPC_MESSAGE__STATUS__ACKN_OK);
+    io_uring_prep_send(sqe, sock, buffer_wr , n , MSG_DONTWAIT);// read answer
+    if (io_uring_submit(ring) < 0)
+        printf("error submitting\n");
+    return n;
+}
+
+
+size_t send_STATUS(struct io_uring *ring,int sock,void* buffer_wr, IpcMessage__Status status_msg){
+    struct io_uring_sqe *sqe = io_uring_get_sqe(ring); // add to ring
+    size_t n = send_ONLY_status_code(buffer_transactions,buffer_wr,status_msg);
+    printf("sending status code %d\n",status_msg);
+    DumpHex(buffer_wr, n);
+    io_uring_prep_send(sqe, sock, buffer_wr , n , MSG_DONTWAIT);// read answer
+    if (io_uring_submit(ring) < 0)
+        printf("error submitting\n");
+    return n;
+}
+
+
+
 u_int64_t  get_epoch_ns(){
 	long int ns;
 	u_int64_t all;
@@ -94,3 +129,35 @@ size_t send_ONLY_status_code( IpcMessage* message,void* socket_buf, IpcMessage__
 
 }
 
+/*
+ * for debugging
+ * */
+void DumpHex(const void *data, size_t size) {
+  char ascii[17];
+  size_t i, j;
+  ascii[16] = '\0';
+  for (i = 0; i < size; ++i) {
+    printf("%02X ", ((unsigned char *)data)[i]);
+    if (((unsigned char *)data)[i] >= ' ' &&
+        ((unsigned char *)data)[i] <= '~') {
+      ascii[i % 16] = ((unsigned char *)data)[i];
+    } else {
+      ascii[i % 16] = '.';
+    }
+    if ((i + 1) % 8 == 0 || i + 1 == size) {
+      printf(" ");
+      if ((i + 1) % 16 == 0) {
+        printf("|  %s \n", ascii);
+      } else if (i + 1 == size) {
+        ascii[(i + 1) % 16] = '\0';
+        if ((i + 1) % 16 <= 8) {
+          printf(" ");
+        }
+        for (j = (i + 1) % 16; j < 16; ++j) {
+          printf("   ");
+        }
+        printf("|  %s \n", ascii);
+      }
+    }
+  }
+}
