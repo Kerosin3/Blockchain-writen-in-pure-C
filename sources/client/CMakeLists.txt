@@ -13,4 +13,8 @@ ADD_EXECUTABLE (client.out
 TARGET_LINK_LIBRARIES(client.out
 		      uring
 	              protobuf-c
+		      blockdata
+		      hashing
+		      accounts
+		      misc
 	      		)

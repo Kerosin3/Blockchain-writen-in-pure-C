@@ -1,9 +1,9 @@
 #include "block_process.h"
 
 
-/*
 
-void calc_merkle_tree(signed_message_t** msg_pointer){
+
+void calc_merkle_tree(signed_message_t* msg_pointer){
     //-----create basic structures	
     unsigned long long EXPONENT = 9;
     unsigned long long n_msg = (1LLU << EXPONENT); //  create 2^9 messages
@@ -12,12 +12,14 @@ void calc_merkle_tree(signed_message_t** msg_pointer){
     printf("n msg :%llu\n",n_msg);
 
     //user_keys uk = create_key_pair();
-    signed_message_t** msg_arr = calloc(n_msg, sizeof(signed_message_t *)); //space for msgs
+    signed_message_t** msg_arr = calloc(n_msg, sizeof(signed_message_t *));
     //----fill messages
     size_t i = 0;
     for (i = 0; i < n_msg; i++)
     {
-        msg_arr[i] = msg_pointer[i]; // pointer to message
+        msg_arr[i] = msg_pointer+i; // pointer to message
+
+  	   DumpHex( msg_pointer->message, msg_pointer->length  ); 
 //         validate_a_message(*msg_arr[i], uk.pk);
     }
     //-----------------------------------
@@ -37,14 +39,13 @@ void calc_merkle_tree(signed_message_t** msg_pointer){
     {
         destoroy_a_layer(L_arrays[i]);
     }
-//     destoroy_a_layer(&L_arrays_p[EXPONENT-1]); // destroy level
-    for (i = 0; i < (1LLU<<EXPONENT); i++)
+   /* for (i = 0; i < (1LLU<<EXPONENT); i++)
     {
         destroy_signed_message(msg_arr[i]);
-    }
+    }*/
     free(msg_arr); // free conrainer for messages
 
 
 }
 
-*/
+

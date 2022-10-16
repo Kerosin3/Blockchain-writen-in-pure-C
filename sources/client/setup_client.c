@@ -2,6 +2,7 @@
 
 #define BUFSIZE 4096
 #define BLOCKSIZE 512
+#define BUFSIZEFORMESSAGE 512
 //size_t send_need_more_msg(struct io_uring *ring,int sock,void* buffer_wr);
 
 //size_t send_STATUS(struct io_uring *ring,int sock,void* buffer_wr, IpcMessage__Status status_msg);
@@ -77,6 +78,9 @@ int setup_client_iouring(){
   char* buffer2 = calloc(BUFSIZE, sizeof(char));
 
   signed_message_t* msg_arr = calloc(BLOCKSIZE, sizeof(signed_message_t));
+  for (size_t i = 0; i<BLOCKSIZE;i++) {
+  	msg_arr[i].message = (unsigned char*) calloc(BUFSIZEFORMESSAGE,sizeof(char));// asign pointer
+  }
   
 
   int ifread = 0;
@@ -114,14 +118,14 @@ int setup_client_iouring(){
 	                DumpHex(buffer, cqe->res);
 
 			printf("----%zu-----\n",count);
-			msg_arr[count] = deserialize_data_from_server(buffer,cqe->res);
+			deserialize_data_from_server(buffer,cqe->res,msg_arr+count);
 			count++;
 			//ret = send_ACKN_OK(&ring,s,buffer);
 			ret = send_STATUS(&ring,s,buffer,IPC_MESSAGE__STATUS__ACKN_OK);
 			} else if (count == BLOCKSIZE-1) {
 				printf("--------count is %zu--------,readed %lu\n",count,cqe->res);
 	                	DumpHex(buffer, cqe->res);
-				msg_arr[count] = deserialize_data_from_server(buffer,cqe->res); // all last
+				deserialize_data_from_server(buffer,cqe->res,msg_arr+count);
 				printf("STOP ACCEPTING\n");
 				ret = send_STATUS(&ring,s,buffer2,IPC_MESSAGE__STATUS__ENOUGH); // 512 blocks acquired
 				flag_block_filled = 1;
@@ -154,5 +158,13 @@ int setup_client_iouring(){
   close(s);
   free(buffer_transactions);
   freeaddrinfo(res);
-}
 
+
+  calc_merkle_tree(msg_arr); 
+//DumpHex(msg_arr[0].message,msg_arr[0].length);
+
+  for (size_t i = 0 ; i<BLOCKSIZE; i++) {
+	  free(msg_arr[i].message);
+  }
+  free(msg_arr);
+}

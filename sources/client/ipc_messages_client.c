@@ -1,6 +1,6 @@
 #include "ipc_messages_client.h"
 
-
+/*
 size_t get_timestamp(void* buffer){
 	char date[32];
         time_t t = time(NULL);
@@ -9,7 +9,7 @@ size_t get_timestamp(void* buffer){
 	int n = snprintf(buffer, strlen(date)+1, "%s", date);
 	return n;
 }
-
+*/
 
 size_t send_need_more_msg(struct io_uring *ring,int sock,void* buffer_wr)
 {
@@ -24,26 +24,25 @@ size_t send_need_more_msg(struct io_uring *ring,int sock,void* buffer_wr)
 }
 
 
-signed_message_t deserialize_data_from_server(char* buff, unsigned len){
-	signed_message_t a_msg;
-	printf("data inside:\n");
-	DumpHex(buff, len);
+void deserialize_data_from_server(char* buff, unsigned len,signed_message_t* msg){
 	IpcMessage *message;
 	message = ipc_message__unpack(0,len,buff);
-	if ((message->status_code) ==IPC_MESSAGE__STATUS__OK )
+	if ((message->status_code) ==IPC_MESSAGE__STATUS__MESSAGE_SENDED)
 		printf("OK!\n");
 	if(message->has_pubkey){
-		memcpy(a_msg.public_key,message->pubkey.data,crypto_sign_PUBLICKEYBYTES);
+		memcpy(msg->public_key,message->pubkey.data,crypto_sign_PUBLICKEYBYTES); // copy public key
 	}
 	if(message->has_transaction_msg){
-		a_msg.length = (unsigned long long) message->transaction_msg.len;
-		memcpy(a_msg.message,message->transaction_msg.data,a_msg.length);
+		msg->length = message->transaction_msg.len; //assign length
+ 		memcpy(msg->message,message->transaction_msg.data,len); // copy data to pointer
+ 		//DumpHex(a_msg.message,a_msg.length);
+ 		//DumpHex(message->transaction_msg.data,message->transaction_msg.len);
 		printf("date: %s\n",message->timestamp);
-		printf("from epoh:%llu\n",message->time_num);
+		printf("from epoh:%lu\n",message->time_num);
 	}
+// 	a_msg.message = msg_pointer;
 	ipc_message__free_unpacked(message,NULL);
 		
-	return a_msg;
 
 }
 
@@ -70,7 +69,7 @@ size_t send_STATUS(struct io_uring *ring,int sock,void* buffer_wr, IpcMessage__S
     return n;
 }
 
-
+/*
 
 u_int64_t  get_epoch_ns(){
 	long int ns;
@@ -102,7 +101,7 @@ long long get_date_usec_rec(){
 	long long ret = ts.tv_sec*1000LL + ts.tv_usec/1000;
 	return ret;
 }
-
+*/
 
 IpcMessage__Status read_response_ONLY_STATUS(void* buf,size_t len){
 	IpcMessage__Status status;	
@@ -158,6 +157,7 @@ size_t send_ONLY_status_code( IpcMessage* message,void* socket_buf, IpcMessage__
 /*
  * for debugging
  * */
+/*
 void DumpHex(const void *data, size_t size) {
   char ascii[17];
   size_t i, j;
@@ -187,3 +187,4 @@ void DumpHex(const void *data, size_t size) {
     }
   }
 }
+*/

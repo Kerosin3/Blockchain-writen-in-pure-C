@@ -25,5 +25,6 @@ add_subdirectory(sources/accounts)
 add_subdirectory(sources/puzzle)
 add_subdirectory(sources/inet_misc)
 add_subdirectory(sources/networking)
+add_subdirectory(sources/client)
 add_subdirectory(sources/main)
 
