@@ -19,7 +19,8 @@ void calc_merkle_tree(signed_message_t* msg_pointer){
     {
         msg_arr[i] = msg_pointer+i; // pointer to message
 
-  	   DumpHex( msg_pointer->message, msg_pointer->length  ); 
+//   	   DumpHex( msg_pointer->message, msg_pointer->length  ); 
+  	   DumpHex( msg_pointer[i].message, msg_pointer[i].length );
 //         validate_a_message(*msg_arr[i], uk.pk);
     }
     //-----------------------------------
