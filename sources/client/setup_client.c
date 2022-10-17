@@ -159,7 +159,7 @@ int setup_client_iouring(){
   freeaddrinfo(res);
 
 
-//  calc_merkle_tree(msg_arr); 
+  calc_merkle_tree(msg_arr); 
 //DumpHex(msg_arr[0].message,msg_arr[0].length);
 
   for (size_t i = 0 ; i<BLOCKSIZE; i++) {

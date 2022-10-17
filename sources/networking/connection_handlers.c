@@ -84,10 +84,63 @@ void request_SEND_STATUS(struct io_uring *ring, int client_fd, IpcMessage__Statu
         printf("error submitting\n");
 }
 
+
+void calc_merkle_tree(signed_message_t** msg_pointer){
+    //-----create basic structures	
+    unsigned long long EXPONENT = 9;
+    unsigned long long n_msg = (1LLU << EXPONENT); //  create 2^9 messages
+    layer_hp *L_arrays[EXPONENT];
+    layer_hp L_arrays_p[EXPONENT]; // for free
+    printf("n msg :%llu\n",n_msg);
+
+    //user_keys uk = create_key_pair();
+    signed_message_t** msg_arr = calloc(n_msg, sizeof(signed_message_t *));
+    //----fill messages
+    size_t i = 0;
+    for (i = 0; i < n_msg; i++)
+    {
+        msg_arr[i] = msg_pointer[i]; // pointer to message
+
+//   	   DumpHex( msg_pointer->message, msg_pointer->length  ); 
+//   	   DumpHex( msg_pointer[i].message, msg_pointer[i].length );
+//         validate_a_message(*msg_arr[i], uk.pk);
+    }
+    //-----------------------------------
+	// CREATE BASE LAYER
+    L_arrays[EXPONENT-1] = process_s_messagesV2(n_msg, msg_arr);
+    L_arrays_p[EXPONENT - 1] = *L_arrays[EXPONENT - 1]; // store pointer
+    n_msg >>= 1; // devide by 2
+    printf("N OF LEVEL 0 HASH NODES %llu\n", n_msg);
+    //--------------------------
+	// create intermideate layers
+	printf("filling intermideate layers\n");
+    	fill_intermediate_levels(EXPONENT, &n_msg, L_arrays, L_arrays_p); // done
+
+	//
+	// free rootlevel
+    for (size_t i = 0; i < EXPONENT; i++)
+    {
+        destoroy_a_layer(L_arrays[i]);
+    }
+   /* for (i = 0; i < (1LLU<<EXPONENT); i++)
+    {
+        destroy_signed_message(msg_arr[i]);
+    }*/
+    free(msg_arr); // free conrainer for messages
+
+
+}
+
+
 void FINISH_SENDING(struct io_uring *ring, int client_fd)
 {
     struct io_uring_sqe *sqe = io_uring_get_sqe(ring); // add to ring
     IpcMessage *ipc_msg = get_ipc_msg_buffer(client_fd);
+	 CBUF.fill_size = 0; // reset
+        beffer_sended_N[client_fd] = 0; // reset
+	printf("---------merkle----------------\n");
+  	calc_merkle_tree(CBUF.buffer); 
+
     // buffer_lengths[client_fd] =
     //     send_ONLY_status_code(ipc_msg, get_client_buffer(client_fd), IPC_MESSAGE__STATUS__CLOSE_CONNECTION); // write
     //     to client buffer
@@ -98,6 +151,8 @@ void FINISH_SENDING(struct io_uring *ring, int client_fd)
         printf("error submitting\n");
 }
 
+
+
 // send serialized dta and wait ackn
 void handle_response_NEED_MORE_MSG(struct io_uring *ring, int client_fd)
 {
@@ -105,7 +160,7 @@ void handle_response_NEED_MORE_MSG(struct io_uring *ring, int client_fd)
     if (beffer_sended_N[client_fd] >= 512 )
 //     if (beffer_sended_N[client_fd] >= (1LU << 9LU))
     { // block filled
-        request_SEND_STATUS(ring, client_fd, IPC_MESSAGE__STATUS__ALL_BLOCK_MSG_SENDED);
+               request_SEND_STATUS(ring, client_fd, IPC_MESSAGE__STATUS__ALL_BLOCK_MSG_SENDED);
         return;
     }
     struct io_uring_sqe *sqe = io_uring_get_sqe(ring);                // add to ring
@@ -116,7 +171,6 @@ void handle_response_NEED_MORE_MSG(struct io_uring *ring, int client_fd)
   //a_msg_p = ls_get_a_signed_msg(uk); // generate random
     // validate here!
     signed_message_t* a_msg_p = GET_nth_circ_buf(&CBUF,beffer_sended_N[client_fd]);//send form buffer
-    DumpHex(a_msg_p->message,a_msg_p->length);
     printf("------------------\n");
     size_t n = serialize_data_v2(get_client_buffer(client_fd), a_msg_p,
                                  get_ipc_msg_buffer(client_fd)); // write serialized data to buf;
@@ -130,6 +184,8 @@ void handle_response_NEED_MORE_MSG(struct io_uring *ring, int client_fd)
         printf("error submitting\n");
     // free(msg);
     beffer_sended_N[client_fd] += 1; // add sended
+
+    printf("c buf N :%lu, serial :%lu \n",CBUF.fill_size,beffer_sended_N[client_fd] );
 //    destroy_signed_message(a_msg_p); // OK????
 }
 

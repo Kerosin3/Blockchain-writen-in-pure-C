@@ -5,6 +5,7 @@
 #include "../accounts/acc_utils.h"
 #include "../misc/misc.h"
 #include "../serdes/serdes.h"
+#include "../block_data/layering.h"
 #include "ipcmessages.h"
 #include "settings.h"
 #include "setup.h"
