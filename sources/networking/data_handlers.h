@@ -19,6 +19,8 @@ typedef struct {
 } circ_buf_t;
 
 circ_buf_t create_circ_buf();
+void release_circ_nth_msg(circ_buf_t* cbuf,size_t N);
+void clean_circ_buf(circ_buf_t* cbuf);
 
 int PUSH_msg_circ_buf(circ_buf_t* cbuf );
 size_t get_cbuf_head(circ_buf_t* cbuf);

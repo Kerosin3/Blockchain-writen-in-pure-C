@@ -5,6 +5,7 @@
 #include "misc.h"
 #include "setup.h"
 
+
 void event_loop(int sockfd, struct io_uring *ring)
 {
 
@@ -18,7 +19,6 @@ void event_loop(int sockfd, struct io_uring *ring)
     if ((err = setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR | SO_RCVBUF, (char *)&sndsize, (int)sizeof(sndsize))))
         strerror(err);
     unsigned long long ii = 0;
-    circ_buf_t CBUF =  create_circ_buf();
     PUSH_msg_circ_buf(&CBUF);
     add_accept_request(ring, sockfd, &client_addr, &client_addr_len);
     for (;;)

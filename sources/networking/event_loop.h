@@ -18,6 +18,7 @@
 #include <sys/socket.h>
 #include <sys/types.h>
 
+extern circ_buf_t CBUF;
 void event_loop(int serv_sock, struct io_uring *ring);
 
 #endif

@@ -20,7 +20,7 @@ int PUSH_msg_circ_buf(circ_buf_t* cbuf ){
 	int next;
 
 	next = cbuf->head++; // assign next
-
+	printf("added element to buff\n");
 	//if (next == cbuf->maxlen ) next = 0;
 	if (next == cbuf->maxlen ) {
 		printf("MAX BUF REACHED\n");
@@ -36,6 +36,10 @@ int PUSH_msg_circ_buf(circ_buf_t* cbuf ){
 
 size_t get_cbuf_head(circ_buf_t* cbuf){
 	return (cbuf->head);
+}
+
+void release_circ_nth_msg(circ_buf_t* cbuf,size_t N){
+	destroy_signed_message(cbuf->buffer[N]);
 }
 
 void clean_circ_buf(circ_buf_t* cbuf){

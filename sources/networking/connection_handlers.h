@@ -8,6 +8,7 @@
 #include "ipcmessages.h"
 #include "settings.h"
 #include "setup.h"
+#include "data_handlers.h"
 #include <asm-generic/errno-base.h>
 #include <errno.h>
 #include <fcntl.h>
@@ -22,6 +23,9 @@
 #include <sys/socket.h>
 #include <sys/stat.h>
 #include <sys/types.h>
+
+extern circ_buf_t CBUF;
+
 
 typedef enum
 {
