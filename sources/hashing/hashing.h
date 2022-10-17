@@ -3,12 +3,12 @@
 #define HASHING
 
 #include "../accounts/acc_utils.h"
-#include "../misc/misc.h"
 #include <sodium/crypto_generichash.h>
 #include <sodium/crypto_stream_salsa2012.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <sodium.h>
+#include "../misc/misc.h"
 
 #define HASHSIZE 32U
 

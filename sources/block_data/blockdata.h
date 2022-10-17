@@ -3,16 +3,31 @@
 
 #include <sodium/crypto_generichash.h>
 #include <stdio.h>
+//#include "../misc/misc.h"
 #include <stdlib.h>
 #include <sodium.h>
+#include <stdint.h>
 
-typedef struct {
-	unsigned char nonce[10];
-	char date[15];
-	unsigned char prev_block[crypto_generichash_BYTES];
+#define NONCE_LEN 5
+
+typedef struct block {
+	unsigned char nonce[NONCE_LEN];
+	char date[35];
+	uint64_t timestamp_begin;
+	uint64_t timestamp_end;
+	size_t difficulty;
+	void* previous_block;
 	unsigned char merkle_root[crypto_generichash_BYTES];
 	
-} block;
+} block_t;
+/*
+block_t* try_create_block(
+		block_t* prev_block,
+	        unsigned char* merkle_root
+		);
+*/
+
+void solve_puzzle(unsigned char* merkle_root);
 #endif
 
 

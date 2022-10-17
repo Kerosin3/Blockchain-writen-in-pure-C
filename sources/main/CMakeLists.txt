@@ -1,9 +1,4 @@
-#ADD_LIBRARY( servapplib STATIC
-	#	     )
-
-     #TARGET_LINK_LIBRARIES( servapplib 
-	#picohttpparserlib
-	#	)
+project(main)
 
 ADD_EXECUTABLE (app.out
 		main.c)

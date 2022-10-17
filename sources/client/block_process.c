@@ -32,7 +32,11 @@ void calc_merkle_tree(signed_message_t* msg_pointer){
 	// create intermideate layers
 	printf("filling intermideate layers\n");
     	fill_intermediate_levels(EXPONENT, &n_msg, L_arrays, L_arrays_p); // done
+    printf("calcing puzzle\n");
 
+  DumpHex( ((*(L_arrays_p[0].main_pointer))->hash ), crypto_generichash_BYTES);
+	solve_puzzle(  ((*(L_arrays_p[0].main_pointer))->hash )  );
+//    L_arrays[0]->main_pointer // 
 	//
 	// free rootlevel
     for (size_t i = 0; i < EXPONENT; i++)

@@ -1,10 +1,4 @@
 #include "hashing.h"
-#include <sodium/crypto_generichash.h>
-#include <sodium/crypto_generichash_blake2b.h>
-#include <sodium/crypto_hash.h>
-#include <sodium/crypto_sign_ed25519.h>
-#include <stdlib.h>
-#include <string.h>
 /*
  *calculating hash for a SIGNED message, need cleaningup, using BLAKE2b algorithm
  */

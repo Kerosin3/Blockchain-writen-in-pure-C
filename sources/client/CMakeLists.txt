@@ -10,11 +10,13 @@ ADD_EXECUTABLE (client.out
 		main.c
 		)
 
+	#target_include_directories(${PROJECT_NAME} PUBLIC ${PROJECT_INCLUDE_DIRS})
+
 TARGET_LINK_LIBRARIES(client.out
 		      uring
 	              protobuf-c
+		      misc
 		      blockdata
 		      hashing
 		      accounts
-		      misc
 	      		)
