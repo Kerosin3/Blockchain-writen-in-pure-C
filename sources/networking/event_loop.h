@@ -3,6 +3,7 @@
 
 #include "../accounts/acc_utils.h"
 #include "connection_handlers.h"
+#include "data_handlers.h"
 #include "misc.h"
 #include "setup.h"
 #include <liburing.h>
