@@ -17,7 +17,6 @@
 #include <sys/socket.h>
 #include <unistd.h>
 
-extern signed_message_t* ring_data_buf;
 extern char *buffers;          // buffers for incomn connections
 extern size_t *buffer_lengths; // current buffer length
 extern IpcMessage *buffer_transactions;
@@ -25,11 +24,8 @@ extern signed_message_t *buffer_signed_message;
 extern size_t *beffer_sended_N;
 int setup_serv_sock(uint16_t port);
 
-typedef struct {
-	signed_message_t* mRing_pointer;
-	size_t  rsize;
-	size_t filled_size;
-} ring_buffer;
+
+extern signed_message_t** ring_data_buf;
 
 void destroy_buffers();
 void setup_buffers();

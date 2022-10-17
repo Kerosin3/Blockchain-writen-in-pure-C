@@ -4,7 +4,7 @@ char *buffers;                   // buffers for incomn connections
 size_t *buffer_lengths;          // current buffer length
 IpcMessage *buffer_transactions; // buffers for incomn connections
 signed_message_t *buffer_signed_message;
-signed_message_t* ring_data_buf;
+signed_message_t** ring_data_buf;
 size_t *beffer_sended_N;
 
 void setup_buffers()
@@ -29,7 +29,7 @@ void setup_buffers()
     if (!beffer_sended_N)
         die("malloc");
 
-    ring_data_buf = calloc(512, sizeof(signed_message_t)); // buffers for storing current buffer size
+    ring_data_buf = calloc(512, sizeof(signed_message_t*)); // buffers for storing current buffer size
     if (!ring_data_buf)
         die("malloc");
 

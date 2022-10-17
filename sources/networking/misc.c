@@ -10,11 +10,6 @@ static void die(const char *message)
  * for debugging
  * */
 
-int RING_fill_one_slot(ring_buffer* rbuf){
-	
-
-	rbuf->filled_size++;
-} 
 
 void DumpHex(const void *data, size_t size)
 {

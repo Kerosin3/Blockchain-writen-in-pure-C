@@ -1,5 +1,6 @@
 #include "connection_handlers.h"
 /*#include "ipcmessages.h"
+#include "data_handlers.h"
 #include "misc.h"
 #include "settings.h"
 #include "setup.h"
@@ -110,10 +111,13 @@ void handle_response_NEED_MORE_MSG(struct io_uring *ring, int client_fd)
     struct io_uring_sqe *sqe = io_uring_get_sqe(ring);                // add to ring
     memset(get_client_buffer(client_fd), 0, BUFFER_SIZE);             // set current buffer to zero;
     buffer_lengths[client_fd] = 0;                                    // set length to zero
-    signed_message_t *a_msg_p = get_signed_message_buffer(client_fd); // write to client buffer
-    user_keys uk = create_key_pair();
-    a_msg_p = ls_get_a_signed_msg(uk); // generate random
+  //  signed_message_t *a_msg_p = get_signed_message_buffer(client_fd); // write to client buffer
+  //user_keys uk = create_key_pair();
+  //a_msg_p = ls_get_a_signed_msg(uk); // generate random
     // validate here!
+    signed_message_t* a_msg_p = GET_nth_circ_buf(&CBUF,beffer_sended_N[client_fd]);//send form buffer
+    DumpHex(a_msg_p->message,a_msg_p->length);
+    printf("------------------\n");
     size_t n = serialize_data_v2(get_client_buffer(client_fd), a_msg_p,
                                  get_ipc_msg_buffer(client_fd)); // write serialized data to buf;
     buffer_lengths[client_fd] = n;
@@ -126,7 +130,7 @@ void handle_response_NEED_MORE_MSG(struct io_uring *ring, int client_fd)
         printf("error submitting\n");
     // free(msg);
     beffer_sended_N[client_fd] += 1; // add sended
-    destroy_signed_message(a_msg_p); // OK????
+//    destroy_signed_message(a_msg_p); // OK????
 }
 
 /*

@@ -5,7 +5,7 @@
 #include "../block_data/blockdata.h"
 #include "../block_data/layering.h"
 #include "../hashing/hashing.h"
-#include "../misc/misc.h"
+#include "misc.h"
 #include "../networking/setup_client.h"
 #include "../networking/start_server.h"
 #include "../puzzle/puzzle.h"

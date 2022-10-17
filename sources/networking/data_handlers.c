@@ -2,14 +2,48 @@
 
 #define CIRC_BUF_SIZE 512
 
-void clean_circ_buf(circ_buf_t* cbuf);
+void clean_circ_buf(circ_buf_t* cbf);
 
 circ_buf_t create_circ_buf(){
 	circ_buf_t cbuf;
-	cbuf.head =0;
+	cbuf.fill_size = 0;
 	cbuf.maxlen = CIRC_BUF_SIZE;
-	cbuf.buffer = 0;
+	cbuf.buffer = ring_data_buf;
+	return cbuf;
 }
+
+/*
+signed_message_t* GET_nth_circ_buf(circ_buf_t* cbuf,size_t N){
+	size_t cur_last_msg_serial = (cbuf->fill_size)-1;
+	printf("here\n");
+	if (N > cur_last_msg_serial) {
+		do {
+			PUSH_msg_circ_buf(cbuf);
+		}while ( (N + 1) != cbuf->fill_size); // push while
+		return cbuf->buffer[ (cbuf->fill_size-1) ] ;
+	} else {
+		return cbuf->buffer[N];
+	}
+
+}
+*/
+
+signed_message_t* GET_nth_circ_buf(circ_buf_t* cbuf,size_t N){
+	size_t cur_last_msg_serial = (cbuf->fill_size)-1;
+	if (N > cur_last_msg_serial) {
+		do {
+			PUSH_msg_circ_buf(cbuf);
+		}while ( (N + 1) != cbuf->fill_size); // push while
+		return cbuf->buffer[ (cbuf->fill_size-1) ] ;
+	} else {
+	printf("here\n");
+		return cbuf->buffer[N];
+	}
+
+}
+
+
+
 
 int PUSH_msg_circ_buf(circ_buf_t* cbuf ){
 
@@ -17,25 +51,26 @@ int PUSH_msg_circ_buf(circ_buf_t* cbuf ){
 
     	signed_message_t* a_msg_p = ls_get_a_signed_msg(uk); // generate random
 
-	int next;
-
-	next = cbuf->head++; // assign next
+	size_t cur = cbuf->fill_size; // get current
+		      
 	printf("added element to buff\n");
-	//if (next == cbuf->maxlen ) next = 0;
-	if (next == cbuf->maxlen ) {
+	// if max
+	if (cur == ((cbuf->maxlen )) ) {
 		printf("MAX BUF REACHED\n");
 		clean_circ_buf(cbuf);
+		cbuf->fill_size = 0;
 		return 1;
 	}
 
 
-	cbuf->buffer[cbuf->head] = a_msg_p; // load data
-	cbuf->head = next;
+	cbuf->buffer[cur] = a_msg_p; // load data to current
+
+	cbuf->fill_size++;// add fill_size
 	return 0;
 }
 
-size_t get_cbuf_head(circ_buf_t* cbuf){
-	return (cbuf->head);
+signed_message_t* get_cbuf_head(circ_buf_t* cbuf){
+	return (cbuf->buffer[(cbuf->fill_size)-1] );
 }
 
 void release_circ_nth_msg(circ_buf_t* cbuf,size_t N){
