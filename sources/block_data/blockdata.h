@@ -8,7 +8,7 @@
 #include <sodium.h>
 #include <stdint.h>
 
-#define NONCE_LEN 5
+#define NONCE_LEN 15
 
 typedef struct block {
 	unsigned char nonce[NONCE_LEN];

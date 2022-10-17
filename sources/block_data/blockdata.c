@@ -41,8 +41,11 @@ void solve_puzzle(unsigned char* merkle_root){
 			CONCAT_BYTES, crypto_generichash_BYTES+NONCE_LEN,
 			NULL,0); //calc HASH
 
+// 	printf("current hash:\n");
     }while (  (memcmp(out_hash,ans,3   ) )  );
     printf("answer:\n");
     DumpHex(out_hash,NONCE_LEN+crypto_generichash_BYTES);
+    printf("nonce:\n");
+    DumpHex(CONCAT_BYTES,NONCE_LEN);
  
 }
