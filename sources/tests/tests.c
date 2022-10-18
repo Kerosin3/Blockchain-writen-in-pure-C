@@ -48,6 +48,7 @@ int proof_message(unsigned long long EXPONENT, size_t msg_num, layer_hp *Layers_
     //unsigned char *hash_msg1_f =
     //    calc_hash(*ls_get_a_signed_msg(uk));
 
+    unsigned char* Shash2 = calloc(crypto_generichash_BYTES,sizeof(unsigned char));
     unsigned char *hash_msg2_f =
         calc_hash(*(*(Layers_pointer[EXPONENT - 1].main_pointer[req_msg_first_nodeN])).messages.smsg_p2);
     unsigned char *Shash = merge_2hashses(hash_msg1_f, hash_msg2_f);
@@ -56,8 +57,11 @@ int proof_message(unsigned long long EXPONENT, size_t msg_num, layer_hp *Layers_
     // printf("written hash:\n");
     // DumpHex(((*(Layers_pointer[EXPONENT-1].main_pointer[req_msg_first_nodeN])).hash),crypto_generichash_BYTES);
     int ret_gr_lev = 0;
-    ret_gr_lev = memcmp(Shash, ((*(Layers_pointer[EXPONENT - 1].main_pointer[req_msg_first_nodeN])).hash),
+    //ret_gr_lev = memcmp(Shash, ((*(Layers_pointer[EXPONENT - 1].main_pointer[req_msg_first_nodeN])).hash),
+    //                    crypto_generichash_BYTES); // compare message itself
+    ret_gr_lev = memcmp(Shash, ((hash_point_p) ((*(Layers_pointer[EXPONENT - 2].main_pointer[req_msg_first_nodeN])).hpoint1 ) )->hash,
                         crypto_generichash_BYTES); // compare message itself
+
     if (ret_gr_lev)
     {
         printf("not matched hash!\n");
@@ -81,11 +85,21 @@ int proof_message(unsigned long long EXPONENT, size_t msg_num, layer_hp *Layers_
     {
         printf("I=%d\n", i);
         req_msg_first_nodeN >>= 1;
-        Shash =
+	Shash =
+            merge_2hashses(
+			    (*(Layers_pointer[i].main_pointer[req_msg_first_nodeN])).hash, // take cur node
+			    (*(Layers_pointer[i].main_pointer[req_msg_first_nodeN+1])).hash // take neighbor node
+			     );
+	int rez = memcmp( 
+			Shash,
+			(*(Layers_pointer[i-1].main_pointer[req_msg_first_nodeN>>1])).hash, // take val from level upper 
+			crypto_generichash_BYTES);
+        /*Shash =
             merge_2hashses(((hash_point_p)((*(Layers_pointer[i].main_pointer[req_msg_first_nodeN])).hpoint1))->hash,
                            ((hash_point_p)((*(Layers_pointer[i].main_pointer[req_msg_first_nodeN])).hpoint2))->hash);
         int rez =
             memcmp(Shash, (((*(Layers_pointer[i].main_pointer[req_msg_first_nodeN])).hash)), crypto_generichash_BYTES);
+	*/
 	if (rez) {
 		printf("validation failed in %d layer, %lu message\n",i,req_msg_first_nodeN);
 		return 1;
@@ -99,7 +113,7 @@ int proof_message(unsigned long long EXPONENT, size_t msg_num, layer_hp *Layers_
 
     free(hash_msg2_f);
     free(hash_msg1_f);
-
+    free(Shash2);
     Sret += ret_gr_lev;
     printf("RESULT %d\n", Sret);
     if (Sret)
