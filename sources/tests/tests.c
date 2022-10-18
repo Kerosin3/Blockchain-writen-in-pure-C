@@ -23,16 +23,143 @@ void tests()
     // solve_puzlev2(2);
     //	setup_client();
 
-      start_server(12345);
+    //      start_server(12345);
     //
     //
     // test_cleanup_message();
     // test_message_creation_and_validation();
     //	test_create_and_destroy_hpoint();
     // test_process_messages_L1_v2();
-//       create_test_messages(9);
+    //       create_test_messages(9);
+    test_mekrle_proof();
     (!result) ? printf("ALL TESTS PASSED OK\n") : printf("SOME ERRORS WHILE TESTING OCCURRED!\n");
 }
+
+int proof_message(unsigned long long EXPONENT, size_t msg_num, layer_hp *Layers_pointer)
+{
+    size_t req_msg_first_nodeN = (msg_num / 2UL);
+    size_t UPLOAD_req_msg_first_nodeN = req_msg_first_nodeN + 1LU;
+    printf("level:%lu\n", (Layers_pointer[EXPONENT - 1]).level);
+    //     ((*(Layers_pointer[EXPONENT-1].main_pointer))->messages.smsg_p1-> )
+    // check ground level
+    unsigned char *hash_msg1_f =
+        calc_hash(*(*(Layers_pointer[EXPONENT - 1].main_pointer[req_msg_first_nodeN])).messages.smsg_p1);
+    //user_keys uk = create_key_pair();
+    //unsigned char *hash_msg1_f =
+    //    calc_hash(*ls_get_a_signed_msg(uk));
+
+    unsigned char *hash_msg2_f =
+        calc_hash(*(*(Layers_pointer[EXPONENT - 1].main_pointer[req_msg_first_nodeN])).messages.smsg_p2);
+    unsigned char *Shash = merge_2hashses(hash_msg1_f, hash_msg2_f);
+     printf("claced hash S ground level:\n");
+     DumpHex(Shash, crypto_generichash_BYTES);
+    // printf("written hash:\n");
+    // DumpHex(((*(Layers_pointer[EXPONENT-1].main_pointer[req_msg_first_nodeN])).hash),crypto_generichash_BYTES);
+    int ret_gr_lev = 0;
+    ret_gr_lev = memcmp(Shash, ((*(Layers_pointer[EXPONENT - 1].main_pointer[req_msg_first_nodeN])).hash),
+                        crypto_generichash_BYTES); // compare message itself
+    if (ret_gr_lev)
+    {
+        printf("not matched hash!\n");
+        return 0;
+    }
+    else
+    {
+        printf("ground level matched!\n");
+    }
+    /*
+    memset(
+	    ((hash_point_p)((*(Layers_pointer[4].main_pointer[req_msg_first_nodeN])).hpoint2))->hash,
+	    0,
+	    crypto_generichash_BYTES);
+	    */
+    free(Shash);
+    //-----------------------------------------//
+    printf("\n");
+    int Sret = 0;
+    for (int i = EXPONENT - 2; i >= 0; --i)
+    {
+        printf("I=%d\n", i);
+        req_msg_first_nodeN >>= 1;
+        Shash =
+            merge_2hashses(((hash_point_p)((*(Layers_pointer[i].main_pointer[req_msg_first_nodeN])).hpoint1))->hash,
+                           ((hash_point_p)((*(Layers_pointer[i].main_pointer[req_msg_first_nodeN])).hpoint2))->hash);
+        int rez =
+            memcmp(Shash, (((*(Layers_pointer[i].main_pointer[req_msg_first_nodeN])).hash)), crypto_generichash_BYTES);
+	if (rez) {
+		printf("validation failed in %d layer, %lu message\n",i,req_msg_first_nodeN);
+		return 1;
+	}
+        free(Shash);
+        Sret += rez;
+    }
+    printf("EXponen here:%zu\n",req_msg_first_nodeN);
+    DumpHex( ((hash_point_p) ((*(Layers_pointer[req_msg_first_nodeN].main_pointer))->hash )
+          )->hash   ,crypto_generichash_BYTES);
+
+    free(hash_msg2_f);
+    free(hash_msg1_f);
+
+    Sret += ret_gr_lev;
+    printf("RESULT %d\n", Sret);
+    if (Sret)
+        return 1;
+    return 0;
+}
+
+int test_mekrle_proof()
+{
+    unsigned long long EXPONENT = 10;
+    //-----create basic structures
+    unsigned long long n_msg = (1LLU << EXPONENT); //  create 2^9 messages
+    layer_hp *L_arrays[EXPONENT];
+    layer_hp L_arrays_p[EXPONENT]; // for free
+    printf("n msg :%llu\n", n_msg);
+
+    user_keys uk = create_key_pair();
+    signed_message_t **msg_arr = calloc(n_msg, sizeof(signed_message_t *));
+    //----fill messages
+    size_t i = 0;
+    for (i = 0; i < n_msg; i++)
+    {
+        msg_arr[i] = ls_get_a_signed_msg(uk); // pointer to message
+        validate_a_message(*msg_arr[i], uk.pk);
+    }
+    //-----------------------------------
+    // CREATE BASE LAYER
+    L_arrays[EXPONENT - 1] = process_s_messagesV2(n_msg, msg_arr);
+    L_arrays_p[EXPONENT - 1] = *L_arrays[EXPONENT - 1]; // store pointer
+    n_msg >>= 1;                                        // devide by 2
+    printf("N OF LEVEL 0 HASH NODES %llu\n", n_msg);
+    //--------------------------
+    // create intermideate layers
+    printf("filling intermideate layers\n");
+    fill_intermediate_levels(EXPONENT, &n_msg, L_arrays, L_arrays_p); // done
+
+    printf("merkle root:\n");
+    DumpHex(((*(L_arrays_p[0].main_pointer))->hash), crypto_generichash_BYTES);
+    printf("level:%lu\n", (L_arrays_p[0]).level);
+    printf("firs msg:\n");
+    DumpHex(msg_arr[0]->message, msg_arr[0]->length);
+    printf("acces via structs\n");
+    printf("level:%lu\n", (L_arrays_p[EXPONENT - 1]).level);
+    DumpHex(((*(L_arrays_p[EXPONENT - 1].main_pointer))->messages.smsg_p1->message),
+            ((*(L_arrays_p[EXPONENT - 1].main_pointer))->messages.smsg_p1->length));
+    proof_message(EXPONENT, 10, L_arrays_p);
+    //
+    // free rootlevel
+    for (size_t i = 0; i < EXPONENT; i++)
+    {
+        destoroy_a_layer(L_arrays[i]);
+    }
+    //     destoroy_a_layer(&L_arrays_p[EXPONENT-1]); // destroy level
+    for (i = 0; i < (1LLU << EXPONENT); i++)
+    {
+        destroy_signed_message(msg_arr[i]);
+    }
+    free(msg_arr); // free conrainer for messages
+}
+
 // ok!
 int test_message_creation_and_validation()
 {

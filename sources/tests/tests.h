@@ -5,14 +5,16 @@
 #include "../block_data/blockdata.h"
 #include "../block_data/layering.h"
 #include "../hashing/hashing.h"
-#include "misc.h"
 #include "../networking/setup_client.h"
 #include "../networking/start_server.h"
 #include "../puzzle/puzzle.h"
 #include "../serdes/serdes.h"
+#include "misc.h"
 #include <sodium.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
+#include <strings.h>
 
 int test_valid_messages();
 int test_INvalid_messages();
