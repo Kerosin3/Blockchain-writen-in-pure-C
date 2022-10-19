@@ -37,11 +37,14 @@ void tests()
 
 int proof_message(unsigned long long EXPONENT, size_t msg_num, layer_hp *Layers_pointer)
 {
-    size_t req_msg_first_nodeN = (msg_num / 2UL);
+    size_t req_msg_first_nodeN = (msg_num >> 1LU); //assign node number
+    int flip = (req_msg_first_nodeN % 2LU) ? 0 : 1; // flip hpoint if % is true num is level 1 num
+    //flip = 1;
+    printf("TESTING N MSG:%lu flip = %d \n",req_msg_first_nodeN,flip);
     size_t UPLOAD_req_msg_first_nodeN = req_msg_first_nodeN + 1LU;
     printf("level:%lu\n", (Layers_pointer[EXPONENT - 1]).level);
     //     ((*(Layers_pointer[EXPONENT-1].main_pointer))->messages.smsg_p1-> )
-    // check ground level
+    // check ground level, TAKE BOTH MESSAGES
     unsigned char *hash_msg1_f =
         calc_hash(*(*(Layers_pointer[EXPONENT - 1].main_pointer[req_msg_first_nodeN])).messages.smsg_p1);
     //user_keys uk = create_key_pair();
@@ -51,17 +54,50 @@ int proof_message(unsigned long long EXPONENT, size_t msg_num, layer_hp *Layers_
     unsigned char* Shash2 = calloc(crypto_generichash_BYTES,sizeof(unsigned char));
     unsigned char *hash_msg2_f =
         calc_hash(*(*(Layers_pointer[EXPONENT - 1].main_pointer[req_msg_first_nodeN])).messages.smsg_p2);
-    unsigned char *Shash = merge_2hashses(hash_msg1_f, hash_msg2_f);
-     printf("claced hash S ground level:\n");
-     DumpHex(Shash, crypto_generichash_BYTES);
+    unsigned char *Shash = merge_2hashses(hash_msg1_f, hash_msg2_f); // CALC SHASH
+  //   printf("claced hash S ground level:\n");
+//     DumpHex(Shash, crypto_generichash_BYTES);
     // printf("written hash:\n");
     // DumpHex(((*(Layers_pointer[EXPONENT-1].main_pointer[req_msg_first_nodeN])).hash),crypto_generichash_BYTES);
     int ret_gr_lev = 0;
     //ret_gr_lev = memcmp(Shash, ((*(Layers_pointer[EXPONENT - 1].main_pointer[req_msg_first_nodeN])).hash),
     //                    crypto_generichash_BYTES); // compare message itself
-    ret_gr_lev = memcmp(Shash, ((hash_point_p) ((*(Layers_pointer[EXPONENT - 2].main_pointer[req_msg_first_nodeN])).hpoint1 ) )->hash,
+/*    printf("msg 1 hash:\n");
+    DumpHex(hash_msg1_f, crypto_generichash_BYTES);
+    printf("h\n");
+    DumpHex(((hash_point_p) ((*(Layers_pointer[EXPONENT - 2].main_pointer[req_msg_first_nodeN])).hpoint1 ) )->hash,crypto_generichash_BYTES);
+    printf("h\n");
+    DumpHex(((hash_point_p) ((*(Layers_pointer[EXPONENT - 2].main_pointer[req_msg_first_nodeN])).hpoint2 ) )->hash,crypto_generichash_BYTES);
+    */
+/*
+    for (size_t i = 0; i<(Layers_pointer[EXPONENT-1].size) ; i++) {
+	    printf("%lu'th Shash\n",i);
+	    DumpHex( ((*(Layers_pointer[EXPONENT - 1].main_pointer[i])).hash   )  ,crypto_generichash_BYTES);
+    }
+
+    for (size_t i = 0; i<(Layers_pointer[EXPONENT-2].size) ; i++) {
+	printf("layer -2 s hash:\n");
+	DumpHex(  ((hash_point_p)((*(Layers_pointer[EXPONENT - 2].main_pointer[i])).hpoint1))->hash ,crypto_generichash_BYTES  );
+
+    }
+    for (size_t i = 0; i<(Layers_pointer[EXPONENT-2].size) ; i++) {
+	int z = memcmp( ((*(Layers_pointer[EXPONENT - 2].main_pointer[i]))).hash ,Shash, crypto_generichash_BYTES   );
+	//int z = memcmp( ((hash_point_p) ((*(Layers_pointer[EXPONENT - 2].main_pointer[i])).hpoint1 ) )->hash,Shash, crypto_generichash_BYTES   );
+	if (!z) {
+		printf("----------------------------->found! %lu\n",i);
+		break;
+	}
+    }
+*/
+    // CHECK SHASH 
+    if (flip){
+    ret_gr_lev = memcmp(Shash, ((hash_point_p) ((*(Layers_pointer[EXPONENT - 2].main_pointer[req_msg_first_nodeN>>1]))).hash)->hpoint1  ,
+                        crypto_generichash_BYTES); // compare message itself
+    } else {
+    ret_gr_lev = memcmp(Shash, ((hash_point_p) ((*(Layers_pointer[EXPONENT - 2].main_pointer[req_msg_first_nodeN>>1]))).hash)->hpoint2  ,
                         crypto_generichash_BYTES); // compare message itself
 
+    }
     if (ret_gr_lev)
     {
         printf("not matched hash!\n");
@@ -70,6 +106,7 @@ int proof_message(unsigned long long EXPONENT, size_t msg_num, layer_hp *Layers_
     else
     {
         printf("ground level matched!\n");
+	//return 1;
     }
     /*
     memset(
@@ -81,20 +118,45 @@ int proof_message(unsigned long long EXPONENT, size_t msg_num, layer_hp *Layers_
     //-----------------------------------------//
     printf("\n");
     int Sret = 0;
+    int rez = 0;
     for (int i = EXPONENT - 2; i >= 0; --i)
     {
         printf("I=%d\n", i);
-        req_msg_first_nodeN >>= 1;
+        req_msg_first_nodeN >>= 1; // SHIFT
+	printf("msg test N:%lu\n",req_msg_first_nodeN);
+	if (i==0){
+		printf("calc merkle root!\n");
+		break;
+	}
 	Shash =
             merge_2hashses(
 			    (*(Layers_pointer[i].main_pointer[req_msg_first_nodeN])).hash, // take cur node
 			    (*(Layers_pointer[i].main_pointer[req_msg_first_nodeN+1])).hash // take neighbor node
 			     );
-	int rez = memcmp( 
-			Shash,
-			(*(Layers_pointer[i-1].main_pointer[req_msg_first_nodeN>>1])).hash, // take val from level upper 
-			crypto_generichash_BYTES);
-        /*Shash =
+
+       // rez = memcmp(Shash,( (((*(Layers_pointer[i - 1LU].main_pointer[req_msg_first_nodeN>>1]))).hash))    ,
+        //                crypto_generichash_BYTES); // compare message itself
+/*	
+	if (flip){
+        rez = memcmp(Shash,( (((*(Layers_pointer[i - 1LU].main_pointer[req_msg_first_nodeN>>1]))).hash))    ,
+                        crypto_generichash_BYTES); // compare message itself
+        } else {
+        rez = memcmp(Shash,( (((*(Layers_pointer[i - 1LU].main_pointer[req_msg_first_nodeN>>1]))).hash))    ,
+                        crypto_generichash_BYTES); // compare message itself
+
+//        rez = memcmp(Shash,( ((hash_point_p)(((*(Layers_pointer[i - 1LU].main_pointer[req_msg_first_nodeN>>1]))).hpoint2))->hash)    ,
+    //                    crypto_generichash_BYTES); // compare message itself
+	}
+//	rez = memcmp(Shash, ((hash_point_p) ((*(Layers_pointer[i - 1LU].main_pointer[req_msg_first_nodeN>>1]))).hash)->hpoint2  ,
+  //                      crypto_generichash_BYTES); // compare message itself
+
+	printf("hehe\n");
+	//int rez = memcmp( 
+	//		Shash,
+	//		(*(Layers_pointer[i-1].main_pointer[req_msg_first_nodeN>>1])).hash, // take val from level upper 
+	//		crypto_generichash_BYTES);
+        
+	 Shash =
             merge_2hashses(((hash_point_p)((*(Layers_pointer[i].main_pointer[req_msg_first_nodeN])).hpoint1))->hash,
                            ((hash_point_p)((*(Layers_pointer[i].main_pointer[req_msg_first_nodeN])).hpoint2))->hash);
         int rez =
@@ -123,7 +185,7 @@ int proof_message(unsigned long long EXPONENT, size_t msg_num, layer_hp *Layers_
 
 int test_mekrle_proof()
 {
-    unsigned long long EXPONENT = 10;
+    unsigned long long EXPONENT = 9;
     //-----create basic structures
     unsigned long long n_msg = (1LLU << EXPONENT); //  create 2^9 messages
     layer_hp *L_arrays[EXPONENT];
@@ -150,15 +212,18 @@ int test_mekrle_proof()
     printf("filling intermideate layers\n");
     fill_intermediate_levels(EXPONENT, &n_msg, L_arrays, L_arrays_p); // done
 
-    printf("merkle root:\n");
+    printf("merkle root calced:\n");
     DumpHex(((*(L_arrays_p[0].main_pointer))->hash), crypto_generichash_BYTES);
-    printf("level:%lu\n", (L_arrays_p[0]).level);
-    printf("firs msg:\n");
-    DumpHex(msg_arr[0]->message, msg_arr[0]->length);
-    printf("acces via structs\n");
-    printf("level:%lu\n", (L_arrays_p[EXPONENT - 1]).level);
-    DumpHex(((*(L_arrays_p[EXPONENT - 1].main_pointer))->messages.smsg_p1->message),
-            ((*(L_arrays_p[EXPONENT - 1].main_pointer))->messages.smsg_p1->length));
+    //printf("level:%lu\n", (L_arrays_p[0]).level);
+    //printf("firs msg:\n");
+    //DumpHex(msg_arr[0]->message, msg_arr[0]->length);
+    //printf("acces via structs\n");
+    //printf("level:%lu\n", (L_arrays_p[EXPONENT - 1]).level);
+    //DumpHex(((*(L_arrays_p[EXPONENT - 1].main_pointer))->messages.smsg_p1->message),
+    //        ((*(L_arrays_p[EXPONENT - 1].main_pointer))->messages.smsg_p1->length));
+    /*for (size_t i = 0; i<256; i++) {
+    proof_message(EXPONENT, i, L_arrays_p);
+    }*/
     proof_message(EXPONENT, 10, L_arrays_p);
     //
     // free rootlevel

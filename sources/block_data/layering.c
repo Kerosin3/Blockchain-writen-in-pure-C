@@ -19,11 +19,11 @@ layer_hp* create_a_h_layer(unsigned long long* size_d_layer, hash_point_p* start
 		*beg_pointer = create_hpoint_hashG(*start_hpointr, start_hpointr[1] );	
 		printf("root hash:\n");
 		DumpHex( ((*(beg_pointer))->hash ), crypto_generichash_BYTES);
-		printf("side hash 1:\n");
-		DumpHex(  (((hash_point_p) ((*(beg_pointer))->hpoint1)))  , crypto_generichash_BYTES);
-		printf("side hash 2:\n");
-		DumpHex(  (((hash_point_p) ((*(beg_pointer))->hpoint2)))  , crypto_generichash_BYTES);
-		printf("root P is %p\n",a_layer->main_pointer);
+	//	printf("side hash 1:\n");
+	//	DumpHex(  (((hash_point_p) ((*(beg_pointer))->hpoint1)))  , crypto_generichash_BYTES);
+	//	printf("side hash 2:\n");
+	//	DumpHex(  (((hash_point_p) ((*(beg_pointer))->hpoint2)))  , crypto_generichash_BYTES);
+	//	printf("root P is %p\n",a_layer->main_pointer);
 		return a_layer; 
 	}
 	printf("creating n nodes HASH:%llu\n",*size_d_layer);
@@ -31,8 +31,10 @@ layer_hp* create_a_h_layer(unsigned long long* size_d_layer, hash_point_p* start
 	a_layer->size = *size_d_layer;
 	hash_point_p* beg_pointer = calloc(*size_d_layer,sizeof(hash_point_p));	
 	a_layer->main_pointer = beg_pointer;
-	for (size_t i =0; i < (*size_d_layer); i++) {
-		beg_pointer[i] = create_hpoint_hashG(start_hpointr[i], start_hpointr[*size_d_layer+i] );	
+	size_t k = 0;
+	for (size_t i =0; i < ((*size_d_layer)*2LU); i+=2) {
+		beg_pointer[k] = create_hpoint_hashG(start_hpointr[i], start_hpointr[i+1] );	
+		k++;
 	}
 	return a_layer;
 }
@@ -82,7 +84,7 @@ layer_hp* process_s_messages(unsigned long long s_msgN,signed_message_t* star_ms
 	a_layer->main_pointer = beg_pointer;
 	for (size_t i =0; i < (s_msgN); i++) {
 		//beg_pointer = (void*) s_msgN;
-		beg_pointer[i] = create_hpoint_message(star_msg+i, (star_msg+s_msgN+i ) ); // 0-512 1-513		
+		//beg_pointer[i] = create_hpoint_message(star_msg+i, (star_msg+s_msgN+i ) ); // 0-512 1-513		//WRONG
 	}
 	return a_layer;
 }
@@ -99,11 +101,12 @@ layer_hp* process_s_messagesV2(unsigned long long s_msgN,signed_message_t** star
 	printf("msg merged nodes %llu, layer is %zu\n",s_msgN,level);
 	hash_point_p* beg_pointer = calloc(s_msgN,sizeof(hash_point_p));	
 	a_layer->main_pointer = beg_pointer;
-
-	for (size_t i =0; i < (s_msgN); i++) {
-	
-		beg_pointer[i] = create_hpoint_message(star_msg[i], (star_msg[s_msgN+i] ) ); // 0-512 1-513		
+	size_t k = 0;
+	for (size_t i =0; i < (s_msgN*2LU); i+=2) {
+		beg_pointer[k] = create_hpoint_message(star_msg[i], (star_msg[i+1] ) ); // 0-1 2-3 4-5 6-7		
+		k++;
 	}
+	printf("ok!\n");
 	return a_layer;
 }
 //CREATE TREE V2

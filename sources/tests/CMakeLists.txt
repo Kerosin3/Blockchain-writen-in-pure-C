@@ -5,6 +5,8 @@ ADD_LIBRARY( tests STATIC
 	)
 target_include_directories(${PROJECT_NAME} PUBLIC ${PROJECT_INCLUDE_DIRS})
 #set(PROJECT_INCLUDE_DIRS ${PROJECT_SOURCE_DIR}/ )
+
+message( STATUS "*****---" ${PROJECT_INCLUDE_DIRS} )
 TARGET_LINK_LIBRARIES(tests
 		      misc
 		      accounts

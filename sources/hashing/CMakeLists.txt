@@ -1,13 +1,14 @@
 project(hashing)
 
 
-ADD_LIBRARY( hashing OBJECT
+ADD_LIBRARY( ${PROJECT_NAME} OBJECT
 	hashing.c
 	)
 
-target_include_directories(${PROJECT_NAME} PUBLIC ${PROJECT_INCLUDE_DIRS})
-
-TARGET_LINK_LIBRARIES(hashing
+TARGET_LINK_LIBRARIES(${PROJECT_NAME}
 		      sodium
 		      misc
 		      )
+target_include_directories(${PROJECT_NAME} PUBLIC ${PROJECT_INCLUDE_DIRS})
+message( STATUS "*****" ${PROJECT_INCLUDE_DIRS} )
+
