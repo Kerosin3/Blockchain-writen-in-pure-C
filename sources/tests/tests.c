@@ -76,14 +76,14 @@ int test_mekrle_proof()
 		    wrong_message->length  );
     int ver_result = 0;
     printf("n messages:%llu\n",(1LLU << EXPONENT)    );
-    int rez = merkle_verify_message(EXPONENT, 500, L_arrays_p);
-   /* for (size_t i =0; i< (1LLU << EXPONENT) ; i++) {
+    //int rez = merkle_verify_message(EXPONENT, 12, L_arrays_p);
+    for (size_t i =0; i< (1LLU << EXPONENT) ; i++) {
 	    printf("----------------->verify %lu nth\n",i);
     	 int rez = merkle_verify_message(EXPONENT, i, L_arrays_p);
 	 if (rez) break;
 	 ver_result+=rez;
     	
-    }*/
+    }
     printf("ver result %d\n",ver_result);
     //free layers data
     // free rootlevel
@@ -98,6 +98,8 @@ int test_mekrle_proof()
     }
     free(msg_arr); // free conrainer for messages
     destroy_signed_message(wrong_message);
+    if (!ver_result) return 0;
+    return 1;
 }
 
 // ok!

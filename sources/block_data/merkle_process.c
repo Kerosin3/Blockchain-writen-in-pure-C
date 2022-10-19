@@ -4,7 +4,6 @@ int merkle_verify_message(unsigned long long EXPONENT, size_t msg_num, layer_hp 
 {
 
     size_t req_msg_first_nodeN = (msg_num >> 1LU); // assign node number
-                                                   //    size_t req_msg_first_nodeN = (msg_num );  // assign node number
     int flip = (req_msg_first_nodeN % 2LU) ? 0 : 1; // flip hpoint if % is true num is level 1 num
     printf("TESTING N MSG:%lu flip = %d \n", req_msg_first_nodeN, flip);
     size_t UPLOAD_req_msg_first_nodeN = req_msg_first_nodeN + 1LU;
@@ -16,7 +15,7 @@ int merkle_verify_message(unsigned long long EXPONENT, size_t msg_num, layer_hp 
         calc_hash(*(*(Layers_pointer[EXPONENT - 1].main_pointer[req_msg_first_nodeN])).messages.smsg_p2);
     unsigned char *Shash = merge_2hashses(hash_msg1_f, hash_msg2_f); // CALC SHASH
     int ret_gr_lev = 0;
-    if (flip)
+    if (flip) // flip even\odd case
     {
         ret_gr_lev = memcmp(
             Shash,
@@ -68,11 +67,14 @@ int merkle_verify_message(unsigned long long EXPONENT, size_t msg_num, layer_hp 
             break;
         }
 	size_t neighbor_number = (req_msg_first_nodeN % 2) ? (req_msg_first_nodeN-1) : (req_msg_first_nodeN+1); // some magic here
-	//if (i%2) neighbor_number = !neighbor_number;
-	if (neighbor_number) {
+	printf("NEIGH=%lu\n",neighbor_number);
+	//if (i%2) neighbor_number = neighbor_number;
+	if (req_msg_first_nodeN % 2) {
+		printf("neigh min\n");
 		Shash = merge_2hashses((*(Layers_pointer[i].main_pointer[neighbor_number])).hash,    // take cur node
                                (*(Layers_pointer[i].main_pointer[req_msg_first_nodeN ])).hash );// take neighbor node
 	} else {
+		printf("neigh plus\n");
 		Shash = merge_2hashses((*(Layers_pointer[i].main_pointer[req_msg_first_nodeN])).hash,    // take cur node
                                (*(Layers_pointer[i].main_pointer[neighbor_number ])).hash );// take neighbor node
 
@@ -83,21 +85,6 @@ int merkle_verify_message(unsigned long long EXPONENT, size_t msg_num, layer_hp 
                           ((*(Layers_pointer[i-1].main_pointer[req_msg_first_nodeN>>1])).hash), // take cur node
                          crypto_generichash_BYTES                                         // compare message itself
             );
-        /*if (flip)
-        {
-            rez = memcmp(
-                Shash,
-                ((hash_point_p)((*(Layers_pointer[i - 1].main_pointer[req_msg_first_nodeN >> 1]))).hash)->hpoint1,
-                crypto_generichash_BYTES); // compare message itself
-        }
-        else
-        {
-            rez = memcmp(
-                Shash,
-                ((hash_point_p)((*(Layers_pointer[i - 1].main_pointer[req_msg_first_nodeN >> 1]))).hash)->hpoint2,
-                crypto_generichash_BYTES); // compare message itself
-        }
-	*/
         if (rez)
         {
             printf("validation failed in %d layer, %lu message\n", i, req_msg_first_nodeN);
