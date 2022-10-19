@@ -108,12 +108,6 @@ int proof_message(unsigned long long EXPONENT, size_t msg_num, layer_hp *Layers_
         printf("ground level matched!\n");
 	//return 1;
     }
-    /*
-    memset(
-	    ((hash_point_p)((*(Layers_pointer[4].main_pointer[req_msg_first_nodeN])).hpoint2))->hash,
-	    0,
-	    crypto_generichash_BYTES);
-	    */
     free(Shash);
     //-----------------------------------------//
     printf("\n");
@@ -125,7 +119,21 @@ int proof_message(unsigned long long EXPONENT, size_t msg_num, layer_hp *Layers_
         req_msg_first_nodeN >>= 1; // SHIFT
 	printf("msg test N:%lu\n",req_msg_first_nodeN);
 	if (i==0){
-		printf("calc merkle root!\n");
+		printf("compare merkle root!\n");
+		Shash =
+			merge_2hashses(
+					((hash_point_p) (*(Layers_pointer[i].main_pointer[0])).hpoint1)->hash , // take cur node
+					((hash_point_p) (*(Layers_pointer[i].main_pointer[0])).hpoint2)->hash  // take cur node
+			     );
+		rez = memcmp(  
+			    Shash,
+			    ((*(Layers_pointer[i].main_pointer[req_msg_first_nodeN])).hash), // take cur node
+                            crypto_generichash_BYTES // compare message itself
+		      );
+		if (!rez) printf("merkle root verified!\n");  
+		free(Shash);
+	        Sret += rez;
+
 		break;
 	}
 	Shash =
