@@ -75,7 +75,8 @@ int test_mekrle_proof()
 		    wrong_message->message,
 		    wrong_message->length  );
     int ver_result = 0;
-    int rez = merkle_verify_message(EXPONENT, 0, L_arrays_p);
+    printf("n messages:%llu\n",(1LLU << EXPONENT)    );
+    int rez = merkle_verify_message(EXPONENT, 500, L_arrays_p);
    /* for (size_t i =0; i< (1LLU << EXPONENT) ; i++) {
 	    printf("----------------->verify %lu nth\n",i);
     	 int rez = merkle_verify_message(EXPONENT, i, L_arrays_p);
