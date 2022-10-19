@@ -40,6 +40,10 @@ void destroy_buffers()
 {
     free(buffers);
     free(buffer_lengths);
+    free(buffer_transactions);
+    free(buffer_signed_message);
+    free(beffer_sended_N);
+    free(ring_data_buf);
 }
 
 int setup_serv_sock(uint16_t port)

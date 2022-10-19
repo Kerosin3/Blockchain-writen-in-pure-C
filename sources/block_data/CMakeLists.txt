@@ -4,6 +4,7 @@ project(blockdata)
 ADD_LIBRARY( blockdata STATIC
 	blockdata.c
 	layering.c
+	merkle_process.c
 	)
 
 set(PROJECT_INCLUDE_DIRS ${PROJECT_SOURCE_DIR}/ )
