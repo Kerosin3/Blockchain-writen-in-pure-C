@@ -30,7 +30,5 @@ layer_hp *create_LEVEL0(unsigned long long *N_msg, user_keys uk);
 void fill_intermediate_levels(unsigned long long MSG_expt, unsigned long long *n_msg, layer_hp **L_arrays,
                               layer_hp *L_arrays_p);
 
-void create_test_messages(unsigned long long EXPONENT);
-
 void destoroy_a_layer(layer_hp *some_layer);
 #endif
