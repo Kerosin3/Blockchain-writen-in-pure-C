@@ -1,3 +1,6 @@
 [submodule "sources/contrib/libsodium"]
 	path = sources/contrib/libsodium
 	url = https://github.com/jedisct1/libsodium.git
+[submodule "sources/contrib/zlog"]
+	path = sources/contrib/zlog
+	url = https://github.com/HardySimpson/zlog.git
