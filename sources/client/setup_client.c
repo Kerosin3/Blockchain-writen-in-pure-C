@@ -9,7 +9,7 @@
 
 //size_t send_ACKN_OK(struct io_uring *ring,int sock,void* buffer_wr);
 IpcMessage* buffer_transactions;
-
+unsigned long long EXPONENT = 9;
 
 void teardown_server_sock(int sock)
 {
@@ -122,7 +122,7 @@ int setup_client_iouring(){
 			//ret = send_ACKN_OK(&ring,s,buffer);
 			ret = send_STATUS(&ring,s,buffer,IPC_MESSAGE__STATUS__ACKN_OK);
 			} else if (count == BLOCKSIZE-1) {
-				printf("--------count is %zu--------,readed %lu\n",count,cqe->res);
+				printf("--------count is %zu--------,readed %d\n",count,cqe->res);
 	                	DumpHex(buffer, cqe->res);
 				deserialize_data_from_server(buffer,cqe->res,msg_arr+count);
 				printf("STOP ACCEPTING\n");
@@ -159,11 +159,34 @@ int setup_client_iouring(){
   freeaddrinfo(res);
 
 
-  calc_merkle_tree(msg_arr); 
-//DumpHex(msg_arr[0].message,msg_arr[0].length);
-
+  l_msg_container*  L_arrays_p_cont =  calc_merkle_tree(EXPONENT,msg_arr); 
+ 
+    printf("layers copied!\n");
+    int ver_result = 0;
+    for (size_t i =0; i< 512 ; i++) {  //verify all messages
+	  printf("----------------->verify %lu nth\n",i);
+    	 int rez = merkle_verify_message(EXPONENT, i, L_arrays_p_cont->main_layer_pointer   );
+	 if (!rez) break;
+	 ver_result+=rez;
+    	
+    }
+   // free msg for client 
   for (size_t i = 0 ; i<BLOCKSIZE; i++) {
 	  free(msg_arr[i].message);
   }
-  free(msg_arr);
+//destroy layer
+  for (size_t i = 0; i < EXPONENT; i++) // free 
+    {
+         destoroy_a_layer(L_arrays_p_cont->layers_for_destr[i] );
+    }
+    /*for (size_t i = 0; i < (BLOCKSIZE); i++) // destroy in calling process
+    {
+	    free(msg_arr[i].message);
+    }*/
+  free(L_arrays_p_cont->layers_for_destr);
+  free(L_arrays_p_cont->main_layer_pointer);
+  free(L_arrays_p_cont->messages_arr);
+    free(msg_arr); // free conrainer for messages
+   free(L_arrays_p_cont);
+  //free(msg_arr);
 }

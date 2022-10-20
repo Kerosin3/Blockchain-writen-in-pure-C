@@ -83,7 +83,6 @@ int merkle_verify_message(unsigned long long EXPONENT, size_t msg_num, layer_hp 
     free(hash_msg1_f);
     free(Shash2);
     Sret += ret_gr_lev;
-    printf("RESULT %d\n", Sret);
     if (!Sret)
         return 1;
     return 0; //wrong
