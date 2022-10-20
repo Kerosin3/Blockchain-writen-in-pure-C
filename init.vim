@@ -20,15 +20,13 @@ Plug 'https://github.com/cdelledonne/vim-cmake'
 Plug 'Yggdroot/indentLine'
 Plug 'pearofducks/ansible-vim'
 Plug 'nanotech/jellybeans.vim'
-Plug 'ful1e5/onedark.nvim'
 Plug 'HenryNewcomer/vim-theme-papaya'
 Plug 'embark-theme/vim', { 'as': 'embark', 'branch': 'main' }
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 Plug 'https://github.com/adamheins/vim-highlight-match-under-cursor'
 call plug#end()
 "colorscheme monokai
-"colorscheme jellybeans
-colorscheme onedark
+colorscheme jellybeans
 set termguicolors
 "colorscheme embark
 syntax enable
@@ -36,12 +34,10 @@ syntax enable
 set clipboard=unnamedplus
 set background=dark 
 set nu!
-noremap <S-T> :terminal<CR><I>
-tnoremap <Esc> <C-\><C-n>
+
 set mouse=a
 set title
 set cursorline
-hi Visual  guifg=White guibg=LightBlue gui=none
 set encoding=utf-8 " Important to YCM
 map q :quit<CR> " for quit only type q on command mode
 "let g:ycm_key_list_select_completion = ['<C-n>', '<Down>']
@@ -165,7 +161,7 @@ nmap <leader>ac  <Plug>(coc-codeaction)
 nmap <leader>qf  <Plug>(coc-fix-current)
 
 " Run the Code Lens action on the current line.
-nmap <leader>qr  <Plug>(coc-codelens-action)
+nmap <leader>cl  <Plug>(coc-codelens-action)
 
 " Map function and class text objects
 " NOTE: Requires 'textDocument.documentSymbol' support from the language server.
@@ -225,7 +221,6 @@ nnoremap <silent><nowait> <space>k  :<C-u>CocPrev<CR>
 " Resume latest coc list.
 nnoremap <silent><nowait> <space>p  :<C-u>CocListResume<CR>
 
-:autocmd CursorMoved * exe printf('match IncSearch /\V\<%s\>/', escape(expand('<cword>'), '/\'))
 
 " Commenting blocks of code.
 augroup commenting_blocks_of_code
@@ -239,4 +234,20 @@ augroup commenting_blocks_of_code
 augroup END
 noremap <silent> ,cc :<C-B>silent <C-E>s/^/<C-R>=escape(b:comment_leader,'\/')<CR>/<CR>:nohlsearch<CR>
 noremap <silent> ,cu :<C-B>silent <C-E>s/^\V<C-R>=escape(b:comment_leader,'\/')<CR>//e<CR>:nohlsearch<CR>
+" Go to last active tab
+
+au TabLeave * let g:lasttab = tabpagenr()
+nnoremap <silent> <c-l> :exe "tabn ".g:lasttab<cr>
+vnoremap <silent> <c-l> :exe "tabn ".g:lasttab<cr>
+
+"hi Visual  guifg=#94FFB9 guibg=#FFFFFF gui=none
+hi Visual  guifg=#B95EF1 guibg=LightBlue gui=none
+
+noremap <S-T> :terminal<CR><I>
+if has('nvim')
+  tnoremap <Esc> <C-\><C-n>
+  tnoremap <M-[> <Esc>
+  tnoremap <C-v><Esc> <Esc>
+endif
+
 
