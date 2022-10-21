@@ -3,7 +3,7 @@
 
 #include "../serdes/transaction.pb-c.h"
 #include "../accounts/acc_utils.h"
-#include "../misc/misc.h"
+#include "misc.h"
 #include <sodium/crypto_sign.h>
 #include <netinet/in.h>
 #include <stdint.h>

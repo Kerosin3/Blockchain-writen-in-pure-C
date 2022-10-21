@@ -1,15 +1,17 @@
 
 project(blockdata)
 
-ADD_LIBRARY( blockdata STATIC
+ADD_LIBRARY( ${PROJECT_NAME} STATIC
 	blockdata.c
 	layering.c
 	merkle_process.c
 	)
 
-set(PROJECT_INCLUDE_DIRS ${PROJECT_SOURCE_DIR}/ )
-target_include_directories(${PROJECT_NAME} PUBLIC ${PROJECT_INCLUDE_DIRS})
-TARGET_LINK_LIBRARIES(hashing
+
+TARGET_LINK_LIBRARIES(${PROJECT_NAME}
 		      sodium
 		      misc
 		      )
+set(PROJECT_INCLUDE_DIRS ${SOURCES_ROOT_DIR}/ )
+target_include_directories(${PROJECT_NAME} PUBLIC ${PROJECT_INCLUDE_DIRS})
+

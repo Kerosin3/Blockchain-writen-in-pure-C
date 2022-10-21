@@ -21,7 +21,7 @@ int test_process_messages_L1_v2();
 void tests()
 {
     int result = 0;
-    start_server(12345);
+/*    start_server(12345);
     result+=test_valid_messages(); // no memory safe
     result+=test_INvalid_messages(); // no memory safe
     result+=test_hash(); // no memry safe
@@ -35,7 +35,28 @@ void tests()
     result += create_test_messages(9);
     result += test_mekrle_proof_RIGHT();
     result += test_mekrle_proof_WRONG();
-    
+  */ 
+
+	int rc;
+	zlog_category_t *test;
+
+ 	rc = zlog_init("/home/ker0/test/C_prj/sources/logging/zlog.conf");
+	if (rc) {
+		printf("init failed\n");
+		return;
+	}
+	
+	test = zlog_get_category("my_test");
+	if (!test) {
+		printf("get test fail\n");
+		zlog_fini();
+		return ;
+	}
+
+	zlog_info(test, "hello, zlog");
+
+	zlog_fini();
+
     // solve_puzlev2(2);
     (!result) ? printf("ALL TESTS PASSED OK\n") : printf("SOME ERRORS WHILE TESTING OCCURRED!\n");
 }

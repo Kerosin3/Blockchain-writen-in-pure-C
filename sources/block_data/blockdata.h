@@ -3,7 +3,7 @@
 
 #include <sodium/crypto_generichash.h>
 #include <stdio.h>
-//#include "../misc/misc.h"
+#include "misc.h"
 #include <sodium.h>
 #include <stdint.h>
 #include <stdlib.h>

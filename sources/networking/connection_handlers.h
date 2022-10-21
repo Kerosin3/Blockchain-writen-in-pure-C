@@ -3,7 +3,8 @@
 
 #define _GNU_SOURCE
 #include "../accounts/acc_utils.h"
-#include "../misc/misc.h"
+#include "misc.h"
+#include "zlog.h"
 #include "../serdes/serdes.h"
 #include "../block_data/layering.h"
 #include "ipcmessages.h"

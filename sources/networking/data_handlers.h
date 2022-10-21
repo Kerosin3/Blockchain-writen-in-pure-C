@@ -9,7 +9,8 @@
 #include <stdint.h>
 #include <stdatomic.h>
 #include "../accounts/acc_utils.h"
-#include "../misc/misc.h"
+#include "misc.h"
+#include "zlog.h"
 #include "setup.h"
 
 typedef struct {

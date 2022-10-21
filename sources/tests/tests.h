@@ -10,6 +10,7 @@
 #include "../networking/start_server.h"
 #include "../puzzle/puzzle.h"
 #include "../serdes/serdes.h"
+#include "zlog.h"
 #include "misc.h"
 #include <sodium.h>
 #include <stdio.h>

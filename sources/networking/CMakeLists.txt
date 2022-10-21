@@ -1,7 +1,7 @@
 project(networking)
 
-ADD_LIBRARY( networking STATIC
-	misc.c
+ADD_LIBRARY( ${PROJECT_NAME} STATIC
+	#	misc.c
 	connection_handlers.c
 	event_loop.c
 	setup.c
@@ -11,9 +11,13 @@ ADD_LIBRARY( networking STATIC
 	data_handlers.c
 	)
 
-set(PROJECT_INCLUDE_DIRS ${PROJECT_SOURCE_DIR}/ )
+
+
+set(PROJECT_INCLUDE_DIRS ${SOURCES_ROOT_DIR} )
 target_include_directories(${PROJECT_NAME} PUBLIC ${PROJECT_INCLUDE_DIRS})
-TARGET_LINK_LIBRARIES(networking
+
+
+TARGET_LINK_LIBRARIES(${PROJECT_NAME}
 		      uring
 		      protobuf
 		      )

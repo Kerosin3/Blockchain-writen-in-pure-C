@@ -1,12 +1,10 @@
 project(misc)
+
 ADD_LIBRARY( misc OBJECT
 	misc.c
 	)
-set(PROJECT_INCLUDE_DIRS ${PROJECT_SOURCE_DIR}/ )
+#include from INCLUDE
+set(PROJECT_INCLUDE_DIRS ${SOURCES_ROOT_DIR} )
 target_include_directories(${PROJECT_NAME} PUBLIC ${PROJECT_INCLUDE_DIRS})
-#add_library(${PROJECT_NAME} OBJECT ${PROJECT_SOURCES})
 
-message( STATUS "*****---misc" ${PROJECT_INCLUDE_DIRS} )
-#TARGET_LINK_LIBRARIES(accounts
-#		      sodium
-#		      )
+#message( STATUS "*****---misc" ${PROJECT_INCLUDE_DIRS} )

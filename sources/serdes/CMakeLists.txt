@@ -7,8 +7,8 @@ ADD_LIBRARY( serdes STATIC
 	transaction.pb-c.c
 	)
 
-set(PROJECT_INCLUDE_DIRS ${PROJECT_SOURCE_DIR}/ )
-target_include_directories(${PROJECT_NAME} PUBLIC ${PROJECT_INCLUDE_DIRS})
+#set(PROJECT_INCLUDE_DIRS ${PROJECT_SOURCE_DIR}/ )
+target_include_directories(${PROJECT_NAME} PUBLIC ${SOURCES_ROOT_DIR})
 
 #ADD_EXECUTABLE (a.out
 #		transaction.pb-c.c

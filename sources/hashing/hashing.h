@@ -8,7 +8,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <sodium.h>
-#include "../misc/misc.h"
+#include "misc.h"
 
 #define HASHSIZE 32U
 

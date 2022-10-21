@@ -2,7 +2,7 @@
 
 #define IPCMESSAGES
 
-#include "../misc/misc.h"
+#include "misc.h"
 #include "../serdes/transaction.pb-c.h"
 #include <stdio.h>
 #include <stdlib.h>
