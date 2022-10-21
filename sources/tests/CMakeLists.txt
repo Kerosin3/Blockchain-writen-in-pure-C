@@ -22,5 +22,5 @@ TARGET_LINK_LIBRARIES(${PROJECT_NAME}
 		      networking
 		      protobuf-c
 		      serdes
-		      ${ZLOG_LIB}
+		      logging
 		      )

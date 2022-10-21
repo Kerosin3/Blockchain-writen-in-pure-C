@@ -17,4 +17,5 @@ target_include_directories(${PROJECT_NAME} PUBLIC ${SOURCES_ROOT_DIR})
 
 TARGET_LINK_LIBRARIES(serdes
 	              protobuf-c
+		      misc
 	      		)

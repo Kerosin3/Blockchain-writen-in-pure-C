@@ -13,6 +13,10 @@
 #include "zlog.h"
 #include "setup.h"
 
+
+/**
+ * @brief circular buffer used for...
+**************************************************************************/
 typedef struct {
 	signed_message_t** buffer;
 	size_t fill_size;

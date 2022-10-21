@@ -19,6 +19,7 @@ set(EXECUTABLE_OUTPUT_PATH ${CMAKE_BINARY_DIR})
 set(SOURCES_ROOT_DIR ${CMAKE_SOURCE_DIR}/sources/INCLUDE)
 set( ZLOG_LIB  ${CMAKE_SOURCE_DIR}/sources/logging/libzlog.a)
 
+add_subdirectory(sources/logging)
 add_subdirectory(sources/misc)
 add_subdirectory(sources/puzzle)
 add_subdirectory(sources/hashing)
