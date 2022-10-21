@@ -40,7 +40,7 @@ void tests()
 	int rc;
 	zlog_category_t *test;
 
- 	rc = zlog_init("/home/ker0/test/C_prj/sources/logging/zlog.conf");
+ 	rc = zlog_init("/home/ker0/test/prj/sources/logging/zlog.conf");
 	if (rc) {
 		printf("init failed\n");
 		return;
@@ -54,7 +54,9 @@ void tests()
 	}
 
 	zlog_info(test, "hello, zlog");
-
+#if(WRITE_LOG == 1) 
+	zlog_info(test, "define works!");
+#endif
 	zlog_fini();
 
     // solve_puzlev2(2);

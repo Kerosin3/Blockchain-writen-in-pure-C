@@ -16,6 +16,8 @@
 
 /**
  * @brief circular buffer used for...
+ * @param buffer signed message pointer
+ * @return circular buf obj
 **************************************************************************/
 typedef struct {
 	signed_message_t** buffer;

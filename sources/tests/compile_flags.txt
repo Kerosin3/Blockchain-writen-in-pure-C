@@ -1,2 +1,8 @@
 -I
-../INCLUDE
+../INCLUDE/
+-I
+../INCLUDE/misc/
+-I
+../INCLUDE/logging
+-I
+
