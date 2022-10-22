@@ -1,2 +1,10 @@
 -I
+../INCLUDE/
+-I
+../INCLUDE/misc/
+-I
+../INCLUDE/logging
+-I
 ../INCLUDE/networking
+-I
+

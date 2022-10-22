@@ -5,6 +5,7 @@
 #include "../serdes/transaction.pb-c.h"
 #include "settings.h"
 #include <dirent.h>
+#include "data_handlers.h"
 #include <fcntl.h>
 #include <liburing.h>
 #include <linux/limits.h>

@@ -1,9 +1,4 @@
 #include "event_loop.h"
-#include "connection_handlers.h"
-#include "data_handlers.h"
-#include "ipcmessages.h"
-#include "misc.h"
-#include "setup.h"
 
 
 void event_loop(int sockfd, struct io_uring *ring)
@@ -21,6 +16,10 @@ void event_loop(int sockfd, struct io_uring *ring)
     unsigned long long ii = 0;
     PUSH_msg_circ_buf(&CBUF);
     add_accept_request(ring, sockfd, &client_addr, &client_addr_len);
+
+#if(WRITE_LOG == 1) 
+	zlog_info(server_log, "server started!");
+#endif
     for (;;)
     {
 

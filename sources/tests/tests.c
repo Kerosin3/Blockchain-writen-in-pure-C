@@ -2,6 +2,7 @@
 #include <assert.h>
 #include <sodium/crypto_generichash.h>
 #include <sodium/crypto_sign.h>
+#include <stdlib.h>
 #include <string.h>
 #include <tgmath.h>
 #include <time.h>
@@ -21,8 +22,8 @@ int test_process_messages_L1_v2();
 void tests()
 {
     int result = 0;
-/*    start_server(12345);
-    result+=test_valid_messages(); // no memory safe
+    start_server(12345);
+/*    result+=test_valid_messages(); // no memory safe
     result+=test_INvalid_messages(); // no memory safe
     result+=test_hash(); // no memry safe
     result+=test_hash_merging();
@@ -36,7 +37,7 @@ void tests()
     result += test_mekrle_proof_RIGHT();
     result += test_mekrle_proof_WRONG();
   */ 
-
+/*
 	int rc;
 	zlog_category_t *test;
 
@@ -46,6 +47,8 @@ void tests()
 		return;
 	}
 	
+	atexit(zlog_fini);
+
 	test = zlog_get_category("my_test");
 	if (!test) {
 		printf("get test fail\n");
@@ -57,8 +60,8 @@ void tests()
 #if(WRITE_LOG == 1) 
 	zlog_info(test, "define works!");
 #endif
-	zlog_fini();
-
+// 	zlog_fini();
+*/
     // solve_puzlev2(2);
     (!result) ? printf("ALL TESTS PASSED OK\n") : printf("SOME ERRORS WHILE TESTING OCCURRED!\n");
 }
