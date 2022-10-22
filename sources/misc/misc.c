@@ -52,14 +52,12 @@ u_int64_t  get_epoch_ns(){
 	struct timespec spec;
 	
 	if (clock_gettime(CLOCK_REALTIME,&spec)!=0){
-		printf("ERROR GETTING EPOCH TIMESTAMP\n");
 		all = 0;
 		return all;
 	}
 	sec = spec.tv_sec;
 	ns = spec.tv_nsec;
 	all = (u_int64_t) sec *  one_bill + (u_int64_t) ns;
-	printf("EPOH %lu\n",all);
 	return all;
 }
 
@@ -67,7 +65,6 @@ long long get_date_usec_rec(){
 
 	struct timeval ts;
 	if (gettimeofday(&ts,NULL)) {
-		printf("Error getting timestamp!\n");
 		long long ret = 0;
 		return ret;
 	}

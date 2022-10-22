@@ -62,14 +62,12 @@ size_t serialize_data_v2(void* socket_buf,signed_message_t* a_message,IpcMessage
 	message->status_code = IPC_MESSAGE__STATUS__MESSAGE_SENDED;
 	
 	message->time_num = get_epoch_ns();
-	printf("SEREALIZED MESSAGE TIMESTAMP %lu\n",message->time_num);
 
 	size_t time_len = get_timestamp(date);
 	message->timestamp = date; // its ok
 
 	len = ipc_message__get_packed_size(message);
 	ipc_message__pack(message, socket_buf); // write to buffer
-	printf("serialization done!\n");
 	return len;
 
 }
@@ -105,15 +103,14 @@ signed_message_t deserialize_data(int sock,void* deserialized_data){
 
 	IpcMessage *message;
 	message = ipc_message__unpack(0,len,deserialized_data);
-	if ((message->status_code) ==IPC_MESSAGE__STATUS__OK )
-		printf("OK!\n");
+	if ((message->status_code) ==IPC_MESSAGE__STATUS__OK ) ;
+//		printf("OK!\n");
 	if(message->has_pubkey){
 		memcpy(a_msg.public_key,message->pubkey.data,crypto_sign_PUBLICKEYBYTES);
 	}
 	if(message->has_transaction_msg){
 		a_msg.length = (unsigned long long) message->transaction_msg.len;
 		memcpy(a_msg.message,message->transaction_msg.data,a_msg.length);
-		printf("date: %s\n",message->timestamp);
 	}
 	ipc_message__free_unpacked(message,NULL);
 		

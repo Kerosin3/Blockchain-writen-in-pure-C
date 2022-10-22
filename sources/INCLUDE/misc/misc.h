@@ -6,6 +6,7 @@
 #include <stdio.h>
 #include <sys/time.h>
 #include "acc_utils.h"
+#include "zlog.h"
 
 #define LIKELY(x) __builtin_expect(!!(x), 1)
 #define UNLIKELY(x) __builtin_expect(!!(x), 0)

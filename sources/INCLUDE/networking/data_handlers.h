@@ -1,19 +1,11 @@
-#ifndef DATA_HANDLE
+#ifndef DATA_HANDLERS
 
-#define DATA_HANDLE
-
-
+#define DATA_HANDLERS
 
 #include <stdlib.h>
 #include <stdio.h>
-#include <stdint.h>
-#include <stdatomic.h>
-#include "../accounts/acc_utils.h"
-#include "misc.h"
-#include "zlog.h"
+#include "acc_utils.h"
 #include "setup.h"
-
-
 /**
  * @brief circular buffer used for...
  * @param buffer signed message pointer
@@ -24,6 +16,10 @@ typedef struct {
 	size_t fill_size;
 	unsigned long maxlen;
 } circ_buf_t;
+
+
+//extern zlog_category_t *server_log;
+
 
 signed_message_t* GET_last_circ_buf(circ_buf_t* cbuf);
 circ_buf_t create_circ_buf();

@@ -9,5 +9,6 @@ target_include_directories(${PROJECT_NAME} PUBLIC ${PROJECT_INCLUDE_DIRS}/${PROJ
 
 TARGET_LINK_LIBRARIES(${PROJECT_NAME}
 			accounts
+			logging
 		      )
 #message( STATUS "*****---misc" ${PROJECT_INCLUDE_DIRS} )

@@ -36,7 +36,6 @@ signed_message_t* GET_nth_circ_buf(circ_buf_t* cbuf,size_t N){
 		}while ( (N + 1) != cbuf->fill_size); // push while
 		return cbuf->buffer[ (cbuf->fill_size-1) ] ;
 	} else {
-	printf("here\n");
 		return cbuf->buffer[N];
 	}
 
@@ -53,7 +52,6 @@ int PUSH_msg_circ_buf(circ_buf_t* cbuf ){
 
 	size_t cur = cbuf->fill_size; // get current
 		      
-	printf("added element to buff\n");
 	// if max
 	if (cur == ((cbuf->maxlen )) ) {
 		printf("MAX BUF REACHED\n");

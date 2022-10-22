@@ -20,7 +20,15 @@
 #include <sys/socket.h>
 #include <sys/types.h>
 
-extern circ_buf_t CBUF;
+/**
+ * @brief a buffer of N messages that are to send to connected clients
+ * @note currently N is hardcoded and equals 512
+ * *********************************************************************/
+//extern circ_buf_t CBUF;
+
+/**
+ *@brief used to start main server loop
+ */
 void event_loop(int serv_sock, struct io_uring *ring);
 
 #endif
