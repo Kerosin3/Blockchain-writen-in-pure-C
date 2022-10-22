@@ -4,6 +4,8 @@
 #define _GNU_SOURCE
 #include "../accounts/acc_utils.h"
 #include "misc.h"
+#include "data_handlers.h"
+#include "start_server.h"
 #include "zlog.h"
 #include "../serdes/serdes.h"
 #include "../block_data/layering.h"
@@ -25,6 +27,7 @@
 #include <sys/socket.h>
 #include <sys/stat.h>
 #include <sys/types.h>
+
 
 extern circ_buf_t CBUF;
 

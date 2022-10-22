@@ -5,7 +5,7 @@
 struct io_uring ring;
 
 const char* server_conf_logfile = "/home/ker0/test/prj/sources/logging/zlog.conf";
-
+int server_logging_enabled;
 circ_buf_t CBUF;
 
 zlog_category_t *server_log;
@@ -14,7 +14,7 @@ zlog_category_t *server_log;
  * *******************************************************************************/
 void start_server(uint16_t port)
 {
-
+    server_logging_enabled = 0;
     setup_buffers(MAX_CONNECTIONS);      // establish buffers
     int serv_fd = setup_serv_sock(port); // set server fd
     printf(">>launching server on a port: %d<<\n", port);
@@ -37,6 +37,11 @@ void start_server(uint16_t port)
 		printf("failed init logging category!\n");
 		zlog_fini();
 	}
+
+#if(WRITE_LOG == 1) 
+	zlog_info(server_log, "server logging started!");
+	server_logging_enabled = 1;
+#endif
     event_loop(serv_fd, &ring);
 
     destroy_buffers();

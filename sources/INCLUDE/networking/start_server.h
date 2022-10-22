@@ -9,5 +9,6 @@
 #include <stdio.h>
 void start_server(uint16_t port);
 
+extern int server_logging_enabled;
 extern zlog_category_t *server_log;
 #endif
