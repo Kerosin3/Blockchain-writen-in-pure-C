@@ -70,8 +70,10 @@ void event_loop(int sockfd, struct io_uring *ring)
     	            if (server_logging_enabled) zlog_info(server_log, "asking whether needs a message");
                     break;
                 case (IPC_MESSAGE__STATUS__ENOUGH):
+// 		    printf("client fd %zu \n", beffer_sended_N[ request_data_client_fd(cqe->res)  ] );
                     FINISH_SENDING(ring, request_data_client_fd(cqe->user_data));
-    	            if (server_logging_enabled) zlog_info(server_log, "client got enougt,(512 messages)");
+    	            if (server_logging_enabled) zlog_info(server_log, "client got enough,(512 messages)");
+		    fprintf(stdout,"client %d accepted 512 messages\nClosing connection\n",request_data_client_fd(cqe->user_data) );
                     break;
                 case (IPC_MESSAGE__STATUS__ALL_BLOCK_RECEIVED):
                     break;

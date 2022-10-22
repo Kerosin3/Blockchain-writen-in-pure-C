@@ -53,10 +53,10 @@ int PUSH_msg_circ_buf(circ_buf_t* cbuf ){
 
 	size_t cur = cbuf->fill_size; // get current
 		      
-	printf("added element to buff\n");
+     	if (server_logging_enabled) zlog_info(server_log, "adding new element to buf");
 	// if max
 	if (cur == ((cbuf->maxlen )) ) {
-		printf("MAX BUF REACHED\n");
+     		if (server_logging_enabled) zlog_info(server_log, "maximum buf reached, setting 0");
 		clean_circ_buf(cbuf);
 		cbuf->fill_size = 0;
 		return 1;

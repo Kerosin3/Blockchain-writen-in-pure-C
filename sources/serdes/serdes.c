@@ -62,14 +62,14 @@ size_t serialize_data_v2(void* socket_buf,signed_message_t* a_message,IpcMessage
 	message->status_code = IPC_MESSAGE__STATUS__MESSAGE_SENDED;
 	
 	message->time_num = get_epoch_ns();
-	printf("SEREALIZED MESSAGE TIMESTAMP %lu\n",message->time_num);
+// 	printf("SEREALIZED MESSAGE TIMESTAMP %lu\n",message->time_num);
 
 	size_t time_len = get_timestamp(date);
 	message->timestamp = date; // its ok
 
 	len = ipc_message__get_packed_size(message);
 	ipc_message__pack(message, socket_buf); // write to buffer
-	printf("serialization done!\n");
+// 	printf("serialization done!\n");
 	return len;
 
 }
@@ -83,14 +83,14 @@ void print_serialized_data(void* buffer_in,size_t len){
 // 	len = fread(buffer,sizeof(char),sizeof(buffer),fp);
 	IpcMessage *message;
 	message = ipc_message__unpack(0,len,buffer_in);
-	printf("status code:%d\n",message->status_code);
+// 	printf("status code:%d\n",message->status_code);
 	if(message->has_pubkey){
-		printf("has pubkey!\n");
-		DumpHex(message->pubkey.data,message->pubkey.len);
+// 		printf("has pubkey!\n");
+// 		DumpHex(message->pubkey.data,message->pubkey.len);
 	}
 	if(message->has_transaction_msg){
-		printf("decoded message:\n");
-		DumpHex(message->transaction_msg.data, message->transaction_msg.len);
+// 		printf("decoded message:\n");
+// 		DumpHex(message->transaction_msg.data, message->transaction_msg.len);
 	}
 // 	DumpHex(message->transaction_msg.data, message->transaction_msg.len);
 //	printf("date: %s\n",message->timestamp);
@@ -105,15 +105,15 @@ signed_message_t deserialize_data(int sock,void* deserialized_data){
 
 	IpcMessage *message;
 	message = ipc_message__unpack(0,len,deserialized_data);
-	if ((message->status_code) ==IPC_MESSAGE__STATUS__OK )
-		printf("OK!\n");
+// 	if ((message->status_code) ==IPC_MESSAGE__STATUS__OK )
+// 		printf("OK!\n");
 	if(message->has_pubkey){
 		memcpy(a_msg.public_key,message->pubkey.data,crypto_sign_PUBLICKEYBYTES);
 	}
 	if(message->has_transaction_msg){
 		a_msg.length = (unsigned long long) message->transaction_msg.len;
 		memcpy(a_msg.message,message->transaction_msg.data,a_msg.length);
-		printf("date: %s\n",message->timestamp);
+// 		printf("date: %s\n",message->timestamp);
 	}
 	ipc_message__free_unpacked(message,NULL);
 		

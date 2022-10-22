@@ -4,6 +4,7 @@
 
 
 
+//#include "start_server.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdint.h>
@@ -13,6 +14,8 @@
 #include "zlog.h"
 #include "setup.h"
 
+extern int server_logging_enabled;
+extern zlog_category_t *server_log;
 
 /**
  * @brief circular buffer used for...
