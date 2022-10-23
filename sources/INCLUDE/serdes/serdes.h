@@ -2,7 +2,7 @@
 
 #define SERDES
 #include "transaction.pb-c.h"
-#include "../accounts/acc_utils.h"
+#include "acc_utils.h"
 #include "misc.h"
 
 #include <sodium/crypto_sign.h>

@@ -28,7 +28,13 @@ typedef struct {
 	unsigned long maxlen;
 } circ_buf_t;
 
+
+/*! \ detailss bal bla
+ * @brief getting last 
+ * @param port port to start on
+ *****************************************************************************/
 signed_message_t* GET_last_circ_buf(circ_buf_t* cbuf);
+
 circ_buf_t create_circ_buf();
 void release_circ_nth_msg(circ_buf_t* cbuf,size_t N);
 void clean_circ_buf(circ_buf_t* cbuf);

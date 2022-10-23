@@ -2,12 +2,12 @@
 #define CONNECTIONHANDLERS
 
 #define _GNU_SOURCE
-#include "../accounts/acc_utils.h"
+#include "acc_utils.h"
 #include "misc.h"
 #include "data_handlers.h"
 #include "start_server.h"
 #include "zlog.h"
-#include "../serdes/serdes.h"
+#include "serdes.h"
 #include "../block_data/layering.h"
 #include "ipcmessages.h"
 #include "settings.h"
