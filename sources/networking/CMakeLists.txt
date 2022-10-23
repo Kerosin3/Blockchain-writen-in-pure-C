@@ -6,7 +6,6 @@ ADD_LIBRARY( ${PROJECT_NAME} STATIC
 	event_loop.c
 	setup.c
 	start_server.c
-	setup_client.c
 	ipcmessages.c
 	data_handlers.c
 	)

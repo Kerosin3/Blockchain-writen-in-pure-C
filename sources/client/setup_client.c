@@ -87,7 +87,7 @@ int setup_client_iouring(){
   for(;;){
   	struct io_uring_cqe* cqe;
 	if (flag_block_filled) {
-		printf("block aquired!\n");
+  		if (client_logging_enabled) zlog_info(client_log, "block (512) messages, has been acquired");
 		break;
 	}
 	if (ifread == 0){
@@ -97,53 +97,45 @@ int setup_client_iouring(){
 	io_uring_wait_cqe(&ring,&cqe);
   	io_uring_cqe_seen(&ring,cqe);
 	ifread = 1;
-	printf("--->\n");
 	continue;
 	}
 	ifread = 0;
 	int ret = cqe->res; // N readed bytes
-// 	printf("readed %d\n",cqe->res);
 	switch ( FLAG_FROM_SERVER = read_response_ONLY_STATUS(buffer, cqe->res)) {
 		case IPC_MESSAGE__STATUS__ASK_NEED_MSG:
-			printf("ASKED IF NEED MESSAGE:%d\n",FLAG_FROM_SERVER);	
+  			if (client_logging_enabled) zlog_info(client_log,"server ask if need msg"); 
 			ret = send_STATUS(&ring,s,buffer2,IPC_MESSAGE__STATUS__NEED_MORE);
 			break;
 		case IPC_MESSAGE__STATUS__OK:
-			printf("got message! %d \n",cqe->res);
+  			if (client_logging_enabled) zlog_info(client_log,"accepted a ipc msg from the server %d",cqe->res); 
 			send_need_more_msg(&ring,cqe->res,buffer);
 			break;
 		case IPC_MESSAGE__STATUS__MESSAGE_SENDED:
 			if (count < BLOCKSIZE-1){
-			printf("got signed message!n =%lu \n",count);
-	                DumpHex(buffer, cqe->res);
-
-			printf("----%zu-----\n",count);
+  			if (client_logging_enabled) zlog_info(client_log,"acquired %d,sending ACK...",cqe->res); 
 			deserialize_data_from_server(buffer,cqe->res,msg_arr+count);
 			count++;
-			//ret = send_ACKN_OK(&ring,s,buffer);
 			ret = send_STATUS(&ring,s,buffer,IPC_MESSAGE__STATUS__ACKN_OK);
 			} else if (count == BLOCKSIZE-1) {
-				printf("--------count is %zu--------,readed %d\n",count,cqe->res);
-	                	DumpHex(buffer, cqe->res);
+  				if (client_logging_enabled) zlog_info(client_log,"last message has been acquired");
 				deserialize_data_from_server(buffer,cqe->res,msg_arr+count);
-				printf("STOP ACCEPTING\n");
+  				if (client_logging_enabled) zlog_info(client_log,"stop, accepting");
 				ret = send_STATUS(&ring,s,buffer2,IPC_MESSAGE__STATUS__ENOUGH); // 512 blocks acquired
 				flag_block_filled = 1;
 			} else {
 				ret = send_STATUS(&ring,s,buffer2,IPC_MESSAGE__STATUS__ERROR); // 512 blocks acquired
-
 			}
 			break;
 		case IPC_MESSAGE__STATUS__FINISH:
-			printf("STOP ACCEPTING\n");
+  			if (client_logging_enabled) zlog_info(client_log,"server finished sending!");
 			break;
 		case IPC_MESSAGE__STATUS__ALL_BLOCK_MSG_SENDED:
-			printf("ALL BLOCKS ARE AQUIRED,exiting\n");
+  			if (client_logging_enabled) zlog_info(client_log,"server finished sending all data messages!");
 			ret = send_STATUS(&ring,s,buffer2,IPC_MESSAGE__STATUS__ALL_BLOCK_RECEIVED);
 			flag_block_filled = 1;
 			break;
 		default:
-			printf("default!\n");
+			break;
 
 			
 	}

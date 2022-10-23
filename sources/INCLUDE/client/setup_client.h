@@ -23,10 +23,20 @@
 #include <strings.h>
 #include <sys/socket.h>
 #include <sys/types.h>
+
+/** @file setup_client.h
+ * Setupping client io_uring
+*/ 
+
+/*!
+ * @brief starting client, listen port 12345
+ * @param port port to start on
+ *****************************************************************************/
+int setup_client_iouring();
+
 extern IpcMessage* buffer_transactions;
 
 extern zlog_category_t *client_log;
 extern int client_logging_enabled;
-int setup_client_iouring();
 
 #endif

@@ -27,8 +27,6 @@ size_t send_need_more_msg(struct io_uring *ring,int sock,void* buffer_wr)
 void deserialize_data_from_server(char* buff, unsigned len,signed_message_t* msg){
 	IpcMessage *message;
 	message = ipc_message__unpack(0,len,buff);
-	if ((message->status_code) ==IPC_MESSAGE__STATUS__MESSAGE_SENDED)
-		printf("OK!\n");
 	if(message->has_pubkey){
 		memcpy(msg->public_key,message->pubkey.data,crypto_sign_PUBLICKEYBYTES); // copy public key
 	}
@@ -37,8 +35,8 @@ void deserialize_data_from_server(char* buff, unsigned len,signed_message_t* msg
  		memcpy(msg->message,message->transaction_msg.data,len); // copy data to pointer
  		//DumpHex(a_msg.message,a_msg.length);
  		//DumpHex(message->transaction_msg.data,message->transaction_msg.len);
-		printf("date: %s\n",message->timestamp);
-		printf("from epoh:%lu\n",message->time_num);
+// 		printf("date: %s\n",message->timestamp);
+// 		printf("from epoh:%lu\n",message->time_num);
 	}
 // 	a_msg.message = msg_pointer;
 	ipc_message__free_unpacked(message,NULL);
@@ -52,6 +50,7 @@ size_t send_ACKN_OK(struct io_uring *ring,int sock,void* buffer_wr){
     struct io_uring_sqe *sqe = io_uring_get_sqe(ring); // add to ring
     size_t n = send_ONLY_status_code(buffer_transactions,buffer_wr,IPC_MESSAGE__STATUS__ACKN_OK);
     io_uring_prep_send(sqe, sock, buffer_wr , n , MSG_DONTWAIT);// read answer
+    if (client_logging_enabled) zlog_info(client_log,"sending acknowledgement!");
     if (io_uring_submit(ring) < 0)
         printf("error submitting\n");
     return n;
@@ -61,8 +60,7 @@ size_t send_ACKN_OK(struct io_uring *ring,int sock,void* buffer_wr){
 size_t send_STATUS(struct io_uring *ring,int sock,void* buffer_wr, IpcMessage__Status status_msg){
     struct io_uring_sqe *sqe = io_uring_get_sqe(ring); // add to ring
     size_t n = send_ONLY_status_code(buffer_transactions,buffer_wr,status_msg);
-    printf("sending status code %d\n",status_msg);
-    DumpHex(buffer_wr, n);
+    if (client_logging_enabled) zlog_info(client_log,"sending status code %d!",status_msg);
     io_uring_prep_send(sqe, sock, buffer_wr , n , MSG_DONTWAIT);// read answer
     if (io_uring_submit(ring) < 0)
         printf("error submitting\n");
@@ -107,10 +105,8 @@ IpcMessage__Status read_response_ONLY_STATUS(void* buf,size_t len){
 	IpcMessage__Status status;	
 	IpcMessage *message;
 	message = ipc_message__unpack(0,len,buf);
-	printf(" TESTING STATUS CODE IS %d\n",message->status_code);
-//	printf("TIMESTAMP:%s\n",message->timestamp );
+  	if (client_logging_enabled) zlog_info(client_log,"testing status code %d",message->status_code); 
 	status = message->status_code;
-        printf("TIMESTAMP:%ld\n",message->time_num);
 	ipc_message__free_unpacked(message,NULL);
 	return status;
 }
@@ -118,8 +114,6 @@ IpcMessage__Status read_response_ONLY_STATUS(void* buf,size_t len){
 size_t get_a_message(void* buf,size_t len,signed_message_t* a_msg){
 	IpcMessage* message;
 	message = ipc_message__unpack(0,len, buf );
-	if ((message->status_code) ==IPC_MESSAGE__STATUS__OK )
-		printf("OK!\n");
 	if(message->has_pubkey){
 		memcpy(a_msg->public_key,message->pubkey.data,crypto_sign_PUBLICKEYBYTES);
 	}
@@ -166,7 +160,6 @@ size_t send_ONLY_status_code( IpcMessage* message,void* socket_buf, IpcMessage__
 	uint64_t epoch_ns = get_epoch_ns(); 
 	message->time_num = epoch_ns;
 	message->status_code = STATUS;
-        printf("TIMESTAMP SENDED MESSAGE:%ld\n",message->time_num);
 	
 	len = ipc_message__get_packed_size(message);
 	ipc_message__pack(message, socket_buf); // write to buffer
