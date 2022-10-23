@@ -7,16 +7,19 @@
 #include <signal.h>
 #include <stdint.h>
 #include <stdio.h>
+/** @file start_server.h
+ * Setupping server IU_URING
+*/ 
 
-/**
- * @brief this func is starting the ui_uring bases server
- * @param port port used to launch the server
- * **********************************************************/
+/*!
+ * @brief starting server on specified port
+ * @param port port to start on
+ *****************************************************************************/
 void start_server(uint16_t port);
 
-extern int logging_enabled;
 /**
- * @note zlog global var to write log
- * *********************************************************/
+ * @brief global var for setting zlog
+ *****************************************************************************/
+extern int server_logging_enabled;
 extern zlog_category_t *server_log;
 #endif
