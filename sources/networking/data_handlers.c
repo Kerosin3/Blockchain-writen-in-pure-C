@@ -36,7 +36,6 @@ signed_message_t* GET_nth_circ_buf(circ_buf_t* cbuf,size_t N){
 		}while ( (N + 1) != cbuf->fill_size); // push while
 		return cbuf->buffer[ (cbuf->fill_size-1) ] ;
 	} else {
-	printf("here\n");
 		return cbuf->buffer[N];
 	}
 
