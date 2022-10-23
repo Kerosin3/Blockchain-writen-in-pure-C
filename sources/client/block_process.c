@@ -1,8 +1,6 @@
 #include "block_process.h"
 
 
-
-
 l_msg_container* calc_merkle_tree(unsigned long long EXPONENT, signed_message_t* msg_pointer){
     //-----create basic structures	
     l_msg_container* g_cont = calloc(1,sizeof(l_msg_container));

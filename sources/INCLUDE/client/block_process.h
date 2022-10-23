@@ -4,6 +4,7 @@
 
 #include "../block_data/layering.h"
 #include "../block_data/blockdata.h"
+#include "zlog.h"
 
 typedef struct{
 	layer_hp* main_layer_pointer;
@@ -11,6 +12,8 @@ typedef struct{
 	signed_message_t** messages_arr;
 } l_msg_container;
 
+extern zlog_category_t *client_log;
+extern int client_logging_enabled;
 l_msg_container* calc_merkle_tree(unsigned long long,signed_message_t* msg_pointer);
 
 #endif

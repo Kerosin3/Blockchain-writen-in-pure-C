@@ -7,6 +7,7 @@
 #include "../block_data/blockdata.h"
 #include "../block_data/merkle_process.h"
 #include "block_process.h"
+#include "zlog.h"
 #include "ipc_messages_client.h"
 #include <arpa/inet.h>
 #include <errno.h>
@@ -24,6 +25,8 @@
 #include <sys/types.h>
 extern IpcMessage* buffer_transactions;
 
+extern zlog_category_t *client_log;
+extern int client_logging_enabled;
 int setup_client_iouring();
 
 #endif

@@ -82,6 +82,7 @@ int setup_client_iouring(){
   	msg_arr[i].message = (unsigned char*) calloc(BUFSIZEFORMESSAGE,sizeof(char));// asign pointer
   }
   
+  if (client_logging_enabled) zlog_info(client_log, "logging client...");
   int ifread = 0;
   for(;;){
   	struct io_uring_cqe* cqe;
@@ -160,11 +161,14 @@ int setup_client_iouring(){
 
 
   l_msg_container*  L_arrays_p_cont =  calc_merkle_tree(EXPONENT,msg_arr); 
- 
+    printf("merkle root :\n");
+    DumpHex( (*(L_arrays_p_cont->main_layer_pointer[0].main_pointer))->hash  , crypto_generichash_BYTES);
+//     DumpHex( L_arrays_p_cont->main_layer_pointer  (*(L_arrays[0]->main_pointer))->hash  , crypto_generichash_BYTES);
+
     printf("layers copied!\n");
     int ver_result = 0;
     for (size_t i =0; i< 512 ; i++) {  //verify all messages
-	  printf("----------------->verify %lu nth\n",i);
+// 	  printf("----------------->verify %lu nth\n",i);
     	 int rez = merkle_verify_message(EXPONENT, i, L_arrays_p_cont->main_layer_pointer   );
 	 if (!rez) break;
 	 ver_result+=rez;

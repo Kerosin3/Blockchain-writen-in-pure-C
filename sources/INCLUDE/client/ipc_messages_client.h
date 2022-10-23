@@ -4,6 +4,7 @@
 #include "../serdes/transaction.pb-c.h"
 #include "../accounts/acc_utils.h"
 #include "misc.h"
+#include "zlog.h"
 #include <sodium/crypto_sign.h>
 #include <netinet/in.h>
 #include <stdint.h>
@@ -22,6 +23,8 @@
 
 extern IpcMessage* buffer_transactions;
 
+extern int client_logging_enabled;
+extern zlog_category_t *client_log;
 
 void deserialize_data_from_server(char* buff, unsigned len,signed_message_t* msg);
 

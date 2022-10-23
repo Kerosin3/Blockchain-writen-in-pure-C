@@ -28,7 +28,7 @@ if (DOXYGEN_FOUND)
 	configure_file(${DOXYGEN_IN} ${DOXYGEN_OUT} @ONLY)
 	message("starting doxygen guild")
 
-	add_custom_target(doc_doxygen ALL
+	add_custom_target(doc_doxygen_${PROJECT_NAME} ALL
 		COMMAND ${DOXYGEN_EXECUTABLE} ${DOXYGEN_OUT}
 		WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
 		COMMENT "generating doc for networking"
