@@ -2,8 +2,8 @@
 #define BLOCKPROC
 
 
-#include "../block_data/layering.h"
-#include "../block_data/blockdata.h"
+#include "layering.h"
+#include "blockdata.h"
 #include "zlog.h"
 
 typedef struct{

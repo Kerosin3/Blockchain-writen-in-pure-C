@@ -43,5 +43,6 @@ TARGET_LINK_LIBRARIES(${PROJECT_NAME}
 		      protobuf
 		      serdes
 		      misc
+		      blockdata
 		      logging
 		      )

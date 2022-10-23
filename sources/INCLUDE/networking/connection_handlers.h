@@ -8,7 +8,7 @@
 #include "start_server.h"
 #include "zlog.h"
 #include "serdes.h"
-#include "../block_data/layering.h"
+#include "layering.h"
 #include "ipcmessages.h"
 #include "settings.h"
 #include "setup.h"

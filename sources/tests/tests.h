@@ -2,9 +2,9 @@
 #define TESTS
 
 #include "../accounts/acc_utils.h"
-#include "../block_data/blockdata.h"
-#include "../block_data/layering.h"
-#include "../block_data/merkle_process.h"
+#include "blockdata.h"
+#include "layering.h"
+#include "merkle_process.h"
 #include "../hashing/hashing.h"
 #include "../networking/setup_client.h"
 #include "../networking/start_server.h"

@@ -7,4 +7,12 @@
 -I
 ../INCLUDE/networking
 -I
+../INCLUDE/blockdata
+-I
+../INCLUDE/client
+-I
+../INCLUDE/serdes
+-I
+../INCLUDE/accounts
+-I
 

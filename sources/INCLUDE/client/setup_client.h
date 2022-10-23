@@ -4,8 +4,8 @@
 
 #include "../serdes/transaction.pb-c.h"
 #include "../accounts/acc_utils.h"
-#include "../block_data/blockdata.h"
-#include "../block_data/merkle_process.h"
+#include "blockdata.h"
+#include "merkle_process.h"
 #include "block_process.h"
 #include "zlog.h"
 #include "ipc_messages_client.h"
