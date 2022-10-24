@@ -13,7 +13,6 @@ int main(int argc, char *argv[])
     if (!client_conf_logfile)
     {
         printf("no cblockchain_conf env variable has been found\n");
-        return 0;
     }
     client_logging_enabled = 0;
 

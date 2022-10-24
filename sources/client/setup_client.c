@@ -9,7 +9,7 @@
 
 // size_t send_ACKN_OK(struct io_uring *ring,int sock,void* buffer_wr);
 IpcMessage *buffer_transactions;
-unsigned long long EXPONENT = 9;
+unsigned long long EXPONENT = 9; //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 void teardown_server_sock(int sock)
 {
@@ -73,10 +73,10 @@ int setup_client_iouring()
     int ret = cqe_main->res;
     if (!ret)
     {
+        zlog_info(client_log, "connection to server has been established!");
         printf("connection established!\n");
         io_uring_cqe_seen(&ring, cqe_main);
     }
-    printf("main socket: %d\n", s);
     IpcMessage__Status FLAG_FROM_SERVER = IPC_MESSAGE__STATUS__ERROR; // set error default status
     size_t k = 0;
     int flag_block_filled = 0;
@@ -175,14 +175,22 @@ int setup_client_iouring()
     free(buffer_transactions);
     freeaddrinfo(res);
 
-    l_msg_container *L_arrays_p_cont = calc_merkle_tree(EXPONENT, msg_arr);
+    zlog_info(client_log, "calcing merkle tree from received messges!");
+    l_msg_container *L_arrays_p_cont = calc_merkle_tree(EXPONENT, msg_arr); 
     printf("merkle root :\n");
     DumpHex((*(L_arrays_p_cont->main_layer_pointer[0].main_pointer))->hash, crypto_generichash_BYTES);
+    unsigned char merkle_root_first[crypto_generichash_BYTES];
+    memcpy(merkle_root_first,(*(L_arrays_p_cont->main_layer_pointer[0].main_pointer))->hash, crypto_generichash_BYTES);
+    //****************************************************/
+    unsigned char* nonce = solve_puzzle(merkle_root_first,3); //calc puzzle
+    //create block
+    block_t* block_dummy = create_block_dummy(0,merkle_root_first);
+    set_nonce_to_block(block_dummy,nonce);
     //     DumpHex( L_arrays_p_cont->main_layer_pointer  (*(L_arrays[0]->main_pointer))->hash  ,
     //     crypto_generichash_BYTES);
 
-    printf("layers copied!\n");
     int ver_result = 0;
+    zlog_info(client_log, "verifying messages");
     for (size_t i = 0; i < 512; i++)
     { // verify all messages
         // 	  printf("----------------->verify %lu nth\n",i);
@@ -210,5 +218,6 @@ int setup_client_iouring()
     free(L_arrays_p_cont->messages_arr);
     free(msg_arr); // free conrainer for messages
     free(L_arrays_p_cont);
+    free(block_dummy);
     // free(msg_arr);
 }

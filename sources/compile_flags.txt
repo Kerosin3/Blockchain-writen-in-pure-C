@@ -15,4 +15,5 @@
 -I
 ./INCLUDE/accounts
 -I
-
+./INCLUDE/hashing
+-I

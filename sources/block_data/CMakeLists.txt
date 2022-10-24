@@ -15,5 +15,6 @@ target_include_directories(${PROJECT_NAME} PRIVATE ${PROJECT_INCLUDE_DIRS}/) #ex
 TARGET_LINK_LIBRARIES(${PROJECT_NAME}
 		      sodium
 		      misc
+		      hashing
 		      )
 

@@ -10,6 +10,17 @@ unsigned char* calc_hash(signed_message_t s_message){
 	return out_hash;
 }
 
+unsigned char* calc_hashof_hash(unsigned char* hash0){
+	unsigned char* out_hash = calloc(crypto_generichash_BYTES,sizeof(unsigned char));
+	crypto_generichash(out_hash,crypto_generichash_BYTES,
+			hash0, crypto_generichash_BYTES,
+			NULL,0);
+	return out_hash;
+}
+
+
+
+
 // add verify!!!!!!!!!!!
 // store pointer to messages!
 hash_point_p create_hpoint_message(signed_message_t* s_msg1, signed_message_t* s_msg2){

@@ -6,11 +6,12 @@
 #include <sodium/crypto_generichash.h>
 #include <stdint.h>
 #include <stdio.h>
+#include "hashing.h"
 #include <stdlib.h>
 
 #define NONCE_LEN 15
 
-typedef struct block
+typedef struct __attribute__((packed)) block
 {
     unsigned char nonce[NONCE_LEN];
     char date[35];
@@ -21,6 +22,12 @@ typedef struct block
     unsigned char merkle_root[crypto_generichash_BYTES];
 
 } block_t;
+
+
+void set_nonce_to_block(block_t* blk,unsigned char* nonce);
+unsigned char* solve_puzzle(unsigned char *merkle_root,unsigned difficulty);
+block_t* create_block_dummy(block_t* prev_block, unsigned char* merkle_root );
+
 /*
 block_t* try_create_block(
         block_t* prev_block,
@@ -28,5 +35,4 @@ block_t* try_create_block(
         );
 */
 
-void solve_puzzle(unsigned char *merkle_root);
 #endif

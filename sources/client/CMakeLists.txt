@@ -10,9 +10,6 @@ ADD_EXECUTABLE ( ${PROJECT_NAME}
 		main.c
 		)
 
-	#target_include_directories(${PROJECT_NAME} PUBLIC ${PROJECT_INCLUDE_DIRS})
-
-
 
 set(PROJECT_INCLUDE_DIRS ${SOURCES_ROOT_DIR} )
 target_include_directories(${PROJECT_NAME} PUBLIC ${PROJECT_INCLUDE_DIRS}/${PROJECT_NAME}) #import headers

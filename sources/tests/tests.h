@@ -1,11 +1,11 @@
 #ifndef TESTS
 #define TESTS
 
-#include "../accounts/acc_utils.h"
+#include "acc_utils.h"
 #include "blockdata.h"
 #include "layering.h"
 #include "merkle_process.h"
-#include "../hashing/hashing.h"
+#include "hashing.h"
 #include "../networking/start_server.h"
 #include "../puzzle/puzzle.h"
 #include "../serdes/serdes.h"

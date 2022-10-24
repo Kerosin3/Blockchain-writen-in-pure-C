@@ -2,7 +2,7 @@
 
 #define HASHING
 
-#include "../accounts/acc_utils.h"
+#include "acc_utils.h"
 #include <sodium/crypto_generichash.h>
 #include <sodium/crypto_stream_salsa2012.h>
 #include <stdlib.h>
@@ -26,6 +26,7 @@ typedef struct {
 	unsigned char hashMSG2[crypto_generichash_BYTES];
 } smgs2;
 
+unsigned char* calc_hashof_hash(unsigned char* hash0);
 
 // generic struct for storing hash_point
 typedef struct hash_point_t{

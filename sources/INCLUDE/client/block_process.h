@@ -4,6 +4,7 @@
 #include "blockdata.h"
 #include "layering.h"
 #include "zlog.h"
+#include "hashing.h"
 
 typedef struct
 {

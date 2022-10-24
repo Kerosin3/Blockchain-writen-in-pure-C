@@ -1,7 +1,7 @@
 #ifndef LAYERING
 #define LAYERING
 
-#include "../hashing/hashing.h"
+#include "hashing.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
