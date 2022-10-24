@@ -3,16 +3,15 @@
 
 #define _GNU_SOURCE
 #include "acc_utils.h"
-#include "misc.h"
 #include "data_handlers.h"
-#include "start_server.h"
-#include "zlog.h"
-#include "serdes.h"
-#include "layering.h"
 #include "ipcmessages.h"
+#include "layering.h"
+#include "misc.h"
+#include "serdes.h"
 #include "settings.h"
 #include "setup.h"
-#include "data_handlers.h"
+#include "start_server.h"
+#include "zlog.h"
 #include <asm-generic/errno-base.h>
 #include <errno.h>
 #include <fcntl.h>
@@ -28,9 +27,7 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 
-
 extern circ_buf_t CBUF;
-
 
 typedef enum
 {

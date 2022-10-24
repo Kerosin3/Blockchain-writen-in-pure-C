@@ -11,15 +11,15 @@ layer_hp *create_a_h_layer(unsigned long long *size_d_layer, hash_point_p *start
         level++; // calc level
     if ((*size_d_layer) == 1)
     {
-//        printf("create root node\n");
+        //        printf("create root node\n");
         layer_hp *a_layer = calloc(1, sizeof(layer_hp));
         a_layer->size = *size_d_layer;
         a_layer->level = level;
         hash_point_p *beg_pointer = calloc(*size_d_layer, sizeof(hash_point_p));
         a_layer->main_pointer = beg_pointer;
         *beg_pointer = create_hpoint_hashG(*start_hpointr, start_hpointr[1]);
-  //      printf("root hash:\n");
-    //    DumpHex(((*(beg_pointer))->hash), crypto_generichash_BYTES);
+        //      printf("root hash:\n");
+        //    DumpHex(((*(beg_pointer))->hash), crypto_generichash_BYTES);
         //	printf("side hash 1:\n");
         //	DumpHex(  (((hash_point_p) ((*(beg_pointer))->hpoint1)))  , crypto_generichash_BYTES);
         //	printf("side hash 2:\n");
@@ -27,7 +27,7 @@ layer_hp *create_a_h_layer(unsigned long long *size_d_layer, hash_point_p *start
         //	printf("root P is %p\n",a_layer->main_pointer);
         return a_layer;
     }
-    //printf("creating n nodes HASH:%llu\n", *size_d_layer);
+    // printf("creating n nodes HASH:%llu\n", *size_d_layer);
     layer_hp *a_layer = calloc(1, sizeof(layer_hp));
     a_layer->size = *size_d_layer;
     hash_point_p *beg_pointer = calloc(*size_d_layer, sizeof(hash_point_p));
@@ -47,10 +47,10 @@ void fill_intermediate_levels(unsigned long long MSG_expt, unsigned long long *n
 
     for (signed k = MSG_expt - 2; k >= 0; --k)
     {
-        //printf("k is %d \n", k);
+        // printf("k is %d \n", k);
         L_arrays[k] = create_a_h_layer(n_msg, L_arrays[k + 1]->main_pointer);
         L_arrays_p[k] = *L_arrays[k];
-        //printf("done!\n");
+        // printf("done!\n");
     }
 }
 
@@ -83,7 +83,7 @@ hashes_hashNode get_a_hashes_Hnode(layer_hp **a_layer, size_t N)
 layer_hp *process_s_messages(unsigned long long s_msgN, signed_message_t *star_msg)
 {
     s_msgN >>= 1; // devide by 2
-//    printf("msg merged nodes %llu\n", s_msgN);
+                  //    printf("msg merged nodes %llu\n", s_msgN);
     layer_hp *a_layer = calloc(1, sizeof(layer_hp));
     a_layer->size = s_msgN; // assign size
     // create storage for porinters
@@ -108,7 +108,7 @@ layer_hp *process_s_messagesV2(unsigned long long s_msgN, signed_message_t **sta
     while (_n >>= 1)
         level++;            // calc level
     a_layer->level = level; // assign level
- //   printf("msg merged nodes %llu, layer is %zu\n", s_msgN, level);
+                            //   printf("msg merged nodes %llu, layer is %zu\n", s_msgN, level);
     hash_point_p *beg_pointer = calloc(s_msgN, sizeof(hash_point_p));
     a_layer->main_pointer = beg_pointer;
     size_t k = 0;

@@ -1,11 +1,11 @@
 #ifndef BLOCKDATA
 #define BLOCKDATA
 
-#include <sodium/crypto_generichash.h>
-#include <stdio.h>
 #include "misc.h"
 #include <sodium.h>
+#include <sodium/crypto_generichash.h>
 #include <stdint.h>
+#include <stdio.h>
 #include <stdlib.h>
 
 #define NONCE_LEN 15

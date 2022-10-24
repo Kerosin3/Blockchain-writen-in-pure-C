@@ -6,7 +6,6 @@
 #include <stdlib.h>
 
 void some();
-void test(unsigned char*);
+void test(unsigned char *);
 
 #endif
-

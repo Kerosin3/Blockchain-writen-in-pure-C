@@ -9,7 +9,7 @@
 #include <stdio.h>
 /** @file start_server.h
  * Setupping server IU_URING
-*/ 
+ */
 
 /*!
  * @brief starting server on specified port

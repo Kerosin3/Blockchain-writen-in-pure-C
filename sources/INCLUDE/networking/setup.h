@@ -3,9 +3,9 @@
 #define SETUP
 #include "../accounts/acc_utils.h"
 #include "../serdes/transaction.pb-c.h"
+#include "data_handlers.h"
 #include "settings.h"
 #include <dirent.h>
-#include "data_handlers.h"
 #include <fcntl.h>
 #include <liburing.h>
 #include <linux/limits.h>
@@ -25,8 +25,7 @@ extern signed_message_t *buffer_signed_message;
 extern size_t *beffer_sended_N;
 int setup_serv_sock(uint16_t port);
 
-
-extern signed_message_t** ring_data_buf;
+extern signed_message_t **ring_data_buf;
 
 void destroy_buffers();
 void setup_buffers();

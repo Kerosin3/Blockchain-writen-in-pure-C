@@ -2,11 +2,11 @@
 
 #define IPCMESSAGES
 
-#include "misc.h"
 #include "../serdes/transaction.pb-c.h"
+#include "misc.h"
+#include "start_server.h"
 #include <stdio.h>
 #include <stdlib.h>
-#include "start_server.h"
 
 size_t send_ONLY_status_code(IpcMessage *message, void *socket_buf, IpcMessage__Status STATUS);
 
