@@ -7,6 +7,7 @@
 #include <signal.h>
 #include <stdint.h>
 #include <stdio.h>
+#include <dirent.h>
 /** @file start_server.h
  * Setupping server IU_URING
  */

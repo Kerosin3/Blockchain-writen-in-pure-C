@@ -14,6 +14,15 @@ int main(int argc, char *argv[])
     {
         printf("no cblockchain_conf env variable has been found\n");
     }
+
+    char logdir[128]={0};
+    snprintf(logdir,128,"%s", getenv("HOME"));
+    snprintf(logdir+strlen(logdir),128,"%s","/logs");
+    struct stat st = {0};
+    if (stat(logdir,&st) == -1){
+        fprintf(stdout, "no logs folder exists, creating...\n");
+	mkdir(logdir,0744);
+    }
     client_logging_enabled = 0;
 
     int rc;

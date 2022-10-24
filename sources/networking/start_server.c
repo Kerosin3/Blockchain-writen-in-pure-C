@@ -19,7 +19,15 @@ void start_server(uint16_t port)
 		if (!server_conf_logfile){
 			printf("no cblockchain_conf env variable has been found\n");
 			return;
-		}
+		} 
+    char logdir[128]={0};
+    snprintf(logdir,128,"%s", getenv("HOME"));
+    snprintf(logdir+strlen(logdir),128,"%s","/logs");
+    struct stat st = {0};
+    if (stat(logdir,&st) == -1){
+        fprintf(stdout, "no logs folder exists, creating...\n");
+	mkdir(logdir,0744);
+    }
     server_logging_enabled = 0;
     setup_buffers(MAX_CONNECTIONS);      // establish buffers
     int serv_fd = setup_serv_sock(port); // set server fd
