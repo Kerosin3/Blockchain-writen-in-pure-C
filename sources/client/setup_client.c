@@ -60,18 +60,25 @@ int setup_client_iouring()
     struct io_uring_sqe *sqe = io_uring_get_sqe(&ring);
 
     io_uring_prep_connect(sqe, s, res->ai_addr, res->ai_addrlen); // prep connect
-    printf("usign socket:%d\n", s);
 
     if (io_uring_submit(&ring) < 0) // submit now!
         printf("error submitting\n");
     struct io_uring_cqe *cqe_main;
     io_uring_wait_cqe(&ring, &cqe_main);
     int ret = cqe_main->res;
-    if (!ret)
+    if (ret==0)
     {
         zlog_info(client_log, "connection to server has been established!");
         printf("connection established!\n");
         io_uring_cqe_seen(&ring, cqe_main);
+    } else {
+        zlog_info(client_log, "error while trying connecting to the server");
+	printf("error establishing connection to server, exiting\n");
+	close(s);
+        free(buffer_transactions);
+        freeaddrinfo(res);
+	return 0;
+
     }
     IpcMessage__Status FLAG_FROM_SERVER = IPC_MESSAGE__STATUS__ERROR; // set error default status
     size_t k = 0;
