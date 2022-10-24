@@ -2,8 +2,8 @@
 
 #define CLIENT
 
-#include "../accounts/acc_utils.h"
-#include "../serdes/transaction.pb-c.h"
+#include "acc_utils.h"
+#include "transaction.pb-c.h"
 #include "block_process.h"
 #include "blockdata.h"
 #include "ipc_messages_client.h"

@@ -22,7 +22,6 @@ TARGET_LINK_LIBRARIES(${PROJECT_NAME}
 		      hashing
 		      blockdata
 		      sodium
-		      puzzle
 		      networking
 		      protobuf-c
 		      serdes

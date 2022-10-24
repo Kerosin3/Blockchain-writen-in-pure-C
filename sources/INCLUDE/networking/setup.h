@@ -1,8 +1,8 @@
 #ifndef SETUP
 
 #define SETUP
-#include "../accounts/acc_utils.h"
-#include "../serdes/transaction.pb-c.h"
+#include "acc_utils.h"
+#include "transaction.pb-c.h"
 #include "data_handlers.h"
 #include "settings.h"
 #include <dirent.h>

@@ -3,11 +3,7 @@
 #define BUFSIZE 4096
 #define BLOCKSIZE 512
 #define BUFSIZEFORMESSAGE 512
-// size_t send_need_more_msg(struct io_uring *ring,int sock,void* buffer_wr);
 
-// size_t send_STATUS(struct io_uring *ring,int sock,void* buffer_wr, IpcMessage__Status status_msg);
-
-// size_t send_ACKN_OK(struct io_uring *ring,int sock,void* buffer_wr);
 IpcMessage *buffer_transactions;
 unsigned long long EXPONENT = 9; //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -64,7 +60,7 @@ int setup_client_iouring()
     struct io_uring_sqe *sqe = io_uring_get_sqe(&ring);
 
     io_uring_prep_connect(sqe, s, res->ai_addr, res->ai_addrlen); // prep connect
-    printf("-->%d\n", s);
+    printf("usign socket:%d\n", s);
 
     if (io_uring_submit(&ring) < 0) // submit now!
         printf("error submitting\n");
@@ -129,8 +125,10 @@ int setup_client_iouring()
         case IPC_MESSAGE__STATUS__MESSAGE_SENDED:
             if (count < BLOCKSIZE - 1)
             {
-                if (client_logging_enabled)
+                if (client_logging_enabled){
                     zlog_info(client_log, "acquired %d,sending ACK...", cqe->res);
+                    zlog_info(client_log, "accept msg num: %zu", count);
+		}
                 deserialize_data_from_server(buffer, cqe->res, msg_arr + count);
                 count++;
                 ret = send_STATUS(&ring, s, buffer, IPC_MESSAGE__STATUS__ACKN_OK);
@@ -182,10 +180,11 @@ int setup_client_iouring()
     unsigned char merkle_root_first[crypto_generichash_BYTES];
     memcpy(merkle_root_first,(*(L_arrays_p_cont->main_layer_pointer[0].main_pointer))->hash, crypto_generichash_BYTES);
     //****************************************************/
-    unsigned char* nonce = solve_puzzle(merkle_root_first,3); //calc puzzle
+    unsigned char* nonce = solve_puzzle(merkle_root_first,1); //calc puzzle
     //create block
     block_t* block_dummy = create_block_dummy(0,merkle_root_first);
     set_nonce_to_block(block_dummy,nonce);
+    // merkle hash
     //     DumpHex( L_arrays_p_cont->main_layer_pointer  (*(L_arrays[0]->main_pointer))->hash  ,
     //     crypto_generichash_BYTES);
 

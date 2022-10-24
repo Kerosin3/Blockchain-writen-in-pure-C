@@ -7,7 +7,7 @@ l_msg_container *calc_merkle_tree(unsigned long long EXPONENT, signed_message_t 
     unsigned long long n_msg = (1LLU << EXPONENT); //  create 2^9 messages
     layer_hp **L_arrays = calloc(EXPONENT, sizeof(layer_hp));
     layer_hp *L_arrays_p = calloc(EXPONENT, sizeof(layer_hp));
-    zlog_info(client_log, "now precessing number of messages:",n_msg);
+    zlog_info(client_log, "now processing number of messages:",n_msg);
 
     signed_message_t **msg_arr = calloc(n_msg, sizeof(signed_message_t *));
     //----fill messages

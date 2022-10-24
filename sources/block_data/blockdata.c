@@ -7,7 +7,7 @@ block_t* create_block_dummy(
 {    
     block_t* blk = calloc(1,sizeof(block_t));
     //copy merkle root
-    unsigned char* temp_hash = calc_hashof_hash(merkle_root);// calc hash of hash
+    unsigned char* temp_hash = calc_hashof_hash(merkle_root);// calc hash of hash BIRTHDAY
     memcpy(blk->merkle_root,temp_hash,crypto_generichash_BYTES); // copy this hash
     free(temp_hash);
     //set time

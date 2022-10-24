@@ -1,5 +1,4 @@
 #include "layering.h"
-#include <sodium/crypto_generichash.h>
 
 // create a level
 layer_hp *create_a_h_layer(unsigned long long *size_d_layer, hash_point_p *start_hpointr)

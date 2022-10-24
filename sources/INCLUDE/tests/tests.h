@@ -6,9 +6,9 @@
 #include "layering.h"
 #include "merkle_process.h"
 #include "hashing.h"
-#include "../networking/start_server.h"
-#include "../puzzle/puzzle.h"
-#include "../serdes/serdes.h"
+#include "start_server.h"
+//#include "../puzzle/puzzle.h"
+#include "serdes.h"
 #include "zlog.h"
 #include "misc.h"
 #include <sodium.h>

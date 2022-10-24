@@ -2,7 +2,7 @@
 
 #define IPCMESSAGES
 
-#include "../serdes/transaction.pb-c.h"
+#include "transaction.pb-c.h"
 #include "misc.h"
 #include "start_server.h"
 #include <stdio.h>

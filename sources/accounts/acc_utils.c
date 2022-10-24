@@ -1,8 +1,4 @@
 #include "acc_utils.h"
-#include <assert.h>
-#include <sodium/crypto_sign.h>
-#include <stdlib.h>
-#include <string.h>
 /*
  * return signed message without PK, message need cleanup
  *

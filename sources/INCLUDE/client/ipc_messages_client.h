@@ -1,8 +1,8 @@
 #ifndef IPCMESSAGESCLIENT
 #define IPCMESSAGESCLIENT
 
-#include "../accounts/acc_utils.h"
-#include "../serdes/transaction.pb-c.h"
+#include "acc_utils.h"
+#include "transaction.pb-c.h"
 #include "misc.h"
 #include "zlog.h"
 #include <liburing.h>

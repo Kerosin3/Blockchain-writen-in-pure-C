@@ -44,6 +44,7 @@ TARGET_LINK_LIBRARIES( ${PROJECT_NAME}
 		      misc
 		      blockdata
 		      hashing
+		      serdes
 		      logging
 		      accounts
 	      		)
