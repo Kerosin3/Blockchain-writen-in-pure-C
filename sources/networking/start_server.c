@@ -4,7 +4,7 @@
 
 struct io_uring ring;
 
-const char* server_conf_logfile = "/home/ker0/test/prj/sources/logging/zlog.conf";
+const char* server_conf_logfile ;//= "/home/ker0/test/prj/sources/logging/zlog.conf";
 int server_logging_enabled;
 circ_buf_t CBUF;
 
@@ -14,6 +14,12 @@ zlog_category_t *server_log;
  * *******************************************************************************/
 void start_server(uint16_t port)
 {
+
+	server_conf_logfile = getenv("cblockchain_conf");
+		if (!server_conf_logfile){
+			printf("no cblockchain_conf env variable has been found\n");
+			return;
+		}
     server_logging_enabled = 0;
     setup_buffers(MAX_CONNECTIONS);      // establish buffers
     int serv_fd = setup_serv_sock(port); // set server fd

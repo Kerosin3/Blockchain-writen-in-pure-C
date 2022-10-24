@@ -3,11 +3,16 @@
 #include "setup_client.h"
 #include <zlog.h>
 
-const char* client_conf_logfile = "/home/ker0/test/prj/sources/logging/zlog.conf";
+const char* client_conf_logfile;// = "/home/ker0/test/prj/sources/logging/zlog.conf";
 int client_logging_enabled;
 zlog_category_t *client_log;
 
 int main(int argc, char *argv[]){
+	client_conf_logfile = getenv("cblockchain_conf");
+		if (!client_conf_logfile){
+			printf("no cblockchain_conf env variable has been found\n");
+			return 0;
+		}
 	client_logging_enabled = 0;
 
 	int rc;
