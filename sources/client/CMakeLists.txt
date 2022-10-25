@@ -8,6 +8,7 @@ ADD_EXECUTABLE ( ${PROJECT_NAME}
 		../serdes/transaction.pb-c.c
 		block_process.c
 		main.c
+		p2p_setup.c
 		)
 
 
