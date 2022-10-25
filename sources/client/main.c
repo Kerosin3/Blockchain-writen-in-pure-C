@@ -54,6 +54,7 @@ int main(int argc, char *argv[])
     setup_buffers();      // establish buffers
     int serv_fd = setup_serv_sock(10001); // set server fd
     printf("p2p launched at 10001\n");
+    zlog_info(client_log, "p2p server started");
     setup_iouring(&ring_p2p, false);
 
 //----------------------------------------------------
@@ -76,5 +77,6 @@ int main(int argc, char *argv[])
    teardown_server_sock(serv_fd);
    close(serv_fd);
    io_uring_queue_exit(&ring_p2p);
+    zlog_info(client_log, "P2P APPLICATION FINISHED");
     return 0;
 }

@@ -9,6 +9,7 @@ ADD_EXECUTABLE ( ${PROJECT_NAME}
 		block_process.c
 		main.c
 		p2p_setup.c
+		p2p_event_loop.c
 		)
 
 
