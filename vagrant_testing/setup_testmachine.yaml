@@ -1,0 +1,8 @@
+---
+- name: testmachine config
+  hosts: testmachine
+  become: yes
+  roles:
+    - default_setup
+    - setup_shell
+    - copy_soft

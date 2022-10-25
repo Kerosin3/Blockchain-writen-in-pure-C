@@ -1,0 +1,3 @@
+cblockchain_conf: '/home/vagrant/zlog.conf'
+os_type: "arch"
+type_app: "server"

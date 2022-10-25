@@ -1,0 +1,17 @@
+---
+- name: copy server app executable
+  ansible.builtin.copy:
+    src: app.out
+    dest: /home/vagrant/
+    owner: vagrant 
+    mode: '0777'
+- name: copy zconf
+  ansible.builtin.copy:
+    src: zlog.conf
+    dest: /home/vagrant/
+    owner: vagrant 
+    mode: '0644'
+- name: Set env variable
+  lineinfile:
+    path: /home/vagrant/.zshrc
+    line: export cblockchain_conf="/home/vagrant/zlog.conf"
