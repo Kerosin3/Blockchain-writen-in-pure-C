@@ -8,11 +8,6 @@
 IpcMessage *buffer_transactions;
 unsigned long long EXPONENT = 9; //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-void teardown_server_sock(int sock)
-{
-    shutdown(sock, SHUT_RDWR);
-}
-
 int setup_client_iouring()
 {
     struct addrinfo hints, *res, *p;

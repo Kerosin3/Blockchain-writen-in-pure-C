@@ -3,10 +3,12 @@
 #include <stdlib.h>
 #include <zlog.h>
 #include <threads.h>
-
+#include <p2p_setup.h>
 const char *client_conf_logfile; // = "/home/ker0/test/prj/sources/logging/zlog.conf";
 int client_logging_enabled;
 zlog_category_t *client_log;
+
+struct io_uring ring_p2p;
 
 int main(int argc, char *argv[])
 {
@@ -46,6 +48,15 @@ int main(int argc, char *argv[])
     client_logging_enabled = 1;
     zlog_info(client_log, "client logging started!");
 #endif
+    //------------------------------------------------
+    //setup p2p
+	
+    setup_buffers();      // establish buffers
+    int serv_fd = setup_serv_sock(10001); // set server fd
+    printf("p2p launched at 10001\n");
+    setup_iouring(&ring_p2p, false);
+
+//----------------------------------------------------
     thrd_t thread_messages_accept; // create threads
     
    int tc_ret = thrd_create(&thread_messages_accept, (thrd_start_t)setup_client_iouring, (void *)0);
@@ -61,6 +72,9 @@ int main(int argc, char *argv[])
             printf("error joining thread \n");
         }
 //    setup_client_iouring();
-
+   destroy_buffers();
+   teardown_server_sock(serv_fd);
+   close(serv_fd);
+   io_uring_queue_exit(&ring_p2p);
     return 0;
 }
