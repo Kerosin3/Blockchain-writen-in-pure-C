@@ -3,6 +3,7 @@
 #define BUFSIZE 4096
 #define BLOCKSIZE 512
 #define BUFSIZEFORMESSAGE 512
+#define ring_entries_num 10
 
 IpcMessage *buffer_transactions;
 unsigned long long EXPONENT = 9; //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -55,7 +56,7 @@ int setup_client_iouring()
     buffer_transactions = calloc(1, sizeof(IpcMessage)); // buffers for storing current buffer size
 
     struct io_uring ring;
-    io_uring_queue_init(10, &ring, 0);
+    io_uring_queue_init(ring_entries_num, &ring, 0);
 
     struct io_uring_sqe *sqe = io_uring_get_sqe(&ring);
 
@@ -225,5 +226,6 @@ int setup_client_iouring()
     free(msg_arr); // free conrainer for messages
     free(L_arrays_p_cont);
     free(block_dummy);
-    // free(msg_arr);
+     // free(msg_arr);
+    thrd_exit(1);
 }

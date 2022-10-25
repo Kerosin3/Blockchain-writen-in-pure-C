@@ -7,6 +7,7 @@
 #include "block_process.h"
 #include "blockdata.h"
 #include "ipc_messages_client.h"
+#include <threads.h>
 #include "merkle_process.h"
 #include "zlog.h"
 #include <arpa/inet.h>

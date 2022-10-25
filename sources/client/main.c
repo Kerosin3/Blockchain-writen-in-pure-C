@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <zlog.h>
+#include <threads.h>
 
 const char *client_conf_logfile; // = "/home/ker0/test/prj/sources/logging/zlog.conf";
 int client_logging_enabled;
@@ -45,6 +46,21 @@ int main(int argc, char *argv[])
     client_logging_enabled = 1;
     zlog_info(client_log, "client logging started!");
 #endif
-    setup_client_iouring();
+    thrd_t thread_messages_accept; // create threads
+    
+   int tc_ret = thrd_create(&thread_messages_accept, (thrd_start_t)setup_client_iouring, (void *)0);
+   if (tc_ret == thrd_error)
+        {
+            printf("error while thread creation\n");
+            exit(1);
+        }
+//check thread
+	int rez = -1;
+        if (thrd_join(thread_messages_accept, &rez) != thrd_success)
+        {
+            printf("error joining thread \n");
+        }
+//    setup_client_iouring();
+
     return 0;
 }
