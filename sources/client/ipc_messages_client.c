@@ -32,7 +32,7 @@ void deserialize_data_from_server(char *buff, unsigned len, signed_message_t *ms
     if (message->has_transaction_msg)
     {
         msg->length = message->transaction_msg.len;               // assign length
-        memcpy(msg->message, message->transaction_msg.data, len); // copy data to pointer
+        memcpy(msg->message, message->transaction_msg.data, message->transaction_msg.len); // copy data to pointer
                                                                   // DumpHex(a_msg.message,a_msg.length);
         // DumpHex(message->transaction_msg.data,message->transaction_msg.len);
         // 		printf("date: %s\n",message->timestamp);
