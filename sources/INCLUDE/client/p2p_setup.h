@@ -16,7 +16,7 @@
 #include <string.h>
 #include <sys/socket.h>
 #include <unistd.h>
-
+#include <threads.h>
 
 extern char *buffers;                  
 extern size_t *buffer_lengths;          

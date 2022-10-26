@@ -17,6 +17,8 @@
 #include <sys/socket.h>
 #include <sys/types.h>
 #include "dhandlers_p2p.h"
+#include "common.h"
+
 
 typedef struct {
 	struct io_uring *ring;

@@ -82,7 +82,8 @@ int setup_client_iouring()
     size_t count = 0;
     char *buffer = calloc(BUFSIZE, sizeof(char));
     char *buffer2 = calloc(BUFSIZE, sizeof(char));
-
+    l_msg_container *L_arrays_p_cont  = 0;
+    block_t* block_dummy  = 0;
     signed_message_t *msg_arr = calloc(BLOCKSIZE, sizeof(signed_message_t));
     for (size_t i = 0; i < BLOCKSIZE; i++)
     {
@@ -99,8 +100,10 @@ int setup_client_iouring()
         {
             if (client_logging_enabled)
                 zlog_info(client_log, "block (512) messages, has been acquired");
-	    //continue;
-            break;
+	//    printf("cycle!\n"); // ALWAYS CYCLING!!
+            ifread = 0;
+	    continue;
+            //break;
         }
         if (ifread == 0)
         {
@@ -110,16 +113,20 @@ int setup_client_iouring()
             io_uring_wait_cqe(&ring, &cqe);
             io_uring_cqe_seen(&ring, cqe);
             ifread = 1;
-            continue;
+	    continue;
+            //break;
         }
+
         ifread = 0;
         int ret = cqe->res; // N readed bytes
-        switch (FLAG_FROM_SERVER = read_response_ONLY_STATUS(buffer, cqe->res))
+	FLAG_FROM_SERVER = read_response_ONLY_STATUS(buffer, cqe->res);
+	printf("message flag form server %d\n",FLAG_FROM_SERVER);
+        switch (FLAG_FROM_SERVER) 
         {
         case IPC_MESSAGE__STATUS__ASK_NEED_MSG:
             if (client_logging_enabled)
                 zlog_info(client_log, "server ask if need msg");
-            ret = send_STATUS(&ring, s, buffer2, IPC_MESSAGE__STATUS__NEED_MORE);
+            ret = send_STATUS(&ring, s, buffer2, IPC_MESSAGE__STATUS__NEED_MORE); // BNUFFER2 &&&
             break;
         case IPC_MESSAGE__STATUS__OK:
             if (client_logging_enabled)
@@ -145,7 +152,41 @@ int setup_client_iouring()
                 if (client_logging_enabled)
                     zlog_info(client_log, "stop, accepting");
                 ret = send_STATUS(&ring, s, buffer2, IPC_MESSAGE__STATUS__ENOUGH); // 512 blocks acquired
-                flag_block_filled = 1;
+//                 flag_block_filled = 1;
+
+    zlog_info(client_log, "calcing merkle tree from received messges!");
+    L_arrays_p_cont = calc_merkle_tree(EXPONENT, msg_arr); 
+    printf("merkle root :\n");
+    DumpHex((*(L_arrays_p_cont->main_layer_pointer[0].main_pointer))->hash, crypto_generichash_BYTES);
+    unsigned char merkle_root_first[crypto_generichash_BYTES];
+    memcpy(merkle_root_first,(*(L_arrays_p_cont->main_layer_pointer[0].main_pointer))->hash, crypto_generichash_BYTES);
+    //****************************************************/
+    unsigned char* nonce = solve_puzzle(merkle_root_first,1); //calc puzzle
+    //create block
+    block_dummy = create_block_dummy(0,merkle_root_first);
+    set_nonce_to_block(block_dummy,nonce);
+    // merkle hash
+    //     DumpHex( L_arrays_p_cont->main_layer_pointer  (*(L_arrays[0]->main_pointer))->hash  ,
+    //     crypto_generichash_BYTES);
+
+    int ver_result = 0;
+    zlog_info(client_log, "verifying messages");
+    for (size_t i = 0; i < 512; i++)
+    { // verify all messages
+        // 	  printf("----------------->verify %lu nth\n",i);
+        int rez = merkle_verify_message(EXPONENT, i, L_arrays_p_cont->main_layer_pointer);
+        if (!rez)
+            break;
+        ver_result += rez;
+    }
+	printf("verification result %d\n",ver_result);
+
+
+
+    mtx_lock(&block_created_mtx);
+	flag_block_created = 1;
+    mtx_unlock(&block_created_mtx);
+	flag_block_filled = 1;
             }
             else
             {
@@ -163,6 +204,7 @@ int setup_client_iouring()
             flag_block_filled = 1;
             break;
         default:
+	    printf("default!\n");
             break;
         }
 
@@ -177,32 +219,7 @@ int setup_client_iouring()
     free(buffer_transactions);
     freeaddrinfo(res);
 
-    zlog_info(client_log, "calcing merkle tree from received messges!");
-    l_msg_container *L_arrays_p_cont = calc_merkle_tree(EXPONENT, msg_arr); 
-    printf("merkle root :\n");
-    DumpHex((*(L_arrays_p_cont->main_layer_pointer[0].main_pointer))->hash, crypto_generichash_BYTES);
-    unsigned char merkle_root_first[crypto_generichash_BYTES];
-    memcpy(merkle_root_first,(*(L_arrays_p_cont->main_layer_pointer[0].main_pointer))->hash, crypto_generichash_BYTES);
-    //****************************************************/
-    unsigned char* nonce = solve_puzzle(merkle_root_first,1); //calc puzzle
-    //create block
-    block_t* block_dummy = create_block_dummy(0,merkle_root_first);
-    set_nonce_to_block(block_dummy,nonce);
-    // merkle hash
-    //     DumpHex( L_arrays_p_cont->main_layer_pointer  (*(L_arrays[0]->main_pointer))->hash  ,
-    //     crypto_generichash_BYTES);
-
-    int ver_result = 0;
-    zlog_info(client_log, "verifying messages");
-    for (size_t i = 0; i < 512; i++)
-    { // verify all messages
-        // 	  printf("----------------->verify %lu nth\n",i);
-        int rez = merkle_verify_message(EXPONENT, i, L_arrays_p_cont->main_layer_pointer);
-        if (!rez)
-            break;
-        ver_result += rez;
-    }
-    // free msg for client
+        // free msg for client
     for (size_t i = 0; i < BLOCKSIZE; i++)
     {
         free(msg_arr[i].message);

@@ -24,6 +24,8 @@
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <unistd.h>
+#include "common.h"
+#include <threads.h>
 
 /** @file setup_client.h
  * Setupping client io_uring

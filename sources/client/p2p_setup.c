@@ -4,6 +4,7 @@ char *buffers;                   // buffers for incomn connections
 size_t *buffer_lengths;          // current buffer length
 size_t *buffer_sended_N;
 
+
 void setup_buffers()
 {
     buffers = malloc(MAX_CONNECTIONS * BUFFER_SIZE); // connection buffers for messages

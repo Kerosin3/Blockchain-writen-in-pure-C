@@ -5,7 +5,8 @@
 #include <threads.h>
 #include <p2p_setup.h>
 #include "p2p_event_loop.h"
-
+#include "common.h"
+#include <stdatomic.h>
 
 const char *client_conf_logfile; // = "/home/ker0/test/prj/sources/logging/zlog.conf";
 int client_logging_enabled;
@@ -67,15 +68,17 @@ int main(int argc, char *argv[])
     //------------------------------------------------
     //setup p2p
 	
-  //  setup_buffers();      // establish buffers
-   // int serv_fd = setup_serv_sock(10001); // set server fd
-    //printf("p2p launched at 10001\n");
-    //zlog_info(p2p_log, "p2p server started");
-    //setup_iouring(&ring_p2p, false);
-
+    setup_buffers();      // establish buffers
+    int serv_fd = setup_serv_sock(10001); // set server fd
+    printf("p2p launched at 10001\n");
+    zlog_info(p2p_log, "p2p server started");
+    setup_iouring(&ring_p2p, false);
+    kill_thread_p2p = false;
 //----------------------------------------------------
     thrd_t thread_messages_accept; // create threads
     thrd_t thread_p2p_worker; // create threads
+    flag_block_created = 0;
+    mtx_init(&block_created_mtx, mtx_plain); // init mtx
    //setup and start client accept message thread 
    int tc_ret = thrd_create(&thread_messages_accept, (thrd_start_t)setup_client_iouring, (void *)0);
    if (tc_ret == thrd_error)
@@ -83,16 +86,17 @@ int main(int argc, char *argv[])
             printf("error while client accept thread creation\n");
             exit(1);
         }
-   /*event_p2p_params_t* el_params = calloc(1,sizeof(event_p2p_params_t));
+   event_p2p_params_t* el_params = calloc(1,sizeof(event_p2p_params_t));
    el_params->ring = &ring_p2p;
    el_params->serv_sock=  serv_fd;
    tc_ret = thrd_create(&thread_p2p_worker, (thrd_start_t)event_loop_p2p, (void *)el_params);
+   thrd_detach(thread_p2p_worker);
    if (tc_ret == thrd_error)
         {
             printf("error while thread p2p creation\n");
             exit(1);
         }
-*/
+
 //join client accept thread
 	int rez = -1;
         if (thrd_join(thread_messages_accept, &rez) != thrd_success)
@@ -102,10 +106,10 @@ int main(int argc, char *argv[])
   
     setup_client_iouring();
    destroy_buffers();
-  // teardown_server_sock(serv_fd);
-   //close(serv_fd);
+   teardown_server_sock(serv_fd);
+   close(serv_fd);
    io_uring_queue_exit(&ring_p2p);
     zlog_info(p2p_log, "P2P APPLICATION FINISHED");
- //   free(el_params);
+    free(el_params);
     return 0;
 }
