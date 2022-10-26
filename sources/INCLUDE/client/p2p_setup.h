@@ -1,7 +1,7 @@
 #ifndef p2p_setup
 
 #define p2p_setup
-
+#include "p2p_settings.h"
 #include "blockdata.h"
 #include "transaction.pb-c.h"
 #include <dirent.h>

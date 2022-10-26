@@ -40,4 +40,8 @@ extern IpcMessage *buffer_transactions;
 extern zlog_category_t *client_log;
 extern int client_logging_enabled;
 
+extern zlog_category_t *p2p_log;
+extern int p2p_logging_enabled;
+
+
 #endif

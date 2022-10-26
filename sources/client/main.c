@@ -4,9 +4,16 @@
 #include <zlog.h>
 #include <threads.h>
 #include <p2p_setup.h>
+#include "p2p_event_loop.h"
+
+
 const char *client_conf_logfile; // = "/home/ker0/test/prj/sources/logging/zlog.conf";
 int client_logging_enabled;
 zlog_category_t *client_log;
+
+int p2p_logging_enabled;
+zlog_category_t *p2p_log;
+
 
 struct io_uring ring_p2p;
 
@@ -27,7 +34,7 @@ int main(int argc, char *argv[])
 	mkdir(logdir,0744);
     }
     client_logging_enabled = 0;
-
+    p2p_logging_enabled = 0;
     int rc;
 
     rc = zlog_init(client_conf_logfile);
@@ -41,42 +48,64 @@ int main(int argc, char *argv[])
     client_log = zlog_get_category("logclient");
     if (!client_log)
     {
-        printf("failed init logging category!\n");
+        printf("failed init logging category client log!\n");
         zlog_fini();
     }
+
+    p2p_log = zlog_get_category("logp2p");
+    if (!p2p_log)
+    {
+        printf("failed init logging category p2p log!\n");
+        zlog_fini();
+    }
+
 #if (WRITE_LOG == 1)
     client_logging_enabled = 1;
+    p2p_logging_enabled = 1;
     zlog_info(client_log, "client logging started!");
 #endif
     //------------------------------------------------
     //setup p2p
 	
-    setup_buffers();      // establish buffers
-    int serv_fd = setup_serv_sock(10001); // set server fd
-    printf("p2p launched at 10001\n");
-    zlog_info(client_log, "p2p server started");
-    setup_iouring(&ring_p2p, false);
+  //  setup_buffers();      // establish buffers
+   // int serv_fd = setup_serv_sock(10001); // set server fd
+    //printf("p2p launched at 10001\n");
+    //zlog_info(p2p_log, "p2p server started");
+    //setup_iouring(&ring_p2p, false);
 
 //----------------------------------------------------
     thrd_t thread_messages_accept; // create threads
-    
+    thrd_t thread_p2p_worker; // create threads
+   //setup and start client accept message thread 
    int tc_ret = thrd_create(&thread_messages_accept, (thrd_start_t)setup_client_iouring, (void *)0);
    if (tc_ret == thrd_error)
         {
-            printf("error while thread creation\n");
+            printf("error while client accept thread creation\n");
             exit(1);
         }
-//check thread
+   /*event_p2p_params_t* el_params = calloc(1,sizeof(event_p2p_params_t));
+   el_params->ring = &ring_p2p;
+   el_params->serv_sock=  serv_fd;
+   tc_ret = thrd_create(&thread_p2p_worker, (thrd_start_t)event_loop_p2p, (void *)el_params);
+   if (tc_ret == thrd_error)
+        {
+            printf("error while thread p2p creation\n");
+            exit(1);
+        }
+*/
+//join client accept thread
 	int rez = -1;
         if (thrd_join(thread_messages_accept, &rez) != thrd_success)
         {
             printf("error joining thread \n");
         }
-//    setup_client_iouring();
+  
+    setup_client_iouring();
    destroy_buffers();
-   teardown_server_sock(serv_fd);
-   close(serv_fd);
+  // teardown_server_sock(serv_fd);
+   //close(serv_fd);
    io_uring_queue_exit(&ring_p2p);
-    zlog_info(client_log, "P2P APPLICATION FINISHED");
+    zlog_info(p2p_log, "P2P APPLICATION FINISHED");
+ //   free(el_params);
     return 0;
 }

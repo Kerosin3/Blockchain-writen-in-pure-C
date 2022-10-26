@@ -99,6 +99,7 @@ int setup_client_iouring()
         {
             if (client_logging_enabled)
                 zlog_info(client_log, "block (512) messages, has been acquired");
+	    //continue;
             break;
         }
         if (ifread == 0)

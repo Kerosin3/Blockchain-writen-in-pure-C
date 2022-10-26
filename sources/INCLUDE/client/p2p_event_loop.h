@@ -16,12 +16,20 @@
 #include <sys/sendfile.h>
 #include <sys/socket.h>
 #include <sys/types.h>
+#include "dhandlers_p2p.h"
 
-void event_loop_p2p(int serv_sock, struct io_uring *ring);
+typedef struct {
+	struct io_uring *ring;
+	int serv_sock;
+} event_p2p_params_t;
+
+void event_loop_p2p(event_p2p_params_t*);
 
 extern zlog_category_t *client_log;
 extern int client_logging_enabled;
 
+extern zlog_category_t *p2p_log;
+extern int p2p_logging_enabled;
 
 
 #endif

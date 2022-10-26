@@ -1,8 +1,5 @@
 #include "p2p_setup.h"
 
-#define MAX_CONNECTIONS  4096
-#define BUFFER_SIZE  4096
-
 char *buffers;                   // buffers for incomn connections
 size_t *buffer_lengths;          // current buffer length
 size_t *buffer_sended_N;
