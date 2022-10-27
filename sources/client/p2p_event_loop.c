@@ -26,7 +26,8 @@ void event_loop_p2p(event_p2p_params_t* elparams)
 	struct io_uring_cqe *cqe;
         if (UNLIKELY(io_uring_wait_cqe(ring, &cqe)))
             die("error accepting a connection\n");
-	if (flag_block_created) { // test if thread created block!
+	if (mtx_trylock(&block_created_mtx) == thrd_success) { // test if thread created block!
+		memcpy(buffer_BLOCK_DATA, )
 		printf("BLOCK CREATED!\n");
 
 	}else {
@@ -38,6 +39,9 @@ void event_loop_p2p(event_p2p_params_t* elparams)
 	{ 
 	    case FLAG_ACCEPT:
 		    printf("accepted a connection!\n");
+    		    if (p2p_logging_enabled) zlog_info(p2p_log, "accepted a connection");
+            	    add_accept_request(ring, sockfd, &client_addr,
+                               &client_addr_len); // add requst one more time  and set socket id
 		     break;
 		default:
 		     break;
@@ -49,4 +53,5 @@ void event_loop_p2p(event_p2p_params_t* elparams)
     if (p2p_logging_enabled) zlog_info(p2p_log, "exiting main p2p process!");
     printf("exiting p2p process\n");
     io_uring_queue_exit(ring);
+    thrd_exit(1);
 }

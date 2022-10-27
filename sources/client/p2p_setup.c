@@ -3,7 +3,7 @@
 char *buffers;                   // buffers for incomn connections
 size_t *buffer_lengths;          // current buffer length
 size_t *buffer_sended_N;
-
+unsigned char *buffer_BLOCK_DATA;
 
 void setup_buffers()
 {
@@ -18,6 +18,11 @@ void setup_buffers()
     buffer_sended_N = calloc(MAX_CONNECTIONS, sizeof(size_t)); // buffers for storing current buffer size
     if (!buffer_sended_N)
         die("malloc");
+
+    buffer_BLOCK_DATA = calloc(BUFFER_SIZE, sizeof(unsigned char)); // buffers for storing current buffer size
+    if (!buffer_BLOCK_DATA)
+        die("malloc");
+
 
     /*buffer_transactions = calloc(MAX_CONNECTIONS, sizeof(IpcMessage)); // buffers for storing current buffer size
     if (!buffer_transactions)
@@ -41,6 +46,7 @@ void destroy_buffers()
     free(buffers);
     free(buffer_lengths);
     free(buffer_sended_N);
+    free(buffer_BLOCK_DATA);
 }
 
 

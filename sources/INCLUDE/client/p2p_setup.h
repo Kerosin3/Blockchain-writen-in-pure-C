@@ -21,8 +21,7 @@
 extern char *buffers;                  
 extern size_t *buffer_lengths;          
 extern size_t *buffer_sended_N;
-
-
+extern unsigned char *buffer_BLOCK_DATA;
 void destroy_buffers();
 void setup_buffers();
 

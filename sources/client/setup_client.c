@@ -62,6 +62,7 @@ int setup_client_iouring()
     struct io_uring_cqe *cqe_main;
     io_uring_wait_cqe(&ring, &cqe_main);
     int ret = cqe_main->res;
+    mtx_lock(&block_created_mtx);
     if (ret==0)
     {
         zlog_info(client_log, "connection to server has been established!");
@@ -95,13 +96,14 @@ int setup_client_iouring()
     int ifread = 0;
     for (;;)
     {
+	printf("cycle!\n");
         struct io_uring_cqe *cqe;
         if (flag_block_filled)
         {
             if (client_logging_enabled)
                 zlog_info(client_log, "block (512) messages, has been acquired");
-	//    printf("cycle!\n"); // ALWAYS CYCLING!!
             ifread = 0;
+            io_uring_wait_cqe(&ring, &cqe);
 	    continue;
             //break;
         }
@@ -152,7 +154,7 @@ int setup_client_iouring()
                 if (client_logging_enabled)
                     zlog_info(client_log, "stop, accepting");
                 ret = send_STATUS(&ring, s, buffer2, IPC_MESSAGE__STATUS__ENOUGH); // 512 blocks acquired
-//                 flag_block_filled = 1;
+                 flag_block_filled = 1;
 
     zlog_info(client_log, "calcing merkle tree from received messges!");
     L_arrays_p_cont = calc_merkle_tree(EXPONENT, msg_arr); 
@@ -183,7 +185,6 @@ int setup_client_iouring()
 
 
 
-    mtx_lock(&block_created_mtx);
 	flag_block_created = 1;
     mtx_unlock(&block_created_mtx);
 	flag_block_filled = 1;

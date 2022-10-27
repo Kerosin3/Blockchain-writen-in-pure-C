@@ -4,6 +4,7 @@
 
 #include "acc_utils.h"
 #include "misc.h"
+#include "p2p_setup.h"
 #include "zlog.h"
 #include <liburing.h>
 #include <netdb.h>
@@ -26,6 +27,7 @@ typedef struct {
 } event_p2p_params_t;
 
 void event_loop_p2p(event_p2p_params_t*);
+
 
 extern zlog_category_t *client_log;
 extern int client_logging_enabled;
