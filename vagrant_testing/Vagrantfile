@@ -7,12 +7,37 @@ MACHINES = {
         :hostname => "testmachine",
         :os_type => "arch",
         :ssh_port => 2220,
-        :ram => 1024,
-        :cpu => 2,
+        :ram => 256,
+        :cpu => 1,
         :net => [
           {ip: '172.16.1.1', adapter: 2, netmask: "255.255.255.0", virtualbox__intnet: "test_net"},
                 ]
         }       ,
+
+:client1=> {
+        :box_name => "archlinux-archlinux",
+        :hostname => "client1",
+        :os_type => "arch",
+        :ssh_port => 2221,
+        :ram => 256,
+        :cpu => 1,
+        :net => [
+          {ip: '172.16.1.2', adapter: 2, netmask: "255.255.255.0", virtualbox__intnet: "test_net"},
+                ]
+        }       ,
+:client2=> {
+        :box_name => "archlinux-archlinux",
+        :hostname => "client2",
+        :os_type => "arch",
+        :ssh_port => 2222,
+        :ram => 256,
+        :cpu => 1,
+        :net => [
+          {ip: '172.16.1.3', adapter: 2, netmask: "255.255.255.0", virtualbox__intnet: "test_net"},
+                ]
+        }       ,
+
+
 
 
 }
@@ -59,15 +84,6 @@ Vagrant.configure("2") do |config|
         SHELL
 
 
-        when "ubuntu"
-        box.vm.provision "shell", inline: <<-SHELL
-                ssh-keygen -t rsa -N '' -f ~/.ssh/id_rsa <<< y
-                curl -s https://deb.frrouting.org/frr/keys.asc | sudo apt-key add -
-                echo deb https://deb.frrouting.org/frr $(lsb_release -s -c) frr-stable > /etc/apt/sources.list.d/frr.list
-                apt update -y
-                apt install net-tools sshpass -y
-        SHELL
-
         end
         #box.vm.provision "ansible" do |ansible|
         #  ansible.playbook = "main.yaml"
@@ -79,10 +95,23 @@ Vagrant.configure("2") do |config|
             box.vm.provision "ansible", run: "always" do |ansible|
             ansible.playbook = "setup_testmachine.yaml"
           end
+        when "client1" 
+            box.vm.provision :shell, :inline => "pacman -Syy"
+            box.vm.provision "ansible", run: "always" do |ansible|
+            ansible.playbook = "setup_client.yaml"
+          end
+        when "client2" 
+            box.vm.provision :shell, :inline => "pacman -Syy"
+            box.vm.provision "ansible", run: "always" do |ansible|
+            ansible.playbook = "setup_client.yaml"
+          end
+
+
+
 
         end
         box.vm.provision "shell", inline: <<-SHELL
-                 echo "start some testmachine" 
+                 echo "provision finished!" 
 
         SHELL
 

@@ -1,0 +1,6 @@
+---
+- name: update soft
+  hosts: all
+  become: yes
+  roles:
+    - copy_soft

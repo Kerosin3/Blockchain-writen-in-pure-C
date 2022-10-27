@@ -1,0 +1,23 @@
+syntax = "proto2";
+
+message p2p_IpcMessage {
+	enum Status {
+	TEST = 0;
+	OK = 1;
+	ERROR = 2;
+	FINISH = 3;
+	WAIT = 4;
+	ASK_NEED_MSG = 5;
+	NEED_MORE = 6;
+	ACKN_OK = 7;
+	MESSAGE_SENDED = 8;
+	ENOUGH = 9;
+	ALL_BLOCK_MSG_SENDED = 10;
+	ALL_BLOCK_RECEIVED = 11;
+	}
+	optional bytes transaction_msg = 1;
+	optional bytes pubkey = 2;
+	required string timestamp = 3;
+	required uint64 time_num = 4;
+	required Status status_code = 5;
+}

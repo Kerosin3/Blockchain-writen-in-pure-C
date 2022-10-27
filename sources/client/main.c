@@ -7,6 +7,8 @@
 #include "p2p_event_loop.h"
 #include "common.h"
 #include <stdatomic.h>
+#include "p2p_listen.h"
+
 
 const char *client_conf_logfile; // = "/home/ker0/test/prj/sources/logging/zlog.conf";
 int client_logging_enabled;
@@ -20,6 +22,13 @@ struct io_uring ring_p2p;
 
 int main(int argc, char *argv[])
 {
+	
+       if ((argc != 2))  // ip for listen app
+    {
+        printf("please listening IP for p2p..\n");
+        exit(1);
+    }
+  
     client_conf_logfile = getenv("cblockchain_conf");
     if (!client_conf_logfile)
     {
@@ -75,12 +84,16 @@ int main(int argc, char *argv[])
     setup_iouring(&ring_p2p, false);
     kill_thread_p2p = false;
 //----------------------------------------------------
-    thrd_t thread_messages_accept; // create threads
-    thrd_t thread_p2p_worker; // create threads
+    thrd_t thread_messages_accept; // create thread accept message from server
+    thrd_t thread_p2p_worker; // create thread p2p server
+    thrd_t thread_p2p_list; // create thread listen
     flag_block_created = 0;
     mtx_init(&block_created_mtx, mtx_plain); // init mtx
    //setup and start client accept message thread 
-   int tc_ret = thrd_create(&thread_messages_accept, (thrd_start_t)setup_client_iouring, (void *)0);
+   //------------------------------------------------------------------------------------------------------>>ok
+   char* ip_server = "172.16.1.1";
+   int tc_ret = thrd_create(&thread_messages_accept, (thrd_start_t)setup_client_iouring, (void *)ip_server);
+//    int tc_ret = thrd_create(&thread_messages_accept, (thrd_start_t)setup_client_iouring, (void *)0);
    if (tc_ret == thrd_error)
         {
             printf("error while client accept thread creation\n");
@@ -90,12 +103,23 @@ int main(int argc, char *argv[])
    el_params->ring = &ring_p2p;
    el_params->serv_sock=  serv_fd;
    tc_ret = thrd_create(&thread_p2p_worker, (thrd_start_t)event_loop_p2p, (void *)el_params);
-   thrd_detach(thread_p2p_worker);
    if (tc_ret == thrd_error)
         {
             printf("error while thread p2p creation\n");
             exit(1);
         }
+   thrd_detach(thread_p2p_worker); //DETACH!
+//    setup_p2p_listening();
+//    char* _ip = "127.0.0.1" ;
+//    tc_ret = thrd_create(&thread_p2p_list, (thrd_start_t)setup_p2p_listening, (void *)argv[1]);
+//------------------------------------------------------------------------------------------------------>>ok
+   tc_ret = thrd_create(&thread_p2p_list, (thrd_start_t)setup_p2p_listening, (void *)argv[1]);
+   if (tc_ret == thrd_error)
+     {
+	 printf("error while thread p2p creation\n");
+	 exit(1);
+     }
+   thrd_detach(thread_p2p_list); // dETACH!!
 
 //join client accept thread
 	int rez = -1;
@@ -104,7 +128,7 @@ int main(int argc, char *argv[])
             printf("error joining thread \n");
         }
   
-    setup_client_iouring();
+//    setup_client_iouring();
    destroy_buffers();
    teardown_server_sock(serv_fd);
    close(serv_fd);

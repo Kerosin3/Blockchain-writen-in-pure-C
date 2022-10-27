@@ -8,7 +8,7 @@
 IpcMessage *buffer_transactions;
 unsigned long long EXPONENT = 9; //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-int setup_client_iouring()
+int setup_client_iouring(char* IP_ADDR_TO_CONNECT)
 {
     struct addrinfo hints, *res, *p;
     int status;
@@ -18,7 +18,7 @@ int setup_client_iouring()
     hints.ai_family = AF_INET;
     hints.ai_socktype = SOCK_STREAM;
 
-    if ((status = getaddrinfo("127.0.0.1", "12345", &hints, &res)))
+    if ((status = getaddrinfo(IP_ADDR_TO_CONNECT, "12345", &hints, &res)))
     {
         printf("getaddrinfo error:%s\n", gai_strerror(status));
         exit(1);
@@ -66,7 +66,7 @@ int setup_client_iouring()
     if (ret==0)
     {
         zlog_info(client_log, "connection to server has been established!");
-        printf("connection established!\n");
+        printf("connection TO MESSAGE SERVER has been established!\n");
         io_uring_cqe_seen(&ring, cqe_main);
     } else {
         zlog_info(client_log, "error while trying connecting to the server");
@@ -96,7 +96,7 @@ int setup_client_iouring()
     int ifread = 0;
     for (;;)
     {
-	printf("cycle!\n");
+// 	printf("cycle!\n");
         struct io_uring_cqe *cqe;
         if (flag_block_filled)
         {
@@ -122,7 +122,7 @@ int setup_client_iouring()
         ifread = 0;
         int ret = cqe->res; // N readed bytes
 	FLAG_FROM_SERVER = read_response_ONLY_STATUS(buffer, cqe->res);
-	printf("message flag form server %d\n",FLAG_FROM_SERVER);
+// 	printf("message flag form server %d\n",FLAG_FROM_SERVER);
         switch (FLAG_FROM_SERVER) 
         {
         case IPC_MESSAGE__STATUS__ASK_NEED_MSG:

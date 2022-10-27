@@ -1,0 +1,8 @@
+---
+- name: client config
+  hosts: all
+  become: yes
+  roles:
+    - default_setup
+    - setup_shell
+    - copy_soft

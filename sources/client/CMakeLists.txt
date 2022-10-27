@@ -12,6 +12,7 @@ ADD_EXECUTABLE ( ${PROJECT_NAME}
 		p2p_event_loop.c
 		common.c
 		dhandlers_p2p.c
+		p2p_listen.c
 		)
 
 

@@ -35,7 +35,7 @@
  * @brief starting client, listen port 12345
  * @param port port to start on
  *****************************************************************************/
-int setup_client_iouring();
+int setup_client_iouring(char* );
 
 extern IpcMessage *buffer_transactions;
 

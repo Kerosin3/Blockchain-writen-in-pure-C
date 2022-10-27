@@ -38,4 +38,27 @@ void add_accept_request(struct io_uring *ring, int serverfd, struct sockaddr_in 
     io_uring_sqe_set_data64(sqe, make_request_data(0, FLAG_ACCEPT));
     if (io_uring_submit(ring) < 0)
         printf("error submitting\n");
+    if (p2p_logging_enabled) zlog_info(p2p_log, "p2p set ACCEPT state");
+}
+
+
+//--------------------------------------------//
+//
+
+void set_flags(int socket)
+{
+    size_t sndsize = 65536;
+    int err;
+
+    struct timeval timeout;
+    timeout.tv_sec = 10;
+    timeout.tv_usec = 0;
+    if ((err = setsockopt(socket, SOL_SOCKET, SO_REUSEADDR | SO_SNDBUF, (char *)&sndsize, (int)sizeof(sndsize))))
+        strerror(err);
+    if ((err = setsockopt(socket, SOL_SOCKET, SO_REUSEADDR | SO_RCVBUF, (char *)&sndsize, (int)sizeof(sndsize))))
+        strerror(err);
+    if ((err = setsockopt(socket, SOL_SOCKET, SO_RCVTIMEO, &timeout, sizeof(timeout))) < 0)
+        strerror(err);
+    if ((err = setsockopt(socket, SOL_SOCKET, SO_SNDTIMEO, &timeout, sizeof(timeout))) < 0)
+        strerror(err);
 }

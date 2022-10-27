@@ -5,6 +5,12 @@
     dest: /home/vagrant/
     owner: vagrant 
     mode: '0777'
+- name: copy client app executable
+  ansible.builtin.copy:
+    src: client.app
+    dest: /home/vagrant/
+    owner: vagrant 
+    mode: '0777'
 - name: copy zconf
   ansible.builtin.copy:
     src: zlog.conf
