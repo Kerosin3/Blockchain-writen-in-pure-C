@@ -58,37 +58,38 @@ void setup_p2p_listening(char* IP_ADD_LISTEN)
      {
      struct io_uring_cqe *cqe_main;
     	io_uring_prep_connect(sqe, s, res->ai_addr, res->ai_addrlen); // prep connect
-        //if (io_uring_submit(&ring) < 0) // submit now!
-        //printf("error submitting\n");
-        //io_uring_wait_cqe(&ring, &cqe_main); // waiting
+//         if (io_uring_submit(&ring) < 0) // submit now!
+//         printf("error submitting\n");
 	printf("waiting\n");
 	int rez=0;
-	if ((rez = io_uring_wait_cqe_timeout(&ring, &cqe_main,&ts))!=0){ // if timedout
+     	sqe = io_uring_get_sqe(&ring);
+//         rez = io_uring_wait_cqe(&ring, &cqe_main); // waiting
+// 	if ((rez !=0)){ // if timedout
+ 	if ((rez = io_uring_wait_cqe_timeout(&ring, &cqe_main,&ts))!=0){ // if timedout
 		printf("bad %d\n",rez);
-                io_uring_cqe_seen(&ring, cqe_main);
-		//continue;
-	} else{
-	printf("finish\n");
-    	int ret = cqe_main->res;//checkk after connection
-	printf("ret is %d\n",ret);
-    	if (ret==0) //  что делать????? ждать
-    	{
-    //    zlog_info(client_log, "connection to server has been established!");
-        printf(">>>>>connection to p2p peer established!<<<<<<\n");
-	done = 1;
-//         io_uring_cqe_seen(&ring, cqe_main);
-	break;
-    	}
-
+//                 sleep(2);
+//  		continue;
+	} else { // check result if not timed_outed
+		printf("finish\n");
+    		int ret = cqe_main->res;//checkk after connection
+		printf("ret is %d\n",ret);
+    		if (ret==0) //  что делать????? ждать
+    		{
+	    //    zlog_info(client_log, "connection to server has been established!");
+        	printf(">>>>>connection to p2p peer established!<<<<<<\n");
+		done = 1;
+//      	   io_uring_cqe_seen(&ring, cqe_main);
+		break; // out cycle if connect is ok
+    		}
 	} 
+        io_uring_cqe_seen(&ring, cqe_main);
 	printf("trying again\n");
-
+     }
     //  zlog_info(client_log, "error while trying connecting to the server");
 //     	io_uring_cqe_seen(&ring, cqe_main);
  	//printf("sleep 2 seconds, done =%d \n",done);
 	//printf("seen!\n");
         //sleep(2);
-    }
     int ifread = 0;
     unsigned char buffer[4096] = {0};
     for (;;){
