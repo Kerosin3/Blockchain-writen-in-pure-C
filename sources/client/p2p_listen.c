@@ -62,7 +62,7 @@ void setup_p2p_listening(char* IP_ADD_LISTEN)
 //         printf("error submitting\n");
 	printf("waiting\n");
 	int rez=0;
-     	sqe = io_uring_get_sqe(&ring);
+//      	sqe = io_uring_get_sqe(&ring);
 //         rez = io_uring_wait_cqe(&ring, &cqe_main); // waiting
 // 	if ((rez !=0)){ // if timedout
  	if ((rez = io_uring_wait_cqe_timeout(&ring, &cqe_main,&ts))!=0){ // if timedout
