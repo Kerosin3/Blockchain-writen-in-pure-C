@@ -38,7 +38,7 @@ void event_loop_p2p(event_p2p_params_t* elparams)
         switch (request_data_event_type(cqe->user_data))
 	{ 
 	    case FLAG_ACCEPT:
-		    printf("accepted a connection from p2p peer!\n");
+		    printf("accepted a connection from p2p peer to this p2p client!\n");
     		    if (p2p_logging_enabled) zlog_info(p2p_log, "accepted a connection");
             	    add_accept_request(ring, sockfd, &client_addr,
                                &client_addr_len); // add requst one more time  and set socket id

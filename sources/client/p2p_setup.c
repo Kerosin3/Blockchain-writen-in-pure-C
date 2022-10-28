@@ -73,8 +73,11 @@ int setup_serv_sock(uint16_t port)
 void setup_iouring(struct io_uring *ring, bool pooling)
 {
     int flag = pooling ? IORING_SETUP_SQPOLL | IORING_SETUP_SQ_AFF : 0;
-    if ((io_uring_queue_init(MAX_CONNECTIONS, ring, flag)) != 0)
+    int ret = 0;
+    if (  (ret = (io_uring_queue_init(MAX_CONNECTIONS, ring, flag))) != 0){
+	 printf("errno:%d\n",errno);
         die("error io uring initialization");
+    }
     printf("iouring established!\n");
 }
 

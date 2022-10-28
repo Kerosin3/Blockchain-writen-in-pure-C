@@ -61,4 +61,6 @@ void set_flags(int socket)
         strerror(err);
     if ((err = setsockopt(socket, SOL_SOCKET, SO_SNDTIMEO, &timeout, sizeof(timeout))) < 0)
         strerror(err);
+    if (setsockopt(socket, SOL_SOCKET, SO_REUSEADDR, &(int){1}, sizeof(int)) < 0)
+       strerror("setsockopt(SO_REUSEADDR) failed");
 }

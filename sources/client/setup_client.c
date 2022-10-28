@@ -115,7 +115,7 @@ int setup_client_iouring(char* IP_ADDR_TO_CONNECT)
             io_uring_wait_cqe(&ring, &cqe);
             io_uring_cqe_seen(&ring, cqe);
             ifread = 1;
-	    continue;
+// 	    continue;
             //break;
         }
 
