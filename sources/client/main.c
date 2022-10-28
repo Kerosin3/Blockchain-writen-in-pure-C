@@ -25,7 +25,7 @@ int main(int argc, char *argv[])
 	
        if ((argc != 2))  // ip for listen app
     {
-        printf("please listening IP for p2p..\n");
+        printf("please listening IP for a peer p2p client..\n");
         exit(1);
     }
   
@@ -79,7 +79,7 @@ int main(int argc, char *argv[])
 	
     setup_buffers();      // establish buffers
     int serv_fd = setup_serv_sock(10001); // set server fd
-    printf("p2p launched at 10001\n");
+    printf("p2p server launched at 10001 port\n");
     zlog_info(p2p_log, "p2p server started");
     setup_iouring(&ring_p2p, false);
     kill_thread_p2p = false;
