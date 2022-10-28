@@ -49,7 +49,6 @@ void setup_p2p_listening(char* IP_ADD_LISTEN)
     io_uring_queue_init(ring_entries_num, &ring, 0);
 
      struct io_uring_sqe *sqe = io_uring_get_sqe(&ring);
-     struct io_uring_cqe *cqe_main;
      int done = 0;
      struct __kernel_timespec ts;
         ts.tv_sec = 2LL; // wait 2 sec
@@ -57,6 +56,7 @@ void setup_p2p_listening(char* IP_ADD_LISTEN)
 
      while(!done)
      {
+     struct io_uring_cqe *cqe_main;
     	io_uring_prep_connect(sqe, s, res->ai_addr, res->ai_addrlen); // prep connect
         //if (io_uring_submit(&ring) < 0) // submit now!
         //printf("error submitting\n");
@@ -66,8 +66,8 @@ void setup_p2p_listening(char* IP_ADD_LISTEN)
 	if ((rez = io_uring_wait_cqe_timeout(&ring, &cqe_main,&ts))!=0){ // if timedout
 		printf("bad %d\n",rez);
                 io_uring_cqe_seen(&ring, cqe_main);
-		continue;
-	}
+		//continue;
+	} else{
 	printf("finish\n");
     	int ret = cqe_main->res;//checkk after connection
 	printf("ret is %d\n",ret);
@@ -78,10 +78,11 @@ void setup_p2p_listening(char* IP_ADD_LISTEN)
 	done = 1;
 //         io_uring_cqe_seen(&ring, cqe_main);
 	break;
-    } else {
+    	}
+
+	} 
 	printf("trying again\n");
 
-    }
     //  zlog_info(client_log, "error while trying connecting to the server");
 //     	io_uring_cqe_seen(&ring, cqe_main);
  	//printf("sleep 2 seconds, done =%d \n",done);
