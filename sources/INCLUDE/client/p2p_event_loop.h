@@ -28,7 +28,8 @@ typedef struct {
 
 void event_loop_p2p(event_p2p_params_t*);
 
-
+extern P2pIpcMessage__Status P2P_deserialize_STATUS(char *buff, unsigned len);
+extern void die(char*);
 extern zlog_category_t *client_log;
 extern int client_logging_enabled;
 

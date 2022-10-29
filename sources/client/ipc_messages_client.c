@@ -1,4 +1,6 @@
 #include "ipc_messages_client.h"
+#include "p2ptransaction.pb-c.h"
+#include <stdint.h>
 
 /*
 size_t get_timestamp(void* buffer){
@@ -11,6 +13,90 @@ size_t get_timestamp(void* buffer){
 }
 */
 
+//--------------------------------client serdes to p2p--------------------------------------------------//
+
+size_t P2P_serialize_block_to_sock(block_t* a_block,void* buf_out){
+	P2pIpcMessage* ipc_msg_p2p = calloc(1,sizeof(P2pIpcMessage));
+	p2p__ipc_message__init(ipc_msg_p2p);//init
+	ipc_msg_p2p->has_difficulty = 1;			    //
+	ipc_msg_p2p->difficulty = a_block->difficulty;
+	ipc_msg_p2p->has_timestamp_end = 1;
+	ipc_msg_p2p->has_timestamp_begin = 1;
+	ipc_msg_p2p->timestamp_begin = a_block->timestamp_begin;
+	ipc_msg_p2p->timestamp_end = a_block->timestamp_end;
+	ipc_msg_p2p->has_merkle_root = 1;
+	ipc_msg_p2p->merkle_root.data = a_block->merkle_root;
+	ipc_msg_p2p->merkle_root.len = crypto_generichash_BYTES;
+	ipc_msg_p2p->has_nonce = 1;
+	ipc_msg_p2p->nonce.data = a_block->nonce;
+	ipc_msg_p2p->nonce.len = 15;
+	ipc_msg_p2p->has_prev_block = 1;
+	ipc_msg_p2p->prev_block.data = a_block->previous_block;
+	ipc_msg_p2p->prev_block.len = crypto_generichash_BYTES;
+	//---------------date//
+	ipc_msg_p2p->date = a_block->date; 
+	ipc_msg_p2p->status_code = P2P__IPC_MESSAGE__STATUS__BLOCK;
+	size_t len = p2p__ipc_message__get_packed_size(ipc_msg_p2p);
+	p2p__ipc_message__pack(ipc_msg_p2p, buf_out);
+	free(ipc_msg_p2p);// free memory
+	return len;
+}
+
+
+size_t P2P_send_status(P2pIpcMessage__Status STATUS,void* buf_out){
+	P2pIpcMessage* ipc_msg_p2p = calloc(1,sizeof(P2pIpcMessage));
+	p2p__ipc_message__init(ipc_msg_p2p);//init
+	ipc_msg_p2p->has_difficulty = 0;			    //
+	ipc_msg_p2p->has_timestamp_end = 0;
+	ipc_msg_p2p->has_timestamp_begin = 0;
+	ipc_msg_p2p->has_merkle_root = 0;
+	ipc_msg_p2p->has_nonce = 0;
+	ipc_msg_p2p->has_prev_block = 0;
+	//---------------date//
+	char date[35] = {0};
+	get_timestamp(date);
+	ipc_msg_p2p->date = date; 
+	ipc_msg_p2p->status_code = P2P__IPC_MESSAGE__STATUS__BLOCK;
+	size_t len = p2p__ipc_message__get_packed_size(ipc_msg_p2p);
+	p2p__ipc_message__pack(ipc_msg_p2p, buf_out);
+	free(ipc_msg_p2p);// free memory
+	return len;
+}
+
+P2pIpcMessage__Status P2P_deserialize_STATUS(char *buff, unsigned len){
+    P2pIpcMessage *message;
+    message = p2p__ipc_message__unpack(0, len,(uint8_t*) buff);
+    P2pIpcMessage__Status status;	    
+    p2p__ipc_message__free_unpacked(message, NULL);
+    status = message->status_code;
+    return status;
+}
+
+
+block_t* deserialize_block(void* buf_in,unsigned len){
+	block_t* block = calloc(1,sizeof(block_t));
+	P2pIpcMessage *message;
+        message = p2p__ipc_message__unpack(0, len,(uint8_t*) buf_in);
+	if ((message->status_code) != P2P__IPC_MESSAGE__STATUS__BLOCK) return 0;
+	memcpy(block->date,message->date,35);
+// 	memcpy(block->difficulty,message->difficulty,)
+        memcpy(block->merkle_root,message->merkle_root.data,message->merkle_root.len);
+	memcpy(block->nonce, message->nonce.data,message->nonce.len);
+
+	block->timestamp_begin = message->timestamp_begin;
+	block->timestamp_end = message->timestamp_end;
+	memcpy(block->previous_block,message->prev_block.data,message->prev_block.len );
+	block->difficulty = message->difficulty;
+	return block;
+} 
+
+
+
+
+
+
+
+
 size_t send_need_more_msg(struct io_uring *ring, int sock, void *buffer_wr)
 {
     struct io_uring_sqe *sqe = io_uring_get_sqe(ring); // add to ring
@@ -20,11 +106,11 @@ size_t send_need_more_msg(struct io_uring *ring, int sock, void *buffer_wr)
         printf("error submitting\n");
     return n;
 }
-
+//-------------------------------------------------------------------------------------------------------//
 void deserialize_data_from_server(char *buff, unsigned len, signed_message_t *msg)
 {
     IpcMessage *message;
-    message = ipc_message__unpack(0, len, buff);
+    message = ipc_message__unpack(0, len,(uint8_t*) buff);
     if (message->has_pubkey)
     {
         memcpy(msg->public_key, message->pubkey.data, crypto_sign_PUBLICKEYBYTES); // copy public key

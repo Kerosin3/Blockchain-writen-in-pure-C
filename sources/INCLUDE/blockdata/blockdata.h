@@ -18,12 +18,13 @@ typedef struct __attribute__((packed)) block
     uint64_t timestamp_begin;
     uint64_t timestamp_end;
     size_t difficulty;
-    void *previous_block;
+    unsigned char previous_block[crypto_generichash_BYTES];
     unsigned char merkle_root[crypto_generichash_BYTES];
 
 } block_t;
 
 
+void set_prev_block_hash(block_t* blk_current, block_t* blk_prev);
 void set_nonce_to_block(block_t* blk,unsigned char* nonce);
 unsigned char* solve_puzzle(unsigned char *merkle_root,unsigned difficulty);
 block_t* create_block_dummy(block_t* prev_block, unsigned char* merkle_root );

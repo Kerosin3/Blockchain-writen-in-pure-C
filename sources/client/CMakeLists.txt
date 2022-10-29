@@ -6,6 +6,7 @@ ADD_EXECUTABLE ( ${PROJECT_NAME}
 		setup_client.c
 		ipc_messages_client.c
 		../serdes/transaction.pb-c.c
+		p2ptransaction.pb-c.c
 		block_process.c
 		main.c
 		p2p_setup.c

@@ -44,7 +44,7 @@ size_t get_timestamp(void* buffer);
 size_t serialize_data_v2(void* socket_buf,signed_message_t* a_message,IpcMessage* msg_buf){
 	
 	int len = 0;
-	char* date[32];
+	char date[32];
 	IpcMessage *message;
 	message = (IpcMessage*) msg_buf;
 	memset(message,0,sizeof(IpcMessage));

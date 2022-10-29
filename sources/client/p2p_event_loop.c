@@ -16,7 +16,6 @@ void event_loop_p2p(event_p2p_params_t* elparams)
         strerror(err);
     if ((err = setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR | SO_RCVBUF, (char *)&sndsize, (int)sizeof(sndsize))))
         strerror(err);
-    unsigned long long ii = 0;
     add_accept_request(ring, sockfd, &client_addr, &client_addr_len);
     if (p2p_logging_enabled) zlog_info(p2p_log, "logging p2p application");
 
@@ -45,7 +44,18 @@ void event_loop_p2p(event_p2p_params_t* elparams)
 		    current_client_fd = request_data_client_fd(cqe->res); // get current fd
                     set_flags(cqe->res); // set flags for the socket OK??
 //                    request_ASK_NEED_MSG(ring, cqe->res); // send request ask MSG
+   		     break;
+	    case FLAG_WAIT_PONG:
+		     P2P_read_status_response(ring, request_data_client_fd(cqe->user_data));
+		     printf("ping sended\n");
 		     break;
+	    case FLAG_TEST_RESPONSE:
+		     if ((cqe->res) > 0){
+			     P2P_deserialize_STATUS( get_client_buffer(cqe->user_data), cqe->res);
+			printf("waiting response!\n");
+		     }
+		     break;
+
 		default:
 		     break;
 	

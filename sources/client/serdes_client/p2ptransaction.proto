@@ -7,17 +7,16 @@ message p2p_IpcMessage {
 	ERROR = 2;
 	FINISH = 3;
 	WAIT = 4;
-	ASK_NEED_MSG = 5;
-	NEED_MORE = 6;
-	ACKN_OK = 7;
-	MESSAGE_SENDED = 8;
-	ENOUGH = 9;
-	ALL_BLOCK_MSG_SENDED = 10;
-	ALL_BLOCK_RECEIVED = 11;
+	BLOCK = 5;
+	PING = 6;
+	PONG = 7;
 	}
-	optional bytes transaction_msg = 1;
-	optional bytes pubkey = 2;
-	required string timestamp = 3;
-	required uint64 time_num = 4;
-	required Status status_code = 5;
+	required string date = 1;
+	optional uint64 timestamp_begin = 2;
+	optional uint64 timestamp_end = 3;
+	optional uint64 difficulty = 4;
+	optional bytes merkle_root = 5;
+	optional bytes nonce = 6;
+	optional bytes prev_block = 7;
+	required Status status_code = 8;
 }

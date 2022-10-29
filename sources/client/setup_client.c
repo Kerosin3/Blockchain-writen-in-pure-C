@@ -1,4 +1,5 @@
 #include "setup_client.h"
+#include "ipc_messages_client.h"
 
 #define BUFSIZE 4096
 #define BLOCKSIZE 512
@@ -167,6 +168,7 @@ int setup_client_iouring(char* IP_ADDR_TO_CONNECT)
     //create block
     block_dummy = create_block_dummy(0,merkle_root_first);
     set_nonce_to_block(block_dummy,nonce);
+    set_prev_block_hash(block_dummy,NULL);
     // merkle hash
     //     DumpHex( L_arrays_p_cont->main_layer_pointer  (*(L_arrays[0]->main_pointer))->hash  ,
     //     crypto_generichash_BYTES);
@@ -187,6 +189,8 @@ int setup_client_iouring(char* IP_ADDR_TO_CONNECT)
 
 	flag_block_created = 1;
     mtx_unlock(&block_created_mtx);
+    size_t written_block_size = P2P_serialize_block_to_sock(block_dummy,buffer_BLOCK_DATA);
+    printf("written block size %lu\n",written_block_size);
 	flag_block_filled = 1;
             }
             else

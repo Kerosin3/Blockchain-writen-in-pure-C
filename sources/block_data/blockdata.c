@@ -15,7 +15,7 @@ block_t* create_block_dummy(
     //set beg timestampn
     blk->timestamp_begin = get_epoch_ns(); // set timestamp block created
     blk->timestamp_end = 0;  // set when finish puzzle calcing
-    blk->previous_block = 0;
+    memset(blk->previous_block,0,crypto_generichash_BYTES);
     blk->difficulty = 0;
     memset(blk->nonce,0,NONCE_LEN);
     printf("block dummy has been created!\n");
@@ -26,6 +26,16 @@ void set_nonce_to_block(block_t* blk,unsigned char* nonce){
     memcpy(blk->nonce,nonce,NONCE_LEN);
     blk->timestamp_end = get_epoch_ns(); // assign end time
     free(nonce);
+}
+
+void set_prev_block_hash(block_t* blk_current, block_t* blk_prev){
+	if (!blk_prev) {
+		memset(blk_current->previous_block,0,crypto_generichash_BYTES);
+		return;
+	}
+        unsigned char* prev_block_hash_of_hash = calc_hashof_hash(blk_prev->merkle_root);// calc hash of hash BIRTHDAY
+	memcpy(blk_current->previous_block, prev_block_hash_of_hash,crypto_generichash_BYTES);
+	free(prev_block_hash_of_hash);
 }
 
 int test_solution(unsigned char *merkle_root, char *nonce, unsigned char *answer)
