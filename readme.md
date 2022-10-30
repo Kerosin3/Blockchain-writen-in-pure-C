@@ -14,11 +14,20 @@ The blockchain technology is a revolutionary technology and sooner or later it i
 I have readed several books about blockain and got an idea. Hovewer, raw knowledge is not enough for a deep understanding. 
 Thus, main motivation to me was to to get in close touch with blockchain technology by writing a piece of this complex and automonus system only by myself.
 
-## Used technologies
+## Blockchain features
+* Proof of Work based blockchain
+* Fast and efficient hashing (blake2b cryptohashing)
+* Vulnerability to Birthday hash attack propabillity reduced
+* block consist of 512 assymetrically signed mesages
+* Classical Merkle tree block hash generation
+* Encorporated fast message verification for light nodes (this kind of nodes not yet been implemented)
 
+## Used technologies
+* Blockchain
+  * Cassical POW with black2b hash function
 * fast asyncronius Linux-based I/O
   * [io_uring]( https://unixism.net/loti/index.html )
-* fast and modern crypto library 
+* fast and modern crypto library (assymetric cryptography, hashing)
   * libsodium
 * easy-to-use and platforn-neutral data ser/des
   * protobuf-c
@@ -33,5 +42,7 @@ Thus, main motivation to me was to to get in close touch with blockchain technol
 * IT automation system 
   * Ansible
 
+## test stand
+![](https://github.com/Kerosin3/C_blochain-draft/blob/test_doxy/docs/pics/blockchain.jpg)
 
 
