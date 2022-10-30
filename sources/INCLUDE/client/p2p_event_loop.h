@@ -20,12 +20,19 @@
 #include "dhandlers_p2p.h"
 #include "common.h"
 
+/** @file p2p_event_loop.h
+ * Setupping p2p io_uring
+ */
+
 
 typedef struct {
 	struct io_uring *ring;
 	int serv_sock;
 } event_p2p_params_t;
 
+/*!
+ * @brief main event loop for p2p server 
+ *****************************************************************************/
 void event_loop_p2p(event_p2p_params_t*);
 
 extern P2pIpcMessage__Status P2P_deserialize_STATUS(char *buff, unsigned len);

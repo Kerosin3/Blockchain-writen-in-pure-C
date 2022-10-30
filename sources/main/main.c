@@ -2,8 +2,10 @@
 #include <stdlib.h>
 #include "activation.h"
 #include "tests.h"
+#include "start_server.h"
 
 int main(int argc, char *argv[]){
-	tests();
+	//tests();
+	start_server(12345);
 	return 0;
 }
