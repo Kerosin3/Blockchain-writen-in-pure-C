@@ -17,8 +17,12 @@
 #include <sys/socket.h>
 #include <unistd.h>
 #include <threads.h>
+#include "zlog.h"
 
 void setup_p2p_listening(char*);
+
+extern zlog_category_t *p2p_log;
+extern int p2p_logging_enabled;
 
 
 #endif

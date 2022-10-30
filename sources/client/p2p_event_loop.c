@@ -44,10 +44,11 @@ void event_loop_p2p(event_p2p_params_t* elparams)
 		    current_client_fd = request_data_client_fd(cqe->res); // get current fd
                     set_flags(cqe->res); // set flags for the socket OK??
 //                    request_ASK_NEED_MSG(ring, cqe->res); // send request ask MSG
+                    P2P_send_PING(ring,current_client_fd);
+		     printf("ping sended\n");
    		     break;
 	    case FLAG_WAIT_PONG:
 		     P2P_read_status_response(ring, request_data_client_fd(cqe->user_data));
-		     printf("ping sended\n");
 		     break;
 	    case FLAG_TEST_RESPONSE:
 		     if ((cqe->res) > 0){

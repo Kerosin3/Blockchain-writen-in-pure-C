@@ -50,4 +50,5 @@ void set_flags(int socket);
 STATE_P2P request_data_event_type(uint64_t request_data);
 int request_data_client_fd(uint64_t request_data);
 char *get_client_buffer(int client_fd);
+void P2P_send_PING(struct io_uring *ring, int client_fd);
 #endif
