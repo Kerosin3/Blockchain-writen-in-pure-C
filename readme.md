@@ -43,6 +43,6 @@ Thus, main motivation to me was to to get in close touch with blockchain technol
   * Ansible
 
 ## test stand
-![](https://github.com/Kerosin3/C_blochain-draft/blob/test_doxy/docs/pics/blockchain.jpg)
+![](https://github.com/Kerosin3/C_blochain-draft/blob/test_doxy/docs/pictures/blockchain.jpg)
 
 
