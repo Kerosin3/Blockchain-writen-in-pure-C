@@ -18,7 +18,7 @@ void event_loop_p2p(event_p2p_params_t* elparams)
         strerror(err);
     add_accept_request(ring, sockfd, &client_addr, &client_addr_len);
     if (p2p_logging_enabled) zlog_info(p2p_log, "logging p2p application");
-
+    int flag_block_ready = 0;
     add_accept_request(ring, sockfd, &client_addr, &client_addr_len);
     for (;;)
     {
@@ -28,11 +28,11 @@ void event_loop_p2p(event_p2p_params_t* elparams)
 	if (mtx_trylock(&block_created_mtx) == thrd_success) { // test if thread created block!
 // 		memcpy(buffer_BLOCK_DATA, )
 		printf("BLOCK CREATED!\n");
-
+		flag_block_ready = 1;
+		mtx_unlock(&block_created_mtx);
 	}else {
 		printf("block not created!\n");
 	}
-
         if (kill_thread_p2p) break;
         switch (request_data_event_type(cqe->user_data))
 	{ 
@@ -47,7 +47,7 @@ void event_loop_p2p(event_p2p_params_t* elparams)
                     P2P_send_PING(ring,current_client_fd);
 		     printf("ping sended\n");
    		     break;
-	    case FLAG_WAIT_PONG:
+	 /*   case FLAG_WAIT_PONG:
 		     P2P_read_status_response(ring, request_data_client_fd(cqe->user_data));
 		     break;
 	    case FLAG_TEST_RESPONSE:
@@ -55,7 +55,7 @@ void event_loop_p2p(event_p2p_params_t* elparams)
 			     P2P_deserialize_STATUS( get_client_buffer(cqe->user_data), cqe->res);
 			printf("waiting response!\n");
 		     }
-		     break;
+		     break;*/
 
 		default:
 		     break;

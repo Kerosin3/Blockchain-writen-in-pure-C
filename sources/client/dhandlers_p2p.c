@@ -49,6 +49,8 @@ void P2P_send_PING(struct io_uring *ring, int client_fd)
    //                                                   IPC_MESSAGE__STATUS__ASK_NEED_MSG); // write to client buffer
     P2pIpcMessage__Status STATUS = P2P__IPC_MESSAGE__STATUS__PING;
     size_t wr_len =  P2P_send_status(STATUS,get_client_buffer(client_fd));
+    printf("message:\n");
+    DumpHex(get_client_buffer(client_fd),wr_len);
     buffer_lengths[client_fd] = wr_len;
     io_uring_prep_send(sqe, client_fd, get_client_buffer(client_fd), buffer_lengths[client_fd],
                        MSG_DONTWAIT);                                          // send a message

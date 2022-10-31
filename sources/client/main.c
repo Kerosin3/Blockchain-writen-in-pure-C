@@ -89,6 +89,7 @@ int main(int argc, char *argv[])
     thrd_t thread_p2p_list; // create thread listen
     flag_block_created = 0;
     mtx_init(&block_created_mtx, mtx_plain); // init mtx
+    mtx_init(&peer_connection_accepted ,mtx_plain);
    //setup and start client accept message thread 
    //------------------------------------------------------------------------------------------------------>>ok
    char* ip_server = "172.16.1.1";
@@ -109,9 +110,9 @@ int main(int argc, char *argv[])
             exit(1);
         }
    thrd_detach(thread_p2p_worker); //DETACH!
-//    setup_p2p_listening();
-//    char* _ip = "127.0.0.1" ;
-//    tc_ret = thrd_create(&thread_p2p_list, (thrd_start_t)setup_p2p_listening, (void *)argv[1]);
+//     setup_p2p_listening();
+    char* _ip = "127.0.0.1" ;
+    tc_ret = thrd_create(&thread_p2p_list, (thrd_start_t)setup_p2p_listening, (void *)argv[1]);
 //------------------------------------------------------------------------------------------------------>>ok
    tc_ret = thrd_create(&thread_p2p_list, (thrd_start_t)setup_p2p_listening, (void *)argv[1]);
    if (tc_ret == thrd_error)

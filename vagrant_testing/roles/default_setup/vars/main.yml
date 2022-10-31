@@ -1,6 +1,6 @@
 ---
 # vars file for default_setup
-installed_soft: ['git','vim','mc','tcpdump','net-tools','nmap','nftables','bash-completion','most','zsh','nnn','mtr','liburing','protobuf-c','libsodium']
+installed_soft: ['git','vim','mc','tcpdump','net-tools','nmap','nftables','bash-completion','most','zsh','nnn','mtr','liburing','protobuf-c','libsodium','gnu-netcat']
 os_env:
 - key: EDITOR
   value: vi

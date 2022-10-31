@@ -6,6 +6,7 @@
 #include <threads.h>
 #include <stdatomic.h>
 
+extern mtx_t peer_connection_accepted;
 extern mtx_t block_created_mtx;
 extern int flag_block_created;
 extern unsigned char *buffer_BLOCK_DATA;
