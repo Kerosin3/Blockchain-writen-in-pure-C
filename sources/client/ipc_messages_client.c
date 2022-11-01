@@ -56,7 +56,7 @@ size_t P2P_send_status(P2pIpcMessage__Status STATUS,void* buf_out){
 	char date[35] = {0};
 	get_timestamp(date);
 	ipc_msg_p2p->date = date; 
-	ipc_msg_p2p->status_code = P2P__IPC_MESSAGE__STATUS__BLOCK;
+	ipc_msg_p2p->status_code = STATUS;
 	size_t len = p2p__ipc_message__get_packed_size(ipc_msg_p2p);
 	p2p__ipc_message__pack(ipc_msg_p2p, buf_out);
 	free(ipc_msg_p2p);// free memory

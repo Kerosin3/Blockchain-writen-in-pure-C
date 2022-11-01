@@ -10,6 +10,9 @@ message p2p_IpcMessage {
 	BLOCK = 5;
 	PING = 6;
 	PONG = 7;
+	ASK_IF_BLOCK_READY = 8;
+	BLOCK_READY = 9;
+	BLOCK_NOT_READY = 10;
 	}
 	required string date = 1;
 	optional uint64 timestamp_begin = 2;

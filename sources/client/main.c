@@ -23,7 +23,7 @@ struct io_uring ring_p2p;
 int main(int argc, char *argv[])
 {
 	
-       if ((argc != 2))  // ip for listen app
+    if ((argc != 2))  // ip for listen app
     {
         printf("please listening IP for a peer p2p client..\n");
         exit(1);
@@ -90,6 +90,7 @@ int main(int argc, char *argv[])
     flag_block_created = 0;
     mtx_init(&block_created_mtx, mtx_plain); // init mtx
     mtx_init(&peer_connection_accepted ,mtx_plain);
+    block_transmitted = false;
    //setup and start client accept message thread 
    //------------------------------------------------------------------------------------------------------>>ok
    char* ip_server = "172.16.1.1";
@@ -114,7 +115,6 @@ int main(int argc, char *argv[])
     char* _ip = "127.0.0.1" ;
     tc_ret = thrd_create(&thread_p2p_list, (thrd_start_t)setup_p2p_listening, (void *)argv[1]);
 //------------------------------------------------------------------------------------------------------>>ok
-   tc_ret = thrd_create(&thread_p2p_list, (thrd_start_t)setup_p2p_listening, (void *)argv[1]);
    if (tc_ret == thrd_error)
      {
 	 printf("error while thread p2p creation\n");

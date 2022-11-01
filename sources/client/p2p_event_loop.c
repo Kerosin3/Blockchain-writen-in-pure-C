@@ -1,7 +1,6 @@
 #include "p2p_event_loop.h"
 
 
-
 void event_loop_p2p(event_p2p_params_t* elparams)
 {
 
@@ -19,7 +18,18 @@ void event_loop_p2p(event_p2p_params_t* elparams)
     add_accept_request(ring, sockfd, &client_addr, &client_addr_len);
     if (p2p_logging_enabled) zlog_info(p2p_log, "logging p2p application");
     int flag_block_ready = 0;
+    int flag_client_connected = 0;
     add_accept_request(ring, sockfd, &client_addr, &client_addr_len);
+    struct timespec mtimeout;
+    mtimeout.tv_nsec = 100;
+    mtimeout.tv_sec = 15;
+	if (mtx_timedlock(&peer_connection_accepted, &mtimeout) ==  thrd_success){
+		flag_client_connected = 1;
+		mtx_unlock(&peer_connection_accepted);
+	} else {
+		printf("cannot wait till client started\n");
+	}
+	
     for (;;)
     {
 	struct io_uring_cqe *cqe;
@@ -27,12 +37,12 @@ void event_loop_p2p(event_p2p_params_t* elparams)
             die("error accepting a connection\n");
 	if (mtx_trylock(&block_created_mtx) == thrd_success) { // test if thread created block!
 // 		memcpy(buffer_BLOCK_DATA, )
-		printf("BLOCK CREATED!\n");
 		flag_block_ready = 1;
 		mtx_unlock(&block_created_mtx);
 	}else {
-		printf("block not created!\n");
+		flag_block_ready = 0;
 	}
+
         if (kill_thread_p2p) break;
         switch (request_data_event_type(cqe->user_data))
 	{ 
@@ -46,17 +56,46 @@ void event_loop_p2p(event_p2p_params_t* elparams)
 //                    request_ASK_NEED_MSG(ring, cqe->res); // send request ask MSG
                     P2P_send_PING(ring,current_client_fd);
 		     printf("ping sended\n");
+    		    if (p2p_logging_enabled) zlog_info(p2p_log, "ping sended");
    		     break;
-	 /*   case FLAG_WAIT_PONG:
-		     P2P_read_status_response(ring, request_data_client_fd(cqe->user_data));
+	    case FLAG_WAIT_PONG:
+		     P2P_read_status_response(ring, request_data_client_fd(cqe->user_data)); // recv
+    		     if (p2p_logging_enabled) zlog_info(p2p_log, "testing response");
 		     break;
 	    case FLAG_TEST_RESPONSE:
 		     if ((cqe->res) > 0){
-			     P2P_deserialize_STATUS( get_client_buffer(cqe->user_data), cqe->res);
-			printf("waiting response!\n");
+		     	     P2pIpcMessage__Status msg_status;
+			     msg_status = P2P_deserialize_STATUS( get_client_buffer(cqe->user_data), cqe->res);
+			     printf("DESER MSG STATUS:%d\n",msg_status);
+			     switch (msg_status) {
+			     	case P2P__IPC_MESSAGE__STATUS__PONG: // received PONG --> ask if block is ready
+					printf("GOT PONG RESPONSE\n");
+    		     			if (p2p_logging_enabled) zlog_info(p2p_log, "p2p got pong response");
+					P2Pser_send_STATUS(ring, request_data_client_fd(cqe->user_data) ,
+							P2P__IPC_MESSAGE__STATUS__ASK_IF_BLOCK_READY );
+    		     			if (p2p_logging_enabled) zlog_info(p2p_log, "sent ask block ready");
+					break;
+				case P2P__IPC_MESSAGE__STATUS__ASK_IF_BLOCK_READY: // IM BEING ASKED
+					printf("server being asked if I have a block ready\n");
+    		     			if (p2p_logging_enabled) zlog_info(p2p_log, "asked if this client have block ready");
+					if (flag_block_ready) {
+						printf("block ready!\n");
+						P2Pser_send_block(ring, request_data_client_fd(cqe->user_data) );
+    		     				if (p2p_logging_enabled) zlog_info(p2p_log, "block sended!");
+					} else{
+    		     				if (p2p_logging_enabled) zlog_info(p2p_log, "block NOT ready!");
+						P2Pser_send_STATUS(ring, request_data_client_fd(cqe->user_data) ,
+							P2P__IPC_MESSAGE__STATUS__BLOCK_NOT_READY );
+					}
+					break;
+				default:
+					break;
+			     }
 		     }
-		     break;*/
-
+		     break;
+	    case FLAG_BLOCK_SENDED:
+			printf("block has been sent!\n");
+		     break;
 		default:
 		     break;
 	

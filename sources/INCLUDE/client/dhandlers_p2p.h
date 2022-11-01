@@ -23,14 +23,18 @@
 #include <zlog.h>
 #include "p2ptransaction.pb-c.h"
 #include "blockdata.h"
+#include "common.h"
 
 typedef enum
 {
     FLAG_ACCEPT = 0,
-    FLAG_WAIT_PONG = 1,
-    FLAG_TEST_RESPONSE = 2,
+    FLAG_WAIT_PONG,
+    FLAG_TEST_RESPONSE,
+    FLAG_BLOCK_SENDED,
+    FLAG_BLOCK_NOT_READY,
 } STATE_P2P;
 
+void P2Pser_send_block(struct io_uring *ring, int client_fd);
 extern size_t P2P_serialize_block_to_sock(block_t* a_block,void* buf_out);
 extern size_t P2P_send_status(P2pIpcMessage__Status STATUS,void* buf_out);
 
@@ -46,6 +50,7 @@ extern size_t *buffer_sended_N;
 void add_accept_request(struct io_uring *ring, int serverfd, struct sockaddr_in *a_client_adrd,
                         socklen_t *client_addr_len);
 
+void P2Pser_send_STATUS(struct io_uring *ring, int client_fd,  P2pIpcMessage__Status STATUS  );
 void set_flags(int socket);
 STATE_P2P request_data_event_type(uint64_t request_data);
 int request_data_client_fd(uint64_t request_data);

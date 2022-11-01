@@ -188,8 +188,9 @@ int setup_client_iouring(char* IP_ADDR_TO_CONNECT)
 
 
 	flag_block_created = 1;
-    mtx_unlock(&block_created_mtx);
     size_t written_block_size = P2P_serialize_block_to_sock(block_dummy,buffer_BLOCK_DATA);
+    block_written_size = written_block_size;
+    mtx_unlock(&block_created_mtx);
     printf("BLOCK HAS BEEN CREATED!\n");
     printf("written block size %lu\n",written_block_size);
 	flag_block_filled = 1;

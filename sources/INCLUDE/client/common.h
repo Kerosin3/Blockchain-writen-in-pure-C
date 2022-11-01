@@ -6,6 +6,8 @@
 #include <threads.h>
 #include <stdatomic.h>
 
+extern atomic_uint_least64_t block_written_size;
+extern atomic_bool block_transmitted;
 extern mtx_t peer_connection_accepted;
 extern mtx_t block_created_mtx;
 extern int flag_block_created;

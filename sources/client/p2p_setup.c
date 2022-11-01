@@ -57,6 +57,8 @@ int setup_serv_sock(uint16_t port)
     if (sockfd < 0)
         die("error assigning socket");
     struct sockaddr_in s_addr = {0};
+    int option = 1;
+    setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR, &option, sizeof(option));
     s_addr.sin_family = AF_INET; // fill sock struct
     s_addr.sin_port = htons(port);
     s_addr.sin_addr.s_addr = htonl(INADDR_ANY);                             // ine interfac
