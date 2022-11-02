@@ -164,7 +164,7 @@ int setup_client_iouring(char* IP_ADDR_TO_CONNECT)
     unsigned char merkle_root_first[crypto_generichash_BYTES];
     memcpy(merkle_root_first,(*(L_arrays_p_cont->main_layer_pointer[0].main_pointer))->hash, crypto_generichash_BYTES);
     //****************************************************/
-    unsigned char* nonce = solve_puzzle(merkle_root_first,1); //calc puzzle
+    unsigned char* nonce = solve_puzzle(merkle_root_first,3); //calc puzzle
     //create block
     block_dummy = create_block_dummy(0,merkle_root_first);
     set_nonce_to_block(block_dummy,nonce);
@@ -193,6 +193,10 @@ int setup_client_iouring(char* IP_ADDR_TO_CONNECT)
     mtx_unlock(&block_created_mtx);
     printf("BLOCK HAS BEEN CREATED!\n");
     printf("written block size %lu\n",written_block_size);
+    printf("--------------------------\n");
+    printf("serialized block is\n");
+    DumpHex(buffer_BLOCK_DATA,written_block_size);
+    printf("--------------------------\n");
 	flag_block_filled = 1;
             }
             else
