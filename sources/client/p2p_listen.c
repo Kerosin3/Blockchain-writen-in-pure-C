@@ -6,13 +6,18 @@ typedef enum {
 	TEST = 0,
 	ACCEPTED_PING,
 	SEND_PONG,
-	WAITING,
+	PROCESS_RESPONSE,
 	ASK_FOR_A_BLOCK,
+	PROCESS_BLOCK_REQUEST,
+	READ_RESPONSE,
 } cl_p2p_state;
 
+void cl_p2p_send_STATUS(struct io_uring *ring, int client_fd, P2pIpcMessage__Status STATUS,char* buffer_write,cl_p2p_state STATE_MACHINE   );
 static cl_p2p_state request_data_event_type(uint64_t request_data);
 static u_int64_t make_request_data(int client_fd, cl_p2p_state flag);
-void cl_p2p_send_STATUS(struct io_uring *ring, int client_fd, P2pIpcMessage__Status STATUS,char* buffer_write  );
+void cl_P2P_read_status_response(struct io_uring *ring, int client_fd, char* buffer , cl_p2p_state STATE_MACHINE);
+
+
 
 void setup_p2p_listening(char* IP_ADD_LISTEN)
 {
@@ -92,7 +97,7 @@ void setup_p2p_listening(char* IP_ADD_LISTEN)
     sqe = io_uring_get_sqe(&ring);                                 // return io entity
     io_uring_prep_recv(sqe, s, buffer, 4096 * sizeof(char), 0); // WAITING PING
     size_t cycle = 0;
-    io_uring_sqe_set_data64(sqe, make_request_data(s, WAITING)); // set first wait
+    io_uring_sqe_set_data64(sqe, make_request_data(s, PROCESS_RESPONSE)); // set first wait
     if (io_uring_submit(&ring) < 0) {// submit 
         if (p2p_logging_enabled) zlog_info(p2p_log, "error submitting");
     }
@@ -101,21 +106,23 @@ void setup_p2p_listening(char* IP_ADD_LISTEN)
     	io_uring_wait_cqe(&ring, &cqe);
 	cl_p2p_state STATE = request_data_event_type(cqe->user_data);
  	P2pIpcMessage__Status msg_status;
+	printf("message status %d\n",STATE);
 	switch (STATE) { //INTERNAL STATE
-		case WAITING:  // RECEIVING A MESSAGE
+		case PROCESS_RESPONSE:  // RECEIVING A MESSAGE
 	                msg_status = P2P_deserialize_STATUS( buffer, cqe->res);
 			DumpHex(buffer,cqe->res);
-			printf("testing message with status %d\n",msg_status);
+			printf("testing message with P2P status %d\n",msg_status);
 			switch (msg_status) {
 				case P2P__IPC_MESSAGE__STATUS__PING: // server sent PING -> answer pong
-					cl_p2p_send_STATUS(&ring,s,P2P__IPC_MESSAGE__STATUS__PONG, buffer_send);
-    					io_uring_sqe_set_data64(sqe, make_request_data(s, ASK_FOR_A_BLOCK));
-					printf("PONG SENDED, asking for a block!\n");
+					cl_p2p_send_STATUS(&ring,s,P2P__IPC_MESSAGE__STATUS__PONG, buffer_send, READ_RESPONSE);
+					printf("PONG SENDED, WAITING OK!\n");
         				if (p2p_logging_enabled) zlog_info(p2p_log, "pong sended");
 					break;
-//				case P2P__IPC_MESSAGE__STATUS__ASK_IF_BLOCK_READY:
-//					printf(" I am asked if block is ready\n");
-//    					io_uring_sqe_set_data64(sqe, make_request_data(s, WAITING));
+				case P2P__IPC_MESSAGE__STATUS__OK:
+					printf("SERVER ANSWERED OK\n");
+					cl_p2p_send_STATUS(&ring,s,P2P__IPC_MESSAGE__STATUS__ASK_IF_BLOCK_READY, buffer_send,READ_RESPONSE);
+					printf("SENDED BLOCK REQUEST\n");
+        				if (p2p_logging_enabled) zlog_info(p2p_log, "ask for a block");
 					break;
 				case P2P__IPC_MESSAGE__STATUS__BLOCK:
 					printf("BLOCK ACCEPTED\n");
@@ -124,17 +131,23 @@ void setup_p2p_listening(char* IP_ADD_LISTEN)
 					printf("BLOCK IS NOT READY!\n");
 					break;
 				default:
+					printf("waiting default!\n");
 					break;
 					
 			}
 			break;
-		case ASK_FOR_A_BLOCK:
-			cl_p2p_send_STATUS(&ring,s,P2P__IPC_MESSAGE__STATUS__ASK_IF_BLOCK_READY, buffer_send);
-        		if (p2p_logging_enabled) zlog_info(p2p_log, "ask for a block");
-			printf("client send ask for a block\n");
-    			io_uring_sqe_set_data64(sqe, make_request_data(s, WAITING));
+		case READ_RESPONSE:
+			printf("reading response\n");
+			cl_P2P_read_status_response(&ring,s,buffer,PROCESS_RESPONSE);
 			break;
+
+		/*case ASK_FOR_A_BLOCK:
+		break;
+		case PROCESS_BLOCK_REQUEST:
+			printf("make recv request\n");
+			break;*/
 		default: 
+			printf("default!\n");
 			break;
 	}
     	io_uring_cqe_seen(&ring, cqe);
@@ -147,14 +160,26 @@ void setup_p2p_listening(char* IP_ADD_LISTEN)
     thrd_exit(1);
 }
 
+void cl_P2P_read_status_response(struct io_uring *ring, int client_fd, char* buffer , cl_p2p_state STATE_MACHINE)
+{
+    struct io_uring_sqe *sqe = io_uring_get_sqe(ring); // add to ring
+    io_uring_prep_recv(sqe, client_fd, buffer, BUFFER_SIZE, 0);
+//     DumpHex(get_client_buffer(client_fd),wr_len);
+    io_uring_sqe_set_data64(sqe, make_request_data(client_fd, STATE_MACHINE));
+    if (io_uring_submit(ring) < 0)
+        printf("error submitting\n");
+}
 
-void cl_p2p_send_STATUS(struct io_uring *ring, int client_fd, P2pIpcMessage__Status STATUS,char* buffer_write  )
+
+void cl_p2p_send_STATUS(struct io_uring *ring, int client_fd, P2pIpcMessage__Status STATUS,char* buffer_write,cl_p2p_state STATE_MACHINE   )
 {
     struct io_uring_sqe *sqe = io_uring_get_sqe(ring); // add to ring
    //                                                   IPC_MESSAGE__STATUS__ASK_NEED_MSG); // write to client buffer
     size_t wr_len =  P2P_send_status(STATUS,buffer_write);
     io_uring_prep_send(sqe, client_fd, buffer_write, wr_len,
                        MSG_DONTWAIT);                                          // send a message
+
+    io_uring_sqe_set_data64(sqe, make_request_data(client_fd, STATE_MACHINE));
     if (io_uring_submit(ring) < 0)
         printf("error submitting\n");
     if (p2p_logging_enabled) zlog_info(p2p_log, "sent PONG msg");

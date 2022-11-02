@@ -72,7 +72,7 @@ void event_loop_p2p(event_p2p_params_t* elparams)
 					printf("GOT PONG RESPONSE\n");
     		     			if (p2p_logging_enabled) zlog_info(p2p_log, "p2p got pong response");
 					P2Pser_send_STATUS(ring, request_data_client_fd(cqe->user_data) ,
-							P2P__IPC_MESSAGE__STATUS__ASK_IF_BLOCK_READY );
+							P2P__IPC_MESSAGE__STATUS__OK,FLAG_READ_RESPONSE);
     		     			if (p2p_logging_enabled) zlog_info(p2p_log, "sent ask block ready");
 					break;
 				case P2P__IPC_MESSAGE__STATUS__ASK_IF_BLOCK_READY: // IM BEING ASKED
@@ -85,13 +85,17 @@ void event_loop_p2p(event_p2p_params_t* elparams)
 					} else{
     		     				if (p2p_logging_enabled) zlog_info(p2p_log, "block NOT ready!");
 						P2Pser_send_STATUS(ring, request_data_client_fd(cqe->user_data) ,
-							P2P__IPC_MESSAGE__STATUS__BLOCK_NOT_READY );
+							P2P__IPC_MESSAGE__STATUS__BLOCK_NOT_READY,FLAG_READ_RESPONSE );
 					}
 					break;
 				default:
 					break;
 			     }
 		     }
+		     break;
+	    case FLAG_READ_RESPONSE:
+		     P2P_read_status_response(ring, request_data_client_fd(cqe->user_data)); // recv
+    		     if (p2p_logging_enabled) zlog_info(p2p_log, "reading response");
 		     break;
 	    case FLAG_BLOCK_SENDED:
 			printf("block has been sent!\n");

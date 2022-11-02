@@ -52,7 +52,7 @@ void   p2p__ipc_message__free_unpacked
   assert(message->base.descriptor == &p2p__ipc_message__descriptor);
   protobuf_c_message_free_unpacked ((ProtobufCMessage*)message, allocator);
 }
-static const ProtobufCEnumValue p2p__ipc_message__status__enum_values_by_number[11] =
+static const ProtobufCEnumValue p2p__ipc_message__status__enum_values_by_number[12] =
 {
   { "TEST", "P2P__IPC_MESSAGE__STATUS__TEST", 0 },
   { "OK", "P2P__IPC_MESSAGE__STATUS__OK", 1 },
@@ -65,12 +65,14 @@ static const ProtobufCEnumValue p2p__ipc_message__status__enum_values_by_number[
   { "ASK_IF_BLOCK_READY", "P2P__IPC_MESSAGE__STATUS__ASK_IF_BLOCK_READY", 8 },
   { "BLOCK_READY", "P2P__IPC_MESSAGE__STATUS__BLOCK_READY", 9 },
   { "BLOCK_NOT_READY", "P2P__IPC_MESSAGE__STATUS__BLOCK_NOT_READY", 10 },
+  { "ACKN", "P2P__IPC_MESSAGE__STATUS__ACKN", 11 },
 };
 static const ProtobufCIntRange p2p__ipc_message__status__value_ranges[] = {
-{0, 0},{0, 11}
+{0, 0},{0, 12}
 };
-static const ProtobufCEnumValueIndex p2p__ipc_message__status__enum_values_by_name[11] =
+static const ProtobufCEnumValueIndex p2p__ipc_message__status__enum_values_by_name[12] =
 {
+  { "ACKN", 11 },
   { "ASK_IF_BLOCK_READY", 8 },
   { "BLOCK", 5 },
   { "BLOCK_NOT_READY", 10 },
@@ -90,9 +92,9 @@ const ProtobufCEnumDescriptor p2p__ipc_message__status__descriptor =
   "Status",
   "P2pIpcMessage__Status",
   "",
-  11,
+  12,
   p2p__ipc_message__status__enum_values_by_number,
-  11,
+  12,
   p2p__ipc_message__status__enum_values_by_name,
   1,
   p2p__ipc_message__status__value_ranges,

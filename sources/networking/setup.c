@@ -52,6 +52,8 @@ int setup_serv_sock(uint16_t port)
     int sockfd = socket(AF_INET, SOCK_STREAM, proto->p_proto);
     if (sockfd < 0)
         die("error assigning socket");
+    int option = 1;
+    setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR, &option, sizeof(option));
     struct sockaddr_in s_addr = {0};
     s_addr.sin_family = AF_INET; // fill sock struct
     s_addr.sin_port = htons(port);
