@@ -47,12 +47,11 @@ int test_solution(unsigned char *merkle_root, char *nonce, unsigned char *answer
                                                                              //
     crypto_generichash(out_hash, crypto_generichash_BYTES, CONCAT_BYTES, crypto_generichash_BYTES + NONCE_LEN, NULL,
                        0); // calc HASH
-    printf("hash:\n");
+    printf("hash of resulted solution:\n");
     DumpHex(out_hash, crypto_generichash_BYTES);
-    printf("----------\n");
     if ((!memcmp(out_hash, answer, crypto_generichash_BYTES)))
     {
-        printf("passed nonce MATCHED!\n");
+        printf("test passed nonce finished successfully!\n");
         return 1;
     }
     return 0;
@@ -70,13 +69,11 @@ unsigned char* solve_puzzle(unsigned char *merkle_root,unsigned difficulty)
     
     unsigned char* nonce_answ = calloc(NONCE_LEN,sizeof(unsigned char));
 
-    //     unsigned char* nonce = calloc(NONCE_LEN,sizeof(unsigned char)); //alocate for hash
     unsigned char *CONCAT_BYTES =
         calloc(NONCE_LEN + crypto_generichash_BYTES, sizeof(unsigned char)); // allocate concat bytes
     memcpy(CONCAT_BYTES + NONCE_LEN, merkle_root, crypto_generichash_BYTES); // copy merkle to concat
-
-    //     unsigned char CONCAT_BYTES[crypto_generichash_BYTES+NONCE_LEN] = {0}; // concat bytes
-
+    printf("calcing hash puzzle for merkle root: difficulty:[%u]:\n",difficulty);
+    DumpHex(merkle_root,crypto_generichash_BYTES);
     unsigned char *out_hash = calloc(crypto_generichash_BYTES, sizeof(unsigned char)); // alocate for hash
 
     unsigned char ans[5] = {'\0', '\0', '\0', '\0', '\0'}; // 
@@ -85,17 +82,13 @@ unsigned char* solve_puzzle(unsigned char *merkle_root,unsigned difficulty)
         randombytes_buf(CONCAT_BYTES, NONCE_LEN); // take random sample to CONCAT
         crypto_generichash(out_hash, crypto_generichash_BYTES, CONCAT_BYTES, crypto_generichash_BYTES + NONCE_LEN, NULL,
                            0); // calc HASH
-
-        // 	printf("current hash:\n");
     } while ((memcmp(out_hash, ans, difficulty)));
-   // printf("answer:\n");
-    //DumpHex(out_hash, crypto_generichash_BYTES);
-    printf("nonce:\n");
+    printf("Calced nonce to match puzzle:\n");
     memcpy(nonce_answ, CONCAT_BYTES, NONCE_LEN);
     DumpHex(nonce_answ, NONCE_LEN);
     free(CONCAT_BYTES);
 
-    test_solution(merkle_root, nonce_answ, out_hash);
+    test_solution(merkle_root,(char*) nonce_answ, out_hash);
     free(out_hash);
     return nonce_answ;
 }

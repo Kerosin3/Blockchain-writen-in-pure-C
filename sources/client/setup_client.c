@@ -156,10 +156,10 @@ int setup_client_iouring(char* IP_ADDR_TO_CONNECT)
                     zlog_info(client_log, "stop, accepting");
                 ret = send_STATUS(&ring, s, buffer2, IPC_MESSAGE__STATUS__ENOUGH); // 512 blocks acquired
                  flag_block_filled = 1;
-
+	
     zlog_info(client_log, "calcing merkle tree from received messges!");
     L_arrays_p_cont = calc_merkle_tree(EXPONENT, msg_arr); 
-    printf("merkle root :\n");
+    printf("block of 512 msg has been accepted, calcing merkle root :\n");
     DumpHex((*(L_arrays_p_cont->main_layer_pointer[0].main_pointer))->hash, crypto_generichash_BYTES);
     unsigned char merkle_root_first[crypto_generichash_BYTES];
     memcpy(merkle_root_first,(*(L_arrays_p_cont->main_layer_pointer[0].main_pointer))->hash, crypto_generichash_BYTES);
@@ -192,10 +192,9 @@ int setup_client_iouring(char* IP_ADDR_TO_CONNECT)
     block_written_size = written_block_size;
     mtx_unlock(&block_created_mtx);
     printf("BLOCK HAS BEEN CREATED!\n");
-    printf("written block size %lu\n",written_block_size);
     printf("--------------------------\n");
-    printf("serialized block is\n");
-    DumpHex(buffer_BLOCK_DATA,written_block_size);
+//     printf("serialized block is\n");
+//     DumpHex(buffer_BLOCK_DATA,written_block_size);
     printf("--------------------------\n");
 	flag_block_filled = 1;
             }

@@ -59,7 +59,6 @@ void setup_p2p_listening(char* IP_ADD_LISTEN)
     {
         printf("cannot setup a client socket\n");
     }else {
-	    printf("one\n");
 	    printf("established socket for incoming p2p connections!\n");
     }
 
@@ -77,7 +76,7 @@ void setup_p2p_listening(char* IP_ADD_LISTEN)
     while(1){
 	     done = connect(s,res->ai_addr,res->ai_addrlen);
 	     if (!done) break ;
-	     printf("trying to connect againg\n");
+	     printf("trying to connect to neighboor node\n");
 	     sleep(2);
     }
     mtx_unlock(&peer_connection_accepted);
@@ -107,12 +106,12 @@ void setup_p2p_listening(char* IP_ADD_LISTEN)
     	io_uring_wait_cqe(&ring, &cqe);
 	cl_p2p_state STATE = request_data_event_type(cqe->user_data);
  	P2pIpcMessage__Status msg_status;
-	printf("message status %d\n",STATE);
+// 	printf("message status %d\n",STATE);
 	switch (STATE) { //INTERNAL STATE
 		case PROCESS_RESPONSE:  // RECEIVING A MESSAGE
 	                msg_status = P2P_deserialize_STATUS( buffer, cqe->res);
-			DumpHex(buffer,cqe->res);
-			printf("testing message with P2P status %d\n",msg_status);
+// 			DumpHex(buffer,cqe->res);
+// 			printf("testing message with P2P status %d\n",msg_status);
 			switch (msg_status) {
 				case P2P__IPC_MESSAGE__STATUS__PING: // server sent PING -> answer pong
 					cl_p2p_send_STATUS(&ring,s,P2P__IPC_MESSAGE__STATUS__PONG, buffer_send, READ_RESPONSE);

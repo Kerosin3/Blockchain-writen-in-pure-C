@@ -80,7 +80,6 @@ void setup_iouring(struct io_uring *ring, bool pooling)
 	 printf("errno:%d\n",errno);
         die("error io uring initialization");
     }
-    printf("iouring established!\n");
 }
 
 void teardown_server_sock(int servsock)

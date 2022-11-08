@@ -3,7 +3,7 @@
 // create a level
 layer_hp *create_a_h_layer(unsigned long long *size_d_layer, hash_point_p *start_hpointr)
 {
-    *(size_d_layer) >>= 1LLU; // devide by 2
+    *(size_d_layer) >>= 1LLU; // dev by 2
     unsigned long long _n = *size_d_layer;
     size_t level = 0;
     while (_n >>= 1)
