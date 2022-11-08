@@ -160,11 +160,18 @@ int setup_client_iouring(char* IP_ADDR_TO_CONNECT)
     zlog_info(client_log, "calcing merkle tree from received messges!");
     L_arrays_p_cont = calc_merkle_tree(EXPONENT, msg_arr); 
     printf("block of 512 msg has been accepted, calcing merkle root :\n");
+    
     DumpHex((*(L_arrays_p_cont->main_layer_pointer[0].main_pointer))->hash, crypto_generichash_BYTES);
+    unsigned char* temp_hash = calc_hashof_hash(  (*(L_arrays_p_cont->main_layer_pointer[0].main_pointer))->hash  );// calc hash of hash BIRTHDAY 
+    printf("Birthday hash (hash of hash):\n");
+    DumpHex(temp_hash,crypto_generichash_BYTES);
+    free(temp_hash);
     unsigned char merkle_root_first[crypto_generichash_BYTES];
     memcpy(merkle_root_first,(*(L_arrays_p_cont->main_layer_pointer[0].main_pointer))->hash, crypto_generichash_BYTES);
     //****************************************************/
+    printf("-=STARTING PUZZLE SOLVING=-");
     unsigned char* nonce = solve_puzzle(merkle_root_first,3); //calc puzzle
+    printf("-=PUZZLE HAS BEEN SOLVED=-");
     //create block
     block_dummy = create_block_dummy(0,merkle_root_first);
     set_nonce_to_block(block_dummy,nonce);

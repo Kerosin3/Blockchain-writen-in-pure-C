@@ -22,6 +22,17 @@ block_t* create_block_dummy(
     return blk;
 }
 
+void print_block_data(block_t* block ){
+	printf("-----------------block content starts-----------------\n");
+	printf("block data creation:\n");
+	DumpHex(block->date,32);
+	printf("block nonce:\n");
+	DumpHex(block->nonce,15);
+	printf("block merkle root:\n");
+	DumpHex(block->merkle_root,32);
+	printf("-----------------block content ends-------------------\n");
+}
+
 void set_nonce_to_block(block_t* blk,unsigned char* nonce){
     memcpy(blk->nonce,nonce,NONCE_LEN);
     blk->timestamp_end = get_epoch_ns(); // assign end time
@@ -48,7 +59,9 @@ int test_solution(unsigned char *merkle_root, char *nonce, unsigned char *answer
     crypto_generichash(out_hash, crypto_generichash_BYTES, CONCAT_BYTES, crypto_generichash_BYTES + NONCE_LEN, NULL,
                        0); // calc HASH
     printf("hash of resulted solution:\n");
+    printf("---------------------------------------\n");
     DumpHex(out_hash, crypto_generichash_BYTES);
+    printf("---------------------------------------\n");
     if ((!memcmp(out_hash, answer, crypto_generichash_BYTES)))
     {
         printf("test passed nonce finished successfully!\n");
@@ -77,8 +90,11 @@ unsigned char* solve_puzzle(unsigned char *merkle_root,unsigned difficulty)
     unsigned char *out_hash = calloc(crypto_generichash_BYTES, sizeof(unsigned char)); // alocate for hash
 
     unsigned char ans[5] = {'\0', '\0', '\0', '\0', '\0'}; // 
+    unsigned long long ii = 0;
     do
     {
+	if (!(ii % 1000000)) printf("->trying %llu'th\n",ii);
+	ii++;
         randombytes_buf(CONCAT_BYTES, NONCE_LEN); // take random sample to CONCAT
         crypto_generichash(out_hash, crypto_generichash_BYTES, CONCAT_BYTES, crypto_generichash_BYTES + NONCE_LEN, NULL,
                            0); // calc HASH

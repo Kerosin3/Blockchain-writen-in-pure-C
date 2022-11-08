@@ -79,7 +79,6 @@ block_t* deserialize_block(void* buf_in,unsigned len){
         message = p2p__ipc_message__unpack(0, len,(uint8_t*) buf_in);
 	if ((message->status_code) != P2P__IPC_MESSAGE__STATUS__BLOCK) return 0;
 	memcpy(block->date,message->date,35);
-// 	memcpy(block->difficulty,message->difficulty,)
         memcpy(block->merkle_root,message->merkle_root.data,message->merkle_root.len);
 	memcpy(block->nonce, message->nonce.data,message->nonce.len);
 
@@ -87,6 +86,7 @@ block_t* deserialize_block(void* buf_in,unsigned len){
 	block->timestamp_end = message->timestamp_end;
 	memcpy(block->previous_block,message->prev_block.data,message->prev_block.len );
 	block->difficulty = message->difficulty;
+        p2p__ipc_message__free_unpacked(message, NULL);
 	return block;
 } 
 

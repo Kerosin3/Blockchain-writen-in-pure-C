@@ -66,7 +66,7 @@ void event_loop_p2p(event_p2p_params_t* elparams)
 		     if ((cqe->res) > 0){
 		     	     P2pIpcMessage__Status msg_status;
 			     msg_status = P2P_deserialize_STATUS( get_client_buffer(cqe->user_data), cqe->res);
-			     printf("DESER MSG STATUS:%d\n",msg_status);
+// 			     printf("DESER MSG STATUS:%d\n",msg_status);
 			     switch (msg_status) {
 			     	case P2P__IPC_MESSAGE__STATUS__PONG: // received PONG --> ask if block is ready
 					printf("GOT PONG RESPONSE\n");

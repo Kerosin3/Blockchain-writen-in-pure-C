@@ -29,6 +29,8 @@ extern zlog_category_t *client_log;
 
 extern P2pIpcMessage__Status P2P_deserialize_STATUS(char *buff, unsigned len);
 
+extern block_t* deserialize_block(void* buf_in,unsigned len);
+
 void deserialize_data_from_server(char *buff, unsigned len, signed_message_t *msg);
 
 extern size_t P2P_serialize_block_to_sock(block_t* a_block,void* buf_out);

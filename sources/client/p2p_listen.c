@@ -128,11 +128,13 @@ void setup_p2p_listening(char* IP_ADD_LISTEN)
 				case P2P__IPC_MESSAGE__STATUS__BLOCK:
 					printf("BLOCK ACCEPTED\n");
 					// deresialize here
+					block_t* recv_block = deserialize_block(buffer,cqe->res);
+					print_block_data(recv_block);
         				if (p2p_logging_enabled) zlog_info(p2p_log, "block hash been accepted");
 					break;
 				case P2P__IPC_MESSAGE__STATUS__BLOCK_NOT_READY:
 					//wait till block is ready!
-					printf("BLOCK IS NOT READY!\n");
+					printf("getting answer: BLOCK IS NOT READY!\n");
         				if (p2p_logging_enabled) zlog_info(p2p_log, "block is not ready yet");
 					printf("asking again if block is ready\n");
         				if (p2p_logging_enabled) zlog_info(p2p_log, "asking again if block is ready");
@@ -152,7 +154,7 @@ void setup_p2p_listening(char* IP_ADD_LISTEN)
 			}
 			break;
 		case READ_RESPONSE:
-			printf("reading response\n");
+// 			printf("reading response\n");
 			cl_P2P_read_status_response(&ring,s,buffer,PROCESS_RESPONSE);
         		if (p2p_logging_enabled) zlog_info(p2p_log, "reading p2p server response");
 			break;
