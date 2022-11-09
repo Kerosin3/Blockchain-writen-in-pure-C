@@ -125,7 +125,7 @@ test_msg_t get_test_msg(size_t len){
     srand((long)time(0)); // define a seed for the random number generator
     const char ALLOWED[] = "abcdefghijklmnopqrstuvwxyz1234567890";
     unsigned char* random = calloc(len,sizeof(char));
-    int i = 0;
+    size_t i = 0;
     int c = 0;
     int nbAllowed = sizeof(ALLOWED) - 1;
         for (i = 0; i < len; i++)

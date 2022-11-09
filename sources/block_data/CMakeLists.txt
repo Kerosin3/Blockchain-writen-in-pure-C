@@ -1,7 +1,7 @@
 
 project(blockdata)
 
-ADD_LIBRARY( ${PROJECT_NAME} STATIC
+ADD_LIBRARY( ${PROJECT_NAME} STATIC 
 	blockdata.c
 	layering.c
 	merkle_process.c

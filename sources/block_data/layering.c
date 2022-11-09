@@ -10,20 +10,21 @@ layer_hp *create_a_h_layer(unsigned long long *size_d_layer, hash_point_p *start
         level++; // calc level
     if ((*size_d_layer) == 1)
     {
-        //        printf("create root node\n");
+        //printf("create root node\n");
         layer_hp *a_layer = calloc(1, sizeof(layer_hp));
         a_layer->size = *size_d_layer;
         a_layer->level = level;
         hash_point_p *beg_pointer = calloc(*size_d_layer, sizeof(hash_point_p));
         a_layer->main_pointer = beg_pointer;
         *beg_pointer = create_hpoint_hashG(*start_hpointr, start_hpointr[1]);
-        //      printf("root hash:\n");
-        //    DumpHex(((*(beg_pointer))->hash), crypto_generichash_BYTES);
-        //	printf("side hash 1:\n");
-        //	DumpHex(  (((hash_point_p) ((*(beg_pointer))->hpoint1)))  , crypto_generichash_BYTES);
-        //	printf("side hash 2:\n");
-        //	DumpHex(  (((hash_point_p) ((*(beg_pointer))->hpoint2)))  , crypto_generichash_BYTES);
-        //	printf("root P is %p\n",a_layer->main_pointer);
+        /*printf("root hash:\n"); for debugging
+        DumpHex(((*(beg_pointer))->hash), crypto_generichash_BYTES);
+        printf("side hash 1:\n");
+        DumpHex(  (((hash_point_p) ((*(beg_pointer))->hpoint1)))  , crypto_generichash_BYTES);
+        printf("side hash 2:\n");
+        DumpHex(  (((hash_point_p) ((*(beg_pointer))->hpoint2)))  , crypto_generichash_BYTES);
+        printf("root P is %p\n",a_layer->main_pointer);
+	*/
         return a_layer;
     }
     // printf("creating n nodes HASH:%llu\n", *size_d_layer);
@@ -46,10 +47,8 @@ void fill_intermediate_levels(unsigned long long MSG_expt, unsigned long long *n
 
     for (signed k = MSG_expt - 2; k >= 0; --k)
     {
-        // printf("k is %d \n", k);
         L_arrays[k] = create_a_h_layer(n_msg, L_arrays[k + 1]->main_pointer);
         L_arrays_p[k] = *L_arrays[k];
-        // printf("done!\n");
     }
 }
 
@@ -78,7 +77,7 @@ hashes_hashNode get_a_hashes_Hnode(layer_hp **a_layer, size_t N)
     return a_hash_data;
 }
 
-// processing array of messages to a layer 0
+// processing array of messages to a layer 0.  OBSOLETE
 layer_hp *process_s_messages(unsigned long long s_msgN, signed_message_t *star_msg)
 {
     s_msgN >>= 1; // devide by 2
@@ -99,7 +98,7 @@ layer_hp *process_s_messages(unsigned long long s_msgN, signed_message_t *star_m
 // processing array of messages to a layer 0
 layer_hp *process_s_messagesV2(unsigned long long s_msgN, signed_message_t **star_msg)
 {
-    s_msgN >>= 1; // devide by 2
+    s_msgN >>= 1; // dev by 2
     unsigned long long _n = s_msgN;
     size_t level = 0;
     layer_hp *a_layer = calloc(1, sizeof(layer_hp));
@@ -118,52 +117,6 @@ layer_hp *process_s_messagesV2(unsigned long long s_msgN, signed_message_t **sta
     }
     return a_layer;
 }
-/*
-void calc_merkle_tree(){
-    //-----create basic structures
-    unsigned long long EXPONENT = 9;
-    unsigned long long n_msg = (1LLU << EXPONENT); //  create 2^9 messages
-    layer_hp *L_arrays[EXPONENT];
-    layer_hp L_arrays_p[EXPONENT]; // for free
-    printf("n msg :%llu\n",n_msg);
-
-    //user_keys uk = create_key_pair();
-    signed_message_t** msg_arr = calloc(n_msg, sizeof(signed_message_t *)); //space for msgs
-    //----fill messages
-    size_t i = 0;
-    for (i = 0; i < n_msg; i++)
-    {
-        msg_arr[i] = ls_get_a_signed_msg(uk); // pointer to message
-        validate_a_message(*msg_arr[i], uk.pk);
-    }
-    //-----------------------------------
-    // CREATE BASE LAYER
-    L_arrays[EXPONENT-1] = process_s_messagesV2(n_msg, msg_arr);
-    L_arrays_p[EXPONENT - 1] = *L_arrays[EXPONENT - 1]; // store pointer
-    n_msg >>= 1; // devide by 2
-    printf("N OF LEVEL 0 HASH NODES %llu\n", n_msg);
-    //--------------------------
-    // create intermideate layers
-    printf("filling intermideate layers\n");
-        fill_intermediate_levels(EXPONENT, &n_msg, L_arrays, L_arrays_p); // done
-
-    //
-    // free rootlevel
-    for (size_t i = 0; i < EXPONENT; i++)
-    {
-        destoroy_a_layer(L_arrays[i]);
-    }
-//     destoroy_a_layer(&L_arrays_p[EXPONENT-1]); // destroy level
-    for (i = 0; i < (1LLU<<EXPONENT); i++)
-    {
-        destroy_signed_message(msg_arr[i]);
-    }
-    free(msg_arr); // free conrainer for messages
-
-
-}
-*/
-
 // supply n of messages
 layer_hp *create_BASE_LAYER(unsigned long long *n_msg, user_keys uk, signed_message_t **first_msg)
 {

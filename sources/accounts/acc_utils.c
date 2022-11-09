@@ -1,11 +1,7 @@
 #include "acc_utils.h"
-/*
- * return signed message without PK, message need cleanup
- *
- */
+
 signed_message_t sign_a_message(test_msg_t testmsg, unsigned char *secret_key)
 {
-    ;
     signed_message_t sigmsg;
 
     unsigned char SK[crypto_sign_SECRETKEYBYTES];
@@ -33,7 +29,6 @@ void put_a_PK(signed_message_t *a_msg, unsigned char *PK)
     memcpy(a_msg->public_key, PK, crypto_sign_PUBLICKEYBYTES);
 }
 
-// 1 - OK
 int validate_a_message(signed_message_t sigmsg, unsigned char *pk)
 {
     unsigned char decoded_message[sigmsg.length - 64];
@@ -42,8 +37,7 @@ int validate_a_message(signed_message_t sigmsg, unsigned char *pk)
     unsigned char PK[crypto_sign_PUBLICKEYBYTES];
     memcpy(PK, pk, crypto_sign_PUBLICKEYBYTES);
 
-    if (crypto_sign_open(decoded_message, &decoded_message_len, sigmsg.message, sigmsg.length, (unsigned char *)PK) !=
-        0)
+    if (crypto_sign_open(decoded_message, &decoded_message_len, sigmsg.message, sigmsg.length, (unsigned char *)PK) != 0)
     {
         printf("incorrect signature!\n");
         memset(PK, 0, crypto_sign_PUBLICKEYBYTES);

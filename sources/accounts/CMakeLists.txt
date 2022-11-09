@@ -1,6 +1,5 @@
 project(accounts)
 ADD_LIBRARY(accounts OBJECT
-	activation.c
 	acc_utils.c
 	)
 

@@ -1,6 +1,5 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "activation.h"
 #include "tests.h"
 #include "start_server.h"
 

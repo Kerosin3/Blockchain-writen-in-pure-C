@@ -5,7 +5,6 @@ int merkle_verify_message(unsigned long long EXPONENT, size_t msg_num, layer_hp 
 
     size_t req_msg_first_nodeN = (msg_num >> 1LU);  // assign node number
     int flip = (req_msg_first_nodeN % 2LU) ? 0 : 1; // flip hpoint if % is true num is level 1 num
-    size_t UPLOAD_req_msg_first_nodeN = req_msg_first_nodeN + 1LU;
     unsigned char *hash_msg1_f =
         calc_hash(*(*(Layers_pointer[EXPONENT - 1].main_pointer[req_msg_first_nodeN])).messages.smsg_p1);
     unsigned char *Shash2 = calloc(crypto_generichash_BYTES, sizeof(unsigned char));
