@@ -121,11 +121,6 @@ void FINISH_SENDING(struct io_uring *ring, int client_fd)
     if (server_logging_enabled) zlog_info(server_log,"calcin merkle root");
     calc_merkle_tree(CBUF.buffer); 
 
-    // buffer_lengths[client_fd] =
-    //     send_ONLY_status_code(ipc_msg, get_client_buffer(client_fd), IPC_MESSAGE__STATUS__CLOSE_CONNECTION); // write
-    //     to client buffer
-    // io_uring_prep_send(sqe, client_fd, get_client_buffer(client_fd), buffer_lengths[client_fd],
-    //                   MSG_DONTWAIT);                                          // send a message
     io_uring_sqe_set_data64(sqe, make_request_data(client_fd, FLAG_CLOSE_CONNECTION)); // set wait state
     if (io_uring_submit(ring) < 0)
         printf("error submitting\n");
@@ -159,33 +154,7 @@ void handle_response_NEED_MORE_MSG(struct io_uring *ring, int client_fd)
         printf("error submitting\n");
     // free(msg);
     beffer_sended_N[client_fd] += 1; // add sended
-// 	printf("sended %zu\n",beffer_sended_N[client_fd]);
-//     printf("c buf N :%lu, serial :%lu \n",CBUF.fill_size,beffer_sended_N[client_fd] );
-//    destroy_signed_message(a_msg_p); // OK????
 }
-
-/*
-void handle_response_IFNEED_MESSAGE(struct io_uring *ring, int client_fd)
-{
-    struct io_uring_sqe *sqe = io_uring_get_sqe(ring); // add to ring
-    memset(get_client_buffer(client_fd),0,BUFFER_SIZE); // set current buffer to zero;
-    buffer_lengths[client_fd] = 0; // set length to zero
-    io_uring_prep_recv(sqe, client_fd, get_client_buffer(client_fd) , BUFFER_SIZE , 0);// read answer
-    io_uring_sqe_set_data64(sqe, make_request_data(client_fd, FLAG_READ));
-    if (io_uring_submit(ring) < 0)
-        printf("error submitting\n");
-}
-*/
-
-/*
-{
-    struct io_uring_sqe *sqe = io_uring_get_sqe(ring); // get entity
-    io_uring_prep_recv(sqe, client_fd, get_client_buffer(client_fd) , BUFFER_SIZE ,0);// recv data
-    io_uring_sqe_set_data64(sqe, make_request_data(client_fd, FLAG_READ));
-    if (io_uring_submit(ring) < 0)
-        printf("error submitting\n");
-}
-*/
 
 void READ_STATUS_RESPONSE(struct io_uring *ring, int client_fd)
 {
@@ -196,18 +165,6 @@ void READ_STATUS_RESPONSE(struct io_uring *ring, int client_fd)
     if (io_uring_submit(ring) < 0)
         printf("error submitting\n");
 }
-
-/*
-void add_read_request(struct io_uring *ring, int client_fd)
-{
-    struct io_uring_sqe *sqe = io_uring_get_sqe(ring); // add to ring
-    size_t current_length = buffer_lengths[client_fd]; // get current length
-    io_uring_prep_recv(sqe, client_fd, get_client_buffer(client_fd) + current_length, BUFFER_SIZE - current_length, 0);
-    io_uring_sqe_set_data64(sqe, make_request_data(client_fd, FLAG_READ));
-    if (io_uring_submit(ring) < 0)
-        printf("error submitting\n");
-}
-*/
 
 void add_accept_request(struct io_uring *ring, int serverfd, struct sockaddr_in *a_client_adrd,
                         socklen_t *client_addr_len)
@@ -266,69 +223,4 @@ void add_write_request(struct io_uring *ring, int client_fd, size_t nbytes, bool
     io_uring_submit(ring);
 }
 
-/*
-void handle_request(struct io_uring *ring, int client_fd, size_t n_read)
-{
-    // size_t prev_length = buffer_lengths[client_fd];
-    // size_t length = (buffer_lengths[client_fd] += n_read);        // add to length
-    char *requested = extract_bytes(get_client_buffer(client_fd)); // read request
-    int flag_found = 0;
-    size_t k = 0;
-    if (!requested)
-    {
-        printf("error precessing GET request\n");
-        return;
-    }
-    while ((files_in_dir[k])) // check files in dir
-    {
-        if (!(strcmp(requested, files_in_dir[k])))
-        {
-            flag_found = 1;
-            break;
-        }
-        k++;
-    }
-    if (flag_found)
-    {
-        int fds = open(files_in_dir[k],  O_SYNC | O_RDONLY); // open file
-        if (fds < 0)
-        {
-            if (errno == EACCES) // access denied
-            {
-                int n = snprintf(get_client_buffer(client_fd), BUFFER_SIZE, "%s", http_403_content);
-                buffer_lengths[client_fd] = n;
-                file_fds[client_fd] = -1; // write -1
-                add_write_request(ring, client_fd, n, false);
-                free(requested);
-                return;
-            }
-        }
-        // send file
-        file_fds[client_fd] = fds; // write req fd to client fd array
 
-        struct stat st;
-        stat(files_in_dir[k], &st);
-        size_t csize = st.st_size;
-
-        buffer_lengths[client_fd] = csize;
-
-        int n = snprintf(get_client_buffer(client_fd), BUFFER_SIZE, REPLY_200OK, csize );
-        add_write_request(ring, client_fd, n, true);
-    }
-    else if ((strcmp(requested, "main"))) // not main
-    {
-        int n = snprintf(get_client_buffer(client_fd), BUFFER_SIZE, "%s", http_404_content);
-        buffer_lengths[client_fd] = n;
-        file_fds[client_fd] = -1; // write -1
-        add_write_request(ring, client_fd, n, false);
-    }
-    else // main page
-    {
-        int n = snprintf(get_client_buffer(client_fd), BUFFER_SIZE, main_page2, filesinthedir);
-        buffer_lengths[client_fd] = n;
-        file_fds[client_fd] = -1; // write -1
-        add_write_request(ring, client_fd, n, false);
-    }
-    free(requested);
-}
-*/

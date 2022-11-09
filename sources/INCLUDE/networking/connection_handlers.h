@@ -32,17 +32,13 @@ extern circ_buf_t CBUF;
 typedef enum
 {
     FLAG_ACCEPT = 0,
-    ASK_FOR_TRANSACTIONS,
     TEST_RESPONSE,
-    WAIT_RESPONSE_NEED_MSG,
     READ_RESPONSE,
     WAIT_ACKNOWLEDGEMENT,
-    FLAG_SEND_ECHO,
     FLAG_SEND_TRANSACTIONS,
     FLAG_CLOSE_CONNECTION,
     FLAG_READ,
     FLAG_WRITE,
-    FLAG_ASK_MORE,
 } flag_state;
 signed_message_t *get_signed_message_buffer(int client_fd);
 

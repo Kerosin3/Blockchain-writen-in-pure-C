@@ -15,7 +15,16 @@ block_t* create_block_dummy(
     //set beg timestampn
     blk->timestamp_begin = get_epoch_ns(); // set timestamp block created
     blk->timestamp_end = 0;  // set when finish puzzle calcing
-    memset(blk->previous_block,0,crypto_generichash_BYTES);
+    if (!prev_block) { // first block -> just zeros
+	    memset(blk->previous_block,0,crypto_generichash_BYTES);
+    } else {// calc hash o prev block
+	unsigned char* out_hash = calloc(crypto_generichash_BYTES,sizeof(unsigned char));
+	crypto_generichash(out_hash,crypto_generichash_BYTES,
+			(unsigned char*) prev_block,sizeof(block_t),
+			NULL,0);
+	memcpy(blk->previous_block,out_hash,crypto_generichash_BYTES);// copy hash
+	free(out_hash);
+    }
     blk->difficulty = 0;
     memset(blk->nonce,0,NONCE_LEN);
     printf("block dummy has been created!\n");

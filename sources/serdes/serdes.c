@@ -1,43 +1,5 @@
 #include "serdes.h"
-/*
-uint8_t puzzle_msg[10] = { 't','e','s','t','p','u','z','z','l','e' };
 
-uint8_t test_pubkey[5] = { 0xAA, 0xAA,0xAA ,0xAA,0xEE};
-
-void serialize_data(void* buffer);
-
-size_t get_timestamp(void* buffer);
-
-
-
-int main(int argc, char *argv[])
-{
-	void* buf = 0 ;
-	serialize_data(buf);
-	free(buf);
-	
-
-	char buffer[1024]= {0};
-	int len = 0;
-	FILE *fp;
-	fp = fopen("serialized","rb");
-	len = fread(buffer,sizeof(char),sizeof(buffer),fp);
-	IpcMessage *message;
-	message = ipc_message__unpack(0,len,buffer);
-	if(message->has_pubkey){
-		printf("has pubkey!\n");
-		printf("%s\n",message->pubkey.data);
-	}
-	printf("has pubkey %d\n",message->has_pubkey);
-	printf("has msg %d\n",message->has_transaction_msg);
-	printf("date: %s\n",message->timestamp);
-	ipc_message__free_unpacked(message,NULL);
-	fclose(fp);
-		
-
-}
-
-*/
 size_t get_timestamp(void* buffer);
 
 
@@ -64,7 +26,7 @@ size_t serialize_data_v2(void* socket_buf,signed_message_t* a_message,IpcMessage
 	message->time_num = get_epoch_ns();
 // 	printf("SEREALIZED MESSAGE TIMESTAMP %lu\n",message->time_num);
 
-	size_t time_len = get_timestamp(date);
+	get_timestamp(date);
 	message->timestamp = date; // its ok
 
 	len = ipc_message__get_packed_size(message);
