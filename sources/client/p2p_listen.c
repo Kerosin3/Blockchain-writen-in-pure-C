@@ -139,7 +139,7 @@ void setup_p2p_listening(char* IP_ADD_LISTEN)
 					printf("asking again if block is ready\n");
         				if (p2p_logging_enabled) zlog_info(p2p_log, "asking again if block is ready");
 					if (flag_ready_count){
-						printf("sleeping for new try\n");
+						printf("sleeping for new ask for ready block\n");
 						sleep(2);
 						cl_p2p_send_STATUS(&ring,s,P2P__IPC_MESSAGE__STATUS__ASK_IF_BLOCK_READY, buffer_send,READ_RESPONSE);
 					} else {

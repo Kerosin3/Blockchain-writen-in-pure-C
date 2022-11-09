@@ -137,7 +137,7 @@ int setup_client_iouring(char* IP_ADDR_TO_CONNECT)
             send_need_more_msg(&ring, cqe->res, buffer);
             break;
         case IPC_MESSAGE__STATUS__MESSAGE_SENDED:
-            if (count < BLOCKSIZE - 1)
+            if (count < BLOCKSIZE - 1) // not the last msg
             {
                 if (client_logging_enabled){
                     zlog_info(client_log, "acquired %d,sending ACK...", cqe->res);
@@ -147,7 +147,7 @@ int setup_client_iouring(char* IP_ADDR_TO_CONNECT)
                 count++;
                 ret = send_STATUS(&ring, s, buffer, IPC_MESSAGE__STATUS__ACKN_OK);
             }
-            else if (count == BLOCKSIZE - 1)
+            else if (count == BLOCKSIZE - 1) // last msg
             {
                 if (client_logging_enabled)
                     zlog_info(client_log, "last message has been acquired");
@@ -155,55 +155,29 @@ int setup_client_iouring(char* IP_ADDR_TO_CONNECT)
                 if (client_logging_enabled)
                     zlog_info(client_log, "stop, accepting");
                 ret = send_STATUS(&ring, s, buffer2, IPC_MESSAGE__STATUS__ENOUGH); // 512 blocks acquired
-                 flag_block_filled = 1;
-	
-    zlog_info(client_log, "calcing merkle tree from received messges!");
-    L_arrays_p_cont = calc_merkle_tree(EXPONENT, msg_arr); 
-    printf("block of 512 msg has been accepted, calcing merkle root :\n");
-    
-    DumpHex((*(L_arrays_p_cont->main_layer_pointer[0].main_pointer))->hash, crypto_generichash_BYTES);
-    unsigned char* temp_hash = calc_hashof_hash(  (*(L_arrays_p_cont->main_layer_pointer[0].main_pointer))->hash  );// calc hash of hash BIRTHDAY 
-    printf("Birthday hash (hash of hash):\n");
-    DumpHex(temp_hash,crypto_generichash_BYTES);
-    free(temp_hash);
-    unsigned char merkle_root_first[crypto_generichash_BYTES];
-    memcpy(merkle_root_first,(*(L_arrays_p_cont->main_layer_pointer[0].main_pointer))->hash, crypto_generichash_BYTES);
-    //****************************************************/
-    printf("-=STARTING PUZZLE SOLVING=-");
-    unsigned char* nonce = solve_puzzle(merkle_root_first,3); //calc puzzle
-    printf("-=PUZZLE HAS BEEN SOLVED=-");
-    //create block
-    block_dummy = create_block_dummy(0,merkle_root_first);
-    set_nonce_to_block(block_dummy,nonce);
-    set_prev_block_hash(block_dummy,NULL);
-    // merkle hash
-    //     DumpHex( L_arrays_p_cont->main_layer_pointer  (*(L_arrays[0]->main_pointer))->hash  ,
-    //     crypto_generichash_BYTES);
-
-    int ver_result = 0;
-    zlog_info(client_log, "verifying messages");
-    for (size_t i = 0; i < 512; i++)
-    { // verify all messages
-        // 	  printf("----------------->verify %lu nth\n",i);
-        int rez = merkle_verify_message(EXPONENT, i, L_arrays_p_cont->main_layer_pointer);
-        if (!rez)
-            break;
-        ver_result += rez;
-    }
-	printf("verification result %d\n",ver_result);
-
-
-
-	flag_block_created = 1;
-    size_t written_block_size = P2P_serialize_block_to_sock(block_dummy,buffer_BLOCK_DATA);
-    block_written_size = written_block_size;
-    mtx_unlock(&block_created_mtx);
-    printf("BLOCK HAS BEEN CREATED!\n");
-    printf("--------------------------\n");
-//     printf("serialized block is\n");
-//     DumpHex(buffer_BLOCK_DATA,written_block_size);
-    printf("--------------------------\n");
-	flag_block_filled = 1;
+		// calc necessary for block sending
+    		zlog_info(client_log, "calcing merkle tree from received messges!");
+    		printf("block of 512 msg has been accepted, calcing merkle root :\n");
+    		L_arrays_p_cont = calc_merkle_tree(EXPONENT, msg_arr); 
+    		block_dummy = processing_block(EXPONENT, msg_arr,L_arrays_p_cont);     
+    		int ver_result = 0;
+    		zlog_info(client_log, "verifying messages");
+    		for (size_t i = 0; i < 512; i++)
+    		{ // verify all messages
+    		    int rez = merkle_verify_message(EXPONENT, i, L_arrays_p_cont->main_layer_pointer);
+    		    if (!rez)
+    		        break;
+    		    ver_result += rez;
+  		  }
+		printf("verification result %d\n",ver_result);
+    		zlog_info(client_log, "verification passed with result %d",ver_result);
+    		flag_block_created = 1;
+    		size_t written_block_size = P2P_serialize_block_to_sock(block_dummy,buffer_BLOCK_DATA);//then send via server
+    		block_written_size = written_block_size;
+    		mtx_unlock(&block_created_mtx); // unlock to signal
+    		printf("BLOCK HAS BEEN CREATED!\n");
+    		printf("--------------------------\n");
+		flag_block_filled = 1;
             }
             else
             {
