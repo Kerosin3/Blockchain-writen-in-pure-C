@@ -2,9 +2,9 @@
 #define BLOCKPROC
 
 #include "blockdata.h"
+#include "hashing.h"
 #include "layering.h"
 #include "zlog.h"
-#include "hashing.h"
 
 /**
  * struct {name} - struct for firs layer merkle tree
@@ -34,5 +34,5 @@ l_msg_container *calc_merkle_tree(unsigned long long exponent, signed_message_t 
  * @param L_arrays_p_cont layers of merkle tree
  * @return pointer block with an assigned hash
  */
-block_t* processing_block( l_msg_container* L_arrays_p_cont);
+block_t *processing_block(l_msg_container *L_arrays_p_cont);
 #endif

@@ -1,7 +1,7 @@
 #include "p2p_setup.h"
 
-char *buffers;                   // buffers for incomn connections
-size_t *buffer_lengths;          // current buffer length
+char *buffers;          // buffers for incomn connections
+size_t *buffer_lengths; // current buffer length
 size_t *buffer_sended_N;
 unsigned char *buffer_BLOCK_DATA;
 
@@ -18,12 +18,11 @@ void setup_buffers()
     buffer_sended_N = calloc(MAX_CONNECTIONS, sizeof(size_t)); // buffers for storing current buffer size
     if (!buffer_sended_N)
         die("malloc");
-    //frees in main app
+    // frees in main app
     buffer_BLOCK_DATA = calloc(BUFFER_SIZE, sizeof(unsigned char)); // buffers for storing current buffer size
     if (!buffer_BLOCK_DATA)
         die("malloc");
 }
-
 
 void destroy_buffers()
 {
@@ -31,7 +30,6 @@ void destroy_buffers()
     free(buffer_lengths);
     free(buffer_sended_N);
 }
-
 
 int setup_serv_sock(uint16_t port)
 {
@@ -59,8 +57,9 @@ void setup_iouring(struct io_uring *ring, bool pooling)
 {
     int flag = pooling ? IORING_SETUP_SQPOLL | IORING_SETUP_SQ_AFF : 0;
     int ret = 0;
-    if (  (ret = (io_uring_queue_init(MAX_CONNECTIONS, ring, flag))) != 0){
-	 printf("errno:%d\n",errno);
+    if ((ret = (io_uring_queue_init(MAX_CONNECTIONS, ring, flag))) != 0)
+    {
+        printf("errno:%d\n", errno);
         die("error io uring initialization");
     }
 }
@@ -69,4 +68,3 @@ void teardown_server_sock(int servsock)
 {
     shutdown(servsock, SHUT_RDWR);
 }
-

@@ -2,9 +2,9 @@
 
 #define IPCMESSAGES
 
-#include "transaction.pb-c.h"
 #include "misc.h"
 #include "start_server.h"
+#include "transaction.pb-c.h"
 #include <stdio.h>
 #include <stdlib.h>
 

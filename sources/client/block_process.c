@@ -7,7 +7,7 @@ l_msg_container *calc_merkle_tree(unsigned long long EXPONENT, signed_message_t 
     unsigned long long n_msg = (1LLU << EXPONENT); //  create 2^9 messages for fors layer if exponen is 9
     layer_hp **L_arrays = calloc(EXPONENT, sizeof(layer_hp));
     layer_hp *L_arrays_p = calloc(EXPONENT, sizeof(layer_hp));
-    zlog_info(client_log, "now processing number of messages: %llu",n_msg);
+    zlog_info(client_log, "now processing number of messages: %llu", n_msg);
 
     signed_message_t **msg_arr = calloc(n_msg, sizeof(signed_message_t *));
     //----fill messages
@@ -29,23 +29,24 @@ l_msg_container *calc_merkle_tree(unsigned long long EXPONENT, signed_message_t 
     return g_cont;
 }
 
-block_t* processing_block( l_msg_container* L_arrays_p_cont){
-
+block_t *processing_block(l_msg_container *L_arrays_p_cont)
+{
 
     DumpHex((*(L_arrays_p_cont->main_layer_pointer[0].main_pointer))->hash, crypto_generichash_BYTES);
-    unsigned char* temp_hash = calc_hashof_hash(  (*(L_arrays_p_cont->main_layer_pointer[0].main_pointer))->hash  );// calc hash of hash BIRTHDAY 
+    unsigned char *temp_hash =
+        calc_hashof_hash((*(L_arrays_p_cont->main_layer_pointer[0].main_pointer))->hash); // calc hash of hash BIRTHDAY
     printf("Birthday hash (hash of hash):\n");
-    DumpHex(temp_hash,crypto_generichash_BYTES);
+    DumpHex(temp_hash, crypto_generichash_BYTES);
     free(temp_hash);
     unsigned char merkle_root_first[crypto_generichash_BYTES];
-    memcpy(merkle_root_first,(*(L_arrays_p_cont->main_layer_pointer[0].main_pointer))->hash, crypto_generichash_BYTES);
+    memcpy(merkle_root_first, (*(L_arrays_p_cont->main_layer_pointer[0].main_pointer))->hash, crypto_generichash_BYTES);
     //****************************************************/
     printf("-=STARTING PUZZLE SOLVING WITH DIFFICULTY 3=-\n");
-    unsigned char* nonce = solve_puzzle(merkle_root_first,3); //calc puzzle 3 = difficulty
+    unsigned char *nonce = solve_puzzle(merkle_root_first, 3); // calc puzzle 3 = difficulty
     printf("-=PUZZLE HAS BEEN SOLVED=-\n");
-    //create block
-    block_t* block_dummy = create_block_dummy(0,merkle_root_first);
-    set_nonce_to_block(block_dummy,nonce);
-    set_prev_block_hash(block_dummy,NULL);
+    // create block
+    block_t *block_dummy = create_block_dummy(0, merkle_root_first);
+    set_nonce_to_block(block_dummy, nonce);
+    set_prev_block_hash(block_dummy, NULL);
     return block_dummy;
 }

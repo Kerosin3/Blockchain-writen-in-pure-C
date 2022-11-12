@@ -54,7 +54,8 @@ int request_data_client_fd(uint64_t request_data);
 flag_state request_data_event_type(uint64_t request_data);
 char *get_client_buffer(int client_fd);
 void handle_response_NEED_MORE_MSG(struct io_uring *ring, int client_fd);
-void add_accept_request(struct io_uring *ring, int serverfd, struct sockaddr_in *a_client_adrd,socklen_t *client_addr_len);
+void add_accept_request(struct io_uring *ring, int serverfd, struct sockaddr_in *a_client_adrd,
+                        socklen_t *client_addr_len);
 void add_read_request(struct io_uring *ring, int client_fd);
 void add_write_request(struct io_uring *ring, int client_fd, size_t nbytes, bool more_data);
 void handle_request(struct io_uring *ring, int client_fd, size_t n_read);

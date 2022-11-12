@@ -3,11 +3,11 @@
 
 #include "event_loop.h"
 #include "setup.h"
+#include <dirent.h>
 #include <linux/io_uring.h>
 #include <signal.h>
 #include <stdint.h>
 #include <stdio.h>
-#include <dirent.h>
 /** @file start_server.h
  * Setupping server IU_URING
  */

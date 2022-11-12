@@ -34,7 +34,7 @@ hashes_hashNode get_a_hashes_Hnode(layer_hp **a_layer, size_t N);
 layer_hp *process_s_messages(unsigned long long s_msgN, signed_message_t *star_msg);
 
 /**
- * @brief create a h layer 
+ * @brief create a h layer
  *
  */
 layer_hp *create_a_h_layer(unsigned long long *size_d_layer, hash_point_p *start_hpointr);

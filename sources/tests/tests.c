@@ -23,45 +23,45 @@ void tests()
 {
     int result = 0;
     start_server(12345);
-/*    result+=test_valid_messages(); // no memory safe
-    result+=test_INvalid_messages(); // no memory safe
-    result+=test_hash(); // no memry safe
-    result+=test_hash_merging();
-    
-    result += test_cleanup_message();
-    result += test_message_creation_and_validation();
-    result += test_create_and_destroy_hpoint();
-    result += test_process_messages_L1_v2();
+    /*    result+=test_valid_messages(); // no memory safe
+        result+=test_INvalid_messages(); // no memory safe
+        result+=test_hash(); // no memry safe
+        result+=test_hash_merging();
 
-    result += create_test_messages(9);
-    result += test_mekrle_proof_RIGHT();
-    result += test_mekrle_proof_WRONG();
-  */ 
-/*
-	int rc;
-	zlog_category_t *test;
+        result += test_cleanup_message();
+        result += test_message_creation_and_validation();
+        result += test_create_and_destroy_hpoint();
+        result += test_process_messages_L1_v2();
 
- 	rc = zlog_init("/home/ker0/test/prj/sources/logging/zlog.conf");
-	if (rc) {
-		printf("init failed\n");
-		return;
-	}
-	
-	atexit(zlog_fini);
+        result += create_test_messages(9);
+        result += test_mekrle_proof_RIGHT();
+        result += test_mekrle_proof_WRONG();
+      */
+    /*
+        int rc;
+        zlog_category_t *test;
 
-	test = zlog_get_category("my_test");
-	if (!test) {
-		printf("get test fail\n");
-		zlog_fini();
-		return ;
-	}
+        rc = zlog_init("/home/ker0/test/prj/sources/logging/zlog.conf");
+        if (rc) {
+            printf("init failed\n");
+            return;
+        }
 
-	zlog_info(test, "hello, zlog");
-#if(WRITE_LOG == 1) 
-	zlog_info(test, "define works!");
-#endif
-// 	zlog_fini();
-*/
+        atexit(zlog_fini);
+
+        test = zlog_get_category("my_test");
+        if (!test) {
+            printf("get test fail\n");
+            zlog_fini();
+            return ;
+        }
+
+        zlog_info(test, "hello, zlog");
+    #if(WRITE_LOG == 1)
+        zlog_info(test, "define works!");
+    #endif
+    // 	zlog_fini();
+    */
     // solve_puzlev2(2);
     (!result) ? printf("ALL TESTS PASSED OK\n") : printf("SOME ERRORS WHILE TESTING OCCURRED!\n");
 }
@@ -73,10 +73,9 @@ int test_mekrle_proof_RIGHT()
     unsigned long long n_msg = (1LLU << EXPONENT); //  create 2^9 messages
     layer_hp *L_arrays[EXPONENT];
     layer_hp L_arrays_p[EXPONENT]; // for free
-    
 
     user_keys uk = create_key_pair();
-    signed_message_t* wrong_message = ls_get_a_signed_msg(uk); // pointer to message
+    signed_message_t *wrong_message = ls_get_a_signed_msg(uk); // pointer to message
 
     signed_message_t **msg_arr = calloc(n_msg, sizeof(signed_message_t *));
     //----fill messages
@@ -95,23 +94,24 @@ int test_mekrle_proof_RIGHT()
     // create intermideate layers
     fill_intermediate_levels(EXPONENT, &n_msg, L_arrays, L_arrays_p); // done
 
-    //DumpHex(((*(L_arrays_p[0].main_pointer))->hash), crypto_generichash_BYTES);
-    /*int wreck = 1; 
-    if (wreck)  memcpy(   
-		    ((*(L_arrays_p[EXPONENT - 1].main_pointer[125])).messages.smsg_p1)->message,
-		    wrong_message->message,
-		    wrong_message->length  );
+    // DumpHex(((*(L_arrays_p[0].main_pointer))->hash), crypto_generichash_BYTES);
+    /*int wreck = 1;
+    if (wreck)  memcpy(
+            ((*(L_arrays_p[EXPONENT - 1].main_pointer[125])).messages.smsg_p1)->message,
+            wrong_message->message,
+            wrong_message->length  );
     */
     int ver_result = 0;
-    for (size_t i =0; i< (1LLU << EXPONENT) ; i++) {  //verify all messages
-	 // printf("----------------->verify %lu nth\n",i);
-    	 int rez = merkle_verify_message(EXPONENT, i, L_arrays_p);
-	 if (!rez) break;
-	 ver_result+=rez;
-    	
+    for (size_t i = 0; i < (1LLU << EXPONENT); i++)
+    { // verify all messages
+        // printf("----------------->verify %lu nth\n",i);
+        int rez = merkle_verify_message(EXPONENT, i, L_arrays_p);
+        if (!rez)
+            break;
+        ver_result += rez;
     }
-    //free layers data
-    // free rootlevel
+    // free layers data
+    //  free rootlevel
     for (size_t i = 0; i < EXPONENT; i++)
     {
         destoroy_a_layer(L_arrays[i]);
@@ -122,10 +122,10 @@ int test_mekrle_proof_RIGHT()
     }
     free(msg_arr); // free conrainer for messages
     destroy_signed_message(wrong_message);
-    if (ver_result != (1LLU << EXPONENT)) return 1;
+    if (ver_result != (1LLU << EXPONENT))
+        return 1;
     return 0;
 }
-
 
 // CREATE TREE TEST TREE AND CLEAN
 int create_test_messages(unsigned long long EXPONENT)
@@ -166,7 +166,7 @@ int create_test_messages(unsigned long long EXPONENT)
         destroy_signed_message(msg_arr[i]);
     }
     free(msg_arr); // free conrainer for messages
-    return 0 ; // no segfault = all is ok
+    return 0;      // no segfault = all is ok
 }
 
 // ok!
@@ -182,7 +182,7 @@ int test_message_creation_and_validation()
         msg_arr[i] = ls_get_a_signed_msg(uk);
         rez += validate_a_message(*msg_arr[i], uk.pk);
     }
-//     printf("rez is %d\n", rez);
+    //     printf("rez is %d\n", rez);
 
     for (i = 0; i < 512; i++)
     {
@@ -199,7 +199,7 @@ int test_cleanup_message()
     user_keys uk = create_key_pair();
     signed_message_t *msg;
     msg = ls_get_a_signed_msg(uk); // generate random
-//     DumpHex(msg->message, msg->length);
+                                   //     DumpHex(msg->message, msg->length);
     validate_a_message(*msg, uk.pk);
     destroy_signed_message(msg);
     return 0; // no segfault = ok;
@@ -212,24 +212,28 @@ int test_create_and_destroy_hpoint()
     user_keys uk = create_key_pair();
     signed_message_t *msg1;
     msg1 = ls_get_a_signed_msg(uk); // generate random
-//     printf("message 1\n");
-//     DumpHex(msg1->message, msg1->length);
+                                    //     printf("message 1\n");
+                                    //     DumpHex(msg1->message, msg1->length);
     validate_a_message(*msg1, uk.pk);
 
     user_keys uk2 = create_key_pair();
     signed_message_t *msg2;
     msg2 = ls_get_a_signed_msg(uk2); // generate random
-//     printf("message 2\n");
-//     DumpHex(msg2->message, msg2->length);
+                                     //     printf("message 2\n");
+                                     //     DumpHex(msg2->message, msg2->length);
     validate_a_message(*msg2, uk2.pk);
 
     hash_point_p HASH_POINT = 0;
     HASH_POINT = create_hpoint_message(msg1, msg2);
     int rez = 0;
-    if (HASH_POINT->messages.smsg_p1 == msg1){
-        rez++;}
-    if (HASH_POINT->messages.smsg_p2 == msg2){
-        rez++;}
+    if (HASH_POINT->messages.smsg_p1 == msg1)
+    {
+        rez++;
+    }
+    if (HASH_POINT->messages.smsg_p2 == msg2)
+    {
+        rez++;
+    }
     destroy_signed_message(msg1);
     destroy_signed_message(msg2);
     destroy_hpoint_message(HASH_POINT);
@@ -326,7 +330,6 @@ int test_create_tree()
     */
     //	layer_hp* L1 = create_a_h_layer(&n_msg,L0pointer);
 }
-
 
 int test_hashG_node_creation()
 {
@@ -437,7 +440,6 @@ int test_hpoint_from_2msg_creation()
     }
 }
 
-
 int test_mekrle_proof_WRONG()
 {
     unsigned long long EXPONENT = 14;
@@ -446,10 +448,9 @@ int test_mekrle_proof_WRONG()
     layer_hp *L_arrays[EXPONENT];
     layer_hp L_arrays_p[EXPONENT]; // for free
     printf("verefying n msg, test wrong :%llu\n", n_msg);
-    
 
     user_keys uk = create_key_pair();
-    signed_message_t* wrong_message = ls_get_a_signed_msg(uk); // pointer to message
+    signed_message_t *wrong_message = ls_get_a_signed_msg(uk); // pointer to message
 
     signed_message_t **msg_arr = calloc(n_msg, sizeof(signed_message_t *));
     //----fill messages
@@ -468,23 +469,23 @@ int test_mekrle_proof_WRONG()
     // create intermideate layers
     fill_intermediate_levels(EXPONENT, &n_msg, L_arrays, L_arrays_p); // done
 
-    //DumpHex(((*(L_arrays_p[0].main_pointer))->hash), crypto_generichash_BYTES);//merkle root
-    int wreck = 1;  // <<----------------- FALSE MESSAGE HERE!!!!!
-    if (wreck)  memcpy(   
-		    ((*(L_arrays_p[EXPONENT - 1].main_pointer[125])).messages.smsg_p1)->message, // 125 = 250 msg
-		    wrong_message->message,
-		    wrong_message->length  );
-    
+    // DumpHex(((*(L_arrays_p[0].main_pointer))->hash), crypto_generichash_BYTES);//merkle root
+    int wreck = 1; // <<----------------- FALSE MESSAGE HERE!!!!!
+    if (wreck)
+        memcpy(((*(L_arrays_p[EXPONENT - 1].main_pointer[125])).messages.smsg_p1)->message, // 125 = 250 msg
+               wrong_message->message, wrong_message->length);
+
     int ver_result = 0;
-    for (size_t i =0; i< (1LLU << EXPONENT) ; i++) {  //verify all messages
-	    //printf("----------------->verify %lu nth\n",i);
-    	 int rez = merkle_verify_message(EXPONENT, i, L_arrays_p);
-	 if (!rez) break;
-	 ver_result+=rez;
-    	
+    for (size_t i = 0; i < (1LLU << EXPONENT); i++)
+    { // verify all messages
+        // printf("----------------->verify %lu nth\n",i);
+        int rez = merkle_verify_message(EXPONENT, i, L_arrays_p);
+        if (!rez)
+            break;
+        ver_result += rez;
     }
-    //free layers data
-    // free rootlevel
+    // free layers data
+    //  free rootlevel
     for (size_t i = 0; i < EXPONENT; i++)
     {
         destoroy_a_layer(L_arrays[i]);
@@ -495,113 +496,121 @@ int test_mekrle_proof_WRONG()
     }
     free(msg_arr); // free conrainer for messages
     destroy_signed_message(wrong_message);
-    if (ver_result != (125*2)) return 1;
+    if (ver_result != (125 * 2))
+        return 1;
     return 0;
 }
 
-
-
-
-int test_hash_merging(){
+int test_hash_merging()
+{
 
     printf("TEST HASHIN MERGING\n");
-        user_keys uk = create_key_pair();
-        srand(time(NULL));
+    user_keys uk = create_key_pair();
+    srand(time(NULL));
     test_msg_t somemsg = get_test_msg(100);
     signed_message_t a_msg = sign_a_message(somemsg, uk.sk);
-
 
     user_keys uk2 = create_key_pair();
     test_msg_t somemsg2 = get_test_msg(100);
     signed_message_t a_msg2 = sign_a_message(somemsg2, uk2.sk);
 
-    merge_2hashses(calc_hash(a_msg),calc_hash(a_msg2));
+    merge_2hashses(calc_hash(a_msg), calc_hash(a_msg2));
     return 0; // mo segfault == ok
 }
-//test hash generating
-int test_hash(){
+// test hash generating
+int test_hash()
+{
     printf("TEST HASHING FUNCTION\n");
-        user_keys uk = create_key_pair();
-        srand(time(NULL));
+    user_keys uk = create_key_pair();
+    srand(time(NULL));
     test_msg_t somemsg = get_test_msg(100);
     signed_message_t a_msg = sign_a_message(somemsg, uk.sk);
     unsigned char hash[crypto_generichash_BYTES];
     unsigned char hash_re[crypto_generichash_BYTES];
-    memcpy(hash,calc_hash(a_msg),crypto_generichash_BYTES);
-//     printf("calced hash:\n");
-//     DumpHex(hash,crypto_generichash_BYTES);
+    memcpy(hash, calc_hash(a_msg), crypto_generichash_BYTES);
+    //     printf("calced hash:\n");
+    //     DumpHex(hash,crypto_generichash_BYTES);
     size_t i = 0;
-    for (i = 0; i< 500; i++) {
-//		printf("i=%ld new hash:\n",i);
-        memcpy(hash_re,calc_hash(a_msg),crypto_generichash_BYTES);
-//		DumpHex(hash_re,crypto_generichash_BYTES);
-        if (( strncmp((char*) hash ,(char*) hash_re ,crypto_generichash_BYTES ))!=0) break;
-
+    for (i = 0; i < 500; i++)
+    {
+        //		printf("i=%ld new hash:\n",i);
+        memcpy(hash_re, calc_hash(a_msg), crypto_generichash_BYTES);
+        //		DumpHex(hash_re,crypto_generichash_BYTES);
+        if ((strncmp((char *)hash, (char *)hash_re, crypto_generichash_BYTES)) != 0)
+            break;
     }
-    if (i==500) {
-    //    printf("TEST PASSED, NO ERROR OCCURRED \n");
+    if (i == 500)
+    {
+        //    printf("TEST PASSED, NO ERROR OCCURRED \n");
         return 0;
     }
-    //else printf("TEST PASSED, ERROR OCCURRED!!!!!!!!!!!!! \n");
+    // else printf("TEST PASSED, ERROR OCCURRED!!!!!!!!!!!!! \n");
     return 1;
-
 }
-//test message encryption
-int test_valid_messages(){
+// test message encryption
+int test_valid_messages()
+{
     printf("TESTING VALID ENCTYPTION\n");
     user_keys uk = create_key_pair();
     signed_message_t a_msg;
     size_t i = 0;
-    for (i=0; i<15; i++) {
+    for (i = 0; i < 15; i++)
+    {
         int result = 0;
-        test_msg_t somemsg = ls_get_test_msg(15); 
-        //DumpHex(somemsg.test_msg, somemsg.len);
+        test_msg_t somemsg = ls_get_test_msg(15);
+        // DumpHex(somemsg.test_msg, somemsg.len);
         a_msg = sign_a_message(somemsg, uk.sk);
-        for (size_t ii=0; ii<100; ii++) {
+        for (size_t ii = 0; ii < 100; ii++)
+        {
             //---validation
-            ((validate_a_message(a_msg,uk.pk))) ? (result=1) : (result=0);
-            if (!result) break;
-
+            ((validate_a_message(a_msg, uk.pk))) ? (result = 1) : (result = 0);
+            if (!result)
+                break;
         }
-//	    printf("signed!\n");
-//            (result==1) ? printf("validated!\n") : printf("forged!\n");
-            if (!result) break;
+        //	    printf("signed!\n");
+        //            (result==1) ? printf("validated!\n") : printf("forged!\n");
+        if (!result)
+            break;
     }
-    if (i==15) {
-  //      printf("TEST PASSED, NO ERROR OCCURRED \n");
+    if (i == 15)
+    {
+        //      printf("TEST PASSED, NO ERROR OCCURRED \n");
         return 0;
     }
-   // else printf("TEST PASSED, ERROR OCCURRED!!!!!!!!!!!!! \n");
+    // else printf("TEST PASSED, ERROR OCCURRED!!!!!!!!!!!!! \n");
     return 1;
 }
 
-//wrong keys
-int test_INvalid_messages(){
-	printf("TEST FORGED MESSAGE DETECTON\n");
-        user_keys uk = create_key_pair();
-        user_keys uk2 = create_key_pair();
+// wrong keys
+int test_INvalid_messages()
+{
+    printf("TEST FORGED MESSAGE DETECTON\n");
+    user_keys uk = create_key_pair();
+    user_keys uk2 = create_key_pair();
     signed_message_t a_msg;
-    //char* somemsg = "asdfghj";
+    // char* somemsg = "asdfghj";
 
-        srand(time(NULL));
+    srand(time(NULL));
     test_msg_t somemsg[15];
-    for (size_t k=0; k<15; k++) {
-        somemsg[k] = ls_get_test_msg(15); 
+    for (size_t k = 0; k < 15; k++)
+    {
+        somemsg[k] = ls_get_test_msg(15);
     }
 
     int result = 0;
-    for (size_t i=0; i<15; i++) {
-            a_msg = sign_a_message(somemsg[i], uk.sk);
-            //---validation
-            ((validate_a_message(a_msg,uk.pk))) ? (result+=1) : (result=0);
-      //      (result==1) ? printf("validated!\n") : printf("forged!\n");
+    for (size_t i = 0; i < 15; i++)
+    {
+        a_msg = sign_a_message(somemsg[i], uk.sk);
+        //---validation
+        ((validate_a_message(a_msg, uk.pk))) ? (result += 1) : (result = 0);
+        //      (result==1) ? printf("validated!\n") : printf("forged!\n");
     }
-    
-    if (result==15) {
-    //    printf("TEST PASSED, NO ERROR OCCURRED \n");
+
+    if (result == 15)
+    {
+        //    printf("TEST PASSED, NO ERROR OCCURRED \n");
         return 0;
     }
-    //else printf("TEST PASSED, ERROR OCCURRED!!!!!!!!!!!!! \n");
+    // else printf("TEST PASSED, ERROR OCCURRED!!!!!!!!!!!!! \n");
     return 1;
 }
-

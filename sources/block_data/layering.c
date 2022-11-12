@@ -10,7 +10,7 @@ layer_hp *create_a_h_layer(unsigned long long *size_d_layer, hash_point_p *start
         level++; // calc level
     if ((*size_d_layer) == 1)
     {
-        //printf("create root node\n");
+        // printf("create root node\n");
         layer_hp *a_layer = calloc(1, sizeof(layer_hp));
         a_layer->size = *size_d_layer;
         a_layer->level = level;
@@ -24,7 +24,7 @@ layer_hp *create_a_h_layer(unsigned long long *size_d_layer, hash_point_p *start
         printf("side hash 2:\n");
         DumpHex(  (((hash_point_p) ((*(beg_pointer))->hpoint2)))  , crypto_generichash_BYTES);
         printf("root P is %p\n",a_layer->main_pointer);
-	*/
+    */
         return a_layer;
     }
     // printf("creating n nodes HASH:%llu\n", *size_d_layer);

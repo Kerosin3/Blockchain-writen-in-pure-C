@@ -3,14 +3,14 @@
 
 #include "acc_utils.h"
 #include "blockdata.h"
+#include "hashing.h"
 #include "layering.h"
 #include "merkle_process.h"
-#include "hashing.h"
 #include "start_server.h"
 //#include "../puzzle/puzzle.h"
+#include "misc.h"
 #include "serdes.h"
 #include "zlog.h"
-#include "misc.h"
 #include <sodium.h>
 #include <stdio.h>
 #include <stdlib.h>

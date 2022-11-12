@@ -37,7 +37,8 @@ int validate_a_message(signed_message_t sigmsg, unsigned char *pk)
     unsigned char PK[crypto_sign_PUBLICKEYBYTES];
     memcpy(PK, pk, crypto_sign_PUBLICKEYBYTES);
 
-    if (crypto_sign_open(decoded_message, &decoded_message_len, sigmsg.message, sigmsg.length, (unsigned char *)PK) != 0)
+    if (crypto_sign_open(decoded_message, &decoded_message_len, sigmsg.message, sigmsg.length, (unsigned char *)PK) !=
+        0)
     {
         printf("incorrect signature!\n");
         memset(PK, 0, crypto_sign_PUBLICKEYBYTES);

@@ -13,66 +13,72 @@ _Noreturn void die(const char *message)
  * return a allocated memory with signed message
  *
  */
-signed_message_t* get_a_signed_msg(user_keys keys){
-	srand(time(NULL));
-	test_msg_t somemsg = get_test_msg(100);	
-	signed_message_t* a_msg = calloc(1,sizeof(signed_message_t));	
-	*a_msg = sign_a_message(somemsg, keys.sk);
-	//memory for somemsg free here
+signed_message_t *get_a_signed_msg(user_keys keys)
+{
+    srand(time(NULL));
+    test_msg_t somemsg = get_test_msg(100);
+    signed_message_t *a_msg = calloc(1, sizeof(signed_message_t));
+    *a_msg = sign_a_message(somemsg, keys.sk);
+    // memory for somemsg free here
 
-	put_a_PK(a_msg,keys.pk);
-//	a_msg->length = 100;
-	return a_msg;
+    put_a_PK(a_msg, keys.pk);
+    //	a_msg->length = 100;
+    return a_msg;
 }
-signed_message_t* ls_get_a_signed_msg(user_keys keys){
-	srand(time(NULL));
-	test_msg_t somemsg = ls_get_test_msg(100);	
-	signed_message_t* a_msg = calloc(1,sizeof(signed_message_t));	
-	*a_msg = sign_a_message(somemsg,keys.sk);
-	put_a_PK(a_msg,keys.pk);
-//	a_msg->length = 100;
-	return a_msg;
-}
-
-
-size_t get_timestamp(void* buffer){
-	char date[32];
-        time_t t = time(NULL);
-    	struct tm* tm = gmtime(&t);
-    	strftime(date, sizeof(date), "%d/%m/%Y %H:%M:%S GMT", tm);
-	int n = snprintf(buffer, strlen(date)+1, "%s", date);
-	return n;
+signed_message_t *ls_get_a_signed_msg(user_keys keys)
+{
+    srand(time(NULL));
+    test_msg_t somemsg = ls_get_test_msg(100);
+    signed_message_t *a_msg = calloc(1, sizeof(signed_message_t));
+    *a_msg = sign_a_message(somemsg, keys.sk);
+    put_a_PK(a_msg, keys.pk);
+    //	a_msg->length = 100;
+    return a_msg;
 }
 
-u_int64_t  get_epoch_ns(){
-	long int ns;
-	u_int64_t all;
-	time_t sec;
-	unsigned long one_bill = 1000000000L;
-	struct timespec spec;
-	
-	if (clock_gettime(CLOCK_REALTIME,&spec)!=0){
-		printf("ERROR GETTING EPOCH TIMESTAMP\n");
-		all = 0;
-		return all;
-	}
-	sec = spec.tv_sec;
-	ns = spec.tv_nsec;
-	all = (u_int64_t) sec *  one_bill + (u_int64_t) ns;
-// 	printf("EPOH %lu\n",all);
-	return all;
+size_t get_timestamp(void *buffer)
+{
+    char date[32];
+    time_t t = time(NULL);
+    struct tm *tm = gmtime(&t);
+    strftime(date, sizeof(date), "%d/%m/%Y %H:%M:%S GMT", tm);
+    int n = snprintf(buffer, strlen(date) + 1, "%s", date);
+    return n;
 }
 
-long long get_date_usec_rec(){
+u_int64_t get_epoch_ns()
+{
+    long int ns;
+    u_int64_t all;
+    time_t sec;
+    unsigned long one_bill = 1000000000L;
+    struct timespec spec;
 
-	struct timeval ts;
-	if (gettimeofday(&ts,NULL)) {
-		printf("Error getting timestamp!\n");
-		long long ret = 0;
-		return ret;
-	}
-	long long ret = ts.tv_sec*1000LL + ts.tv_usec/1000;
-	return ret;
+    if (clock_gettime(CLOCK_REALTIME, &spec) != 0)
+    {
+        printf("ERROR GETTING EPOCH TIMESTAMP\n");
+        all = 0;
+        return all;
+    }
+    sec = spec.tv_sec;
+    ns = spec.tv_nsec;
+    all = (u_int64_t)sec * one_bill + (u_int64_t)ns;
+    // 	printf("EPOH %lu\n",all);
+    return all;
+}
+
+long long get_date_usec_rec()
+{
+
+    struct timeval ts;
+    if (gettimeofday(&ts, NULL))
+    {
+        printf("Error getting timestamp!\n");
+        long long ret = 0;
+        return ret;
+    }
+    long long ret = ts.tv_sec * 1000LL + ts.tv_usec / 1000;
+    return ret;
 }
 
 /*
@@ -118,36 +124,34 @@ void DumpHex(const void *data, size_t size)
     }
 }
 
+test_msg_t get_test_msg(size_t len)
+{
 
-
-test_msg_t get_test_msg(size_t len){
-    
     srand((long)time(0)); // define a seed for the random number generator
     const char ALLOWED[] = "abcdefghijklmnopqrstuvwxyz1234567890";
-    unsigned char* random = calloc(len,sizeof(char));
+    unsigned char *random = calloc(len, sizeof(char));
     size_t i = 0;
     int c = 0;
     int nbAllowed = sizeof(ALLOWED) - 1;
-        for (i = 0; i < len; i++)
-        {
-            c = rand() % nbAllowed;
-            random[i] = ALLOWED[c];
-        }
-   test_msg_t msg;
-   msg.test_msg = random;
-   msg.len = len;
-   return msg; 
+    for (i = 0; i < len; i++)
+    {
+        c = rand() % nbAllowed;
+        random[i] = ALLOWED[c];
+    }
+    test_msg_t msg;
+    msg.test_msg = random;
+    msg.len = len;
+    return msg;
 }
 
-test_msg_t ls_get_test_msg(size_t len){
-    unsigned char* random = calloc(len,sizeof(char));
-    if (sodium_init() < 0 ) die("libsodium!"); 
+test_msg_t ls_get_test_msg(size_t len)
+{
+    unsigned char *random = calloc(len, sizeof(char));
+    if (sodium_init() < 0)
+        die("libsodium!");
     randombytes_buf(random, len);
-   test_msg_t msg;
-   msg.test_msg = random;
-   msg.len = len;
-   return msg; 
-
+    test_msg_t msg;
+    msg.test_msg = random;
+    msg.len = len;
+    return msg;
 }
-
-

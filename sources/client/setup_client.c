@@ -9,7 +9,7 @@
 IpcMessage *buffer_transactions;
 unsigned long long EXPONENT = 9; //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-int setup_client_iouring(char* IP_ADDR_TO_CONNECT)
+int setup_client_iouring(char *IP_ADDR_TO_CONNECT)
 {
     struct addrinfo hints, *res, *p;
     int status;
@@ -64,19 +64,20 @@ int setup_client_iouring(char* IP_ADDR_TO_CONNECT)
     io_uring_wait_cqe(&ring, &cqe_main);
     int ret = cqe_main->res;
     mtx_lock(&block_created_mtx);
-    if (ret==0)
+    if (ret == 0)
     {
         zlog_info(client_log, "connection to server has been established!");
         printf("connection TO MESSAGE SERVER has been established!\n");
         io_uring_cqe_seen(&ring, cqe_main);
-    } else {
+    }
+    else
+    {
         zlog_info(client_log, "error while trying connecting to the server");
-	printf("error establishing connection to server, exiting\n");
-	close(s);
+        printf("error establishing connection to server, exiting\n");
+        close(s);
         free(buffer_transactions);
         freeaddrinfo(res);
-	return 0;
-
+        return 0;
     }
     IpcMessage__Status FLAG_FROM_SERVER = IPC_MESSAGE__STATUS__ERROR; // set error default status
     size_t k = 0;
@@ -84,8 +85,8 @@ int setup_client_iouring(char* IP_ADDR_TO_CONNECT)
     size_t count = 0;
     char *buffer = calloc(BUFSIZE, sizeof(char));
     char *buffer2 = calloc(BUFSIZE, sizeof(char));
-    l_msg_container *L_arrays_p_cont  = 0;
-    block_t* block_dummy  = 0;
+    l_msg_container *L_arrays_p_cont = 0;
+    block_t *block_dummy = 0;
     signed_message_t *msg_arr = calloc(BLOCKSIZE, sizeof(signed_message_t));
     for (size_t i = 0; i < BLOCKSIZE; i++)
     {
@@ -97,8 +98,9 @@ int setup_client_iouring(char* IP_ADDR_TO_CONNECT)
     int ifread = 0;
     for (;;)
     {
-// 	printf("cycle!\n");
-        if (kill_thread_p2p) break;// kill thread
+        // 	printf("cycle!\n");
+        if (kill_thread_p2p)
+            break; // kill thread
         struct io_uring_cqe *cqe;
         if (flag_block_filled)
         {
@@ -106,8 +108,8 @@ int setup_client_iouring(char* IP_ADDR_TO_CONNECT)
                 zlog_info(client_log, "block (512) messages, has been acquired");
             ifread = 0;
             io_uring_wait_cqe(&ring, &cqe);
-	    continue;
-            //break;
+            continue;
+            // break;
         }
         if (ifread == 0)
         {
@@ -117,21 +119,21 @@ int setup_client_iouring(char* IP_ADDR_TO_CONNECT)
             io_uring_wait_cqe(&ring, &cqe);
             io_uring_cqe_seen(&ring, cqe);
             ifread = 1;
-// 	    continue;
-            //break;
+            // 	    continue;
+            // break;
         }
 
         ifread = 0;
         int ret = cqe->res; // N readed bytes
-	zlog_info(client_log, "cqe returned %d ",ret);
-	FLAG_FROM_SERVER = read_response_ONLY_STATUS(buffer, cqe->res);
-// 	printf("message flag form server %d\n",FLAG_FROM_SERVER);
-        switch (FLAG_FROM_SERVER) 
+        zlog_info(client_log, "cqe returned %d ", ret);
+        FLAG_FROM_SERVER = read_response_ONLY_STATUS(buffer, cqe->res);
+        // 	printf("message flag form server %d\n",FLAG_FROM_SERVER);
+        switch (FLAG_FROM_SERVER)
         {
         case IPC_MESSAGE__STATUS__ASK_NEED_MSG:
             if (client_logging_enabled)
                 zlog_info(client_log, "server ask if need msg");
-            ret = send_STATUS(&ring, s, buffer2, IPC_MESSAGE__STATUS__NEED_MORE); 
+            ret = send_STATUS(&ring, s, buffer2, IPC_MESSAGE__STATUS__NEED_MORE);
             break;
         case IPC_MESSAGE__STATUS__OK:
             if (client_logging_enabled)
@@ -141,10 +143,11 @@ int setup_client_iouring(char* IP_ADDR_TO_CONNECT)
         case IPC_MESSAGE__STATUS__MESSAGE_SENDED:
             if (count < BLOCKSIZE - 1) // not the last msg
             {
-                if (client_logging_enabled){
+                if (client_logging_enabled)
+                {
                     zlog_info(client_log, "acquired %d,sending ACK...", cqe->res);
                     zlog_info(client_log, "accept msg num: %zu", count);
-		}
+                }
                 deserialize_data_from_server(buffer, cqe->res, msg_arr + count);
                 count++;
                 ret = send_STATUS(&ring, s, buffer, IPC_MESSAGE__STATUS__ACKN_OK);
@@ -157,29 +160,30 @@ int setup_client_iouring(char* IP_ADDR_TO_CONNECT)
                 if (client_logging_enabled)
                     zlog_info(client_log, "stop, accepting");
                 ret = send_STATUS(&ring, s, buffer2, IPC_MESSAGE__STATUS__ENOUGH); // 512 blocks acquired
-		// calc necessary for block sending
-    		zlog_info(client_log, "calcing merkle tree from received messges!");
-    		printf("block of 512 msg has been accepted, calcing merkle root :\n");
-    		L_arrays_p_cont = calc_merkle_tree(EXPONENT, msg_arr); 
-    		block_dummy = processing_block(L_arrays_p_cont);     
-    		int ver_result = 0;
-    		zlog_info(client_log, "verifying messages in a block dummy");
-    		for (size_t i = 0; i < BUFSIZEFORMESSAGE; i++)
-    		{ // verify all messages
-    		    int rez = merkle_verify_message(EXPONENT, i, L_arrays_p_cont->main_layer_pointer);
-    		    if (!rez)
-    		        break;
-    		    ver_result += rez;
-  		  }
-		printf("verification result %d\n",ver_result);
-    		zlog_info(client_log, "verification passed with a result %d",ver_result);
-    		flag_block_created = 1;
-    		size_t written_block_size = P2P_serialize_block_to_sock(block_dummy,buffer_BLOCK_DATA);//then send via server
-    		block_written_size = written_block_size;
-    		mtx_unlock(&block_created_mtx); // unlock to signal
-    		printf("BLOCK HAS BEEN CREATED!\n");
-    		printf("--------------------------\n");
-		flag_block_filled = 1;
+                                                                                   // calc necessary for block sending
+                zlog_info(client_log, "calcing merkle tree from received messges!");
+                printf("block of 512 msg has been accepted, calcing merkle root :\n");
+                L_arrays_p_cont = calc_merkle_tree(EXPONENT, msg_arr);
+                block_dummy = processing_block(L_arrays_p_cont);
+                int ver_result = 0;
+                zlog_info(client_log, "verifying messages in a block dummy");
+                for (size_t i = 0; i < BUFSIZEFORMESSAGE; i++)
+                { // verify all messages
+                    int rez = merkle_verify_message(EXPONENT, i, L_arrays_p_cont->main_layer_pointer);
+                    if (!rez)
+                        break;
+                    ver_result += rez;
+                }
+                printf("verification result %d\n", ver_result);
+                zlog_info(client_log, "verification passed with a result %d", ver_result);
+                flag_block_created = 1;
+                size_t written_block_size =
+                    P2P_serialize_block_to_sock(block_dummy, buffer_BLOCK_DATA); // then send via server
+                block_written_size = written_block_size;
+                mtx_unlock(&block_created_mtx); // unlock to signal
+                printf("BLOCK HAS BEEN CREATED!\n");
+                printf("--------------------------\n");
+                flag_block_filled = 1;
             }
             else
             {
@@ -197,7 +201,7 @@ int setup_client_iouring(char* IP_ADDR_TO_CONNECT)
             flag_block_filled = 1;
             break;
         default:
-//	    printf("default!\n");
+            //	    printf("default!\n");
             break;
         }
 
@@ -212,7 +216,7 @@ int setup_client_iouring(char* IP_ADDR_TO_CONNECT)
     free(buffer_transactions);
     freeaddrinfo(res);
 
-        // free msg for client
+    // free msg for client
     for (size_t i = 0; i < BLOCKSIZE; i++)
     {
         free(msg_arr[i].message);
@@ -232,6 +236,6 @@ int setup_client_iouring(char* IP_ADDR_TO_CONNECT)
     free(msg_arr); // free conrainer for messages
     free(L_arrays_p_cont);
     free(block_dummy);
-     // free(msg_arr);
+    // free(msg_arr);
     thrd_exit(1);
 }

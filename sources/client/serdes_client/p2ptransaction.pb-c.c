@@ -7,225 +7,145 @@
 #endif
 
 #include "p2ptransaction.pb-c.h"
-void   p2p__ipc_message__init
-                     (P2pIpcMessage         *message)
+void p2p__ipc_message__init(P2pIpcMessage *message)
 {
-  static const P2pIpcMessage init_value = P2P__IPC_MESSAGE__INIT;
-  *message = init_value;
+    static const P2pIpcMessage init_value = P2P__IPC_MESSAGE__INIT;
+    *message = init_value;
 }
-size_t p2p__ipc_message__get_packed_size
-                     (const P2pIpcMessage *message)
+size_t p2p__ipc_message__get_packed_size(const P2pIpcMessage *message)
 {
-  assert(message->base.descriptor == &p2p__ipc_message__descriptor);
-  return protobuf_c_message_get_packed_size ((const ProtobufCMessage*)(message));
+    assert(message->base.descriptor == &p2p__ipc_message__descriptor);
+    return protobuf_c_message_get_packed_size((const ProtobufCMessage *)(message));
 }
-size_t p2p__ipc_message__pack
-                     (const P2pIpcMessage *message,
-                      uint8_t       *out)
+size_t p2p__ipc_message__pack(const P2pIpcMessage *message, uint8_t *out)
 {
-  assert(message->base.descriptor == &p2p__ipc_message__descriptor);
-  return protobuf_c_message_pack ((const ProtobufCMessage*)message, out);
+    assert(message->base.descriptor == &p2p__ipc_message__descriptor);
+    return protobuf_c_message_pack((const ProtobufCMessage *)message, out);
 }
-size_t p2p__ipc_message__pack_to_buffer
-                     (const P2pIpcMessage *message,
-                      ProtobufCBuffer *buffer)
+size_t p2p__ipc_message__pack_to_buffer(const P2pIpcMessage *message, ProtobufCBuffer *buffer)
 {
-  assert(message->base.descriptor == &p2p__ipc_message__descriptor);
-  return protobuf_c_message_pack_to_buffer ((const ProtobufCMessage*)message, buffer);
+    assert(message->base.descriptor == &p2p__ipc_message__descriptor);
+    return protobuf_c_message_pack_to_buffer((const ProtobufCMessage *)message, buffer);
 }
-P2pIpcMessage *
-       p2p__ipc_message__unpack
-                     (ProtobufCAllocator  *allocator,
-                      size_t               len,
-                      const uint8_t       *data)
+P2pIpcMessage *p2p__ipc_message__unpack(ProtobufCAllocator *allocator, size_t len, const uint8_t *data)
 {
-  return (P2pIpcMessage *)
-     protobuf_c_message_unpack (&p2p__ipc_message__descriptor,
-                                allocator, len, data);
+    return (P2pIpcMessage *)protobuf_c_message_unpack(&p2p__ipc_message__descriptor, allocator, len, data);
 }
-void   p2p__ipc_message__free_unpacked
-                     (P2pIpcMessage *message,
-                      ProtobufCAllocator *allocator)
+void p2p__ipc_message__free_unpacked(P2pIpcMessage *message, ProtobufCAllocator *allocator)
 {
-  if(!message)
-    return;
-  assert(message->base.descriptor == &p2p__ipc_message__descriptor);
-  protobuf_c_message_free_unpacked ((ProtobufCMessage*)message, allocator);
+    if (!message)
+        return;
+    assert(message->base.descriptor == &p2p__ipc_message__descriptor);
+    protobuf_c_message_free_unpacked((ProtobufCMessage *)message, allocator);
 }
-static const ProtobufCEnumValue p2p__ipc_message__status__enum_values_by_number[12] =
-{
-  { "TEST", "P2P__IPC_MESSAGE__STATUS__TEST", 0 },
-  { "OK", "P2P__IPC_MESSAGE__STATUS__OK", 1 },
-  { "ERROR", "P2P__IPC_MESSAGE__STATUS__ERROR", 2 },
-  { "FINISH", "P2P__IPC_MESSAGE__STATUS__FINISH", 3 },
-  { "WAIT", "P2P__IPC_MESSAGE__STATUS__WAIT", 4 },
-  { "BLOCK", "P2P__IPC_MESSAGE__STATUS__BLOCK", 5 },
-  { "PING", "P2P__IPC_MESSAGE__STATUS__PING", 6 },
-  { "PONG", "P2P__IPC_MESSAGE__STATUS__PONG", 7 },
-  { "ASK_IF_BLOCK_READY", "P2P__IPC_MESSAGE__STATUS__ASK_IF_BLOCK_READY", 8 },
-  { "BLOCK_READY", "P2P__IPC_MESSAGE__STATUS__BLOCK_READY", 9 },
-  { "BLOCK_NOT_READY", "P2P__IPC_MESSAGE__STATUS__BLOCK_NOT_READY", 10 },
-  { "ACKN", "P2P__IPC_MESSAGE__STATUS__ACKN", 11 },
+static const ProtobufCEnumValue p2p__ipc_message__status__enum_values_by_number[12] = {
+    {"TEST", "P2P__IPC_MESSAGE__STATUS__TEST", 0},
+    {"OK", "P2P__IPC_MESSAGE__STATUS__OK", 1},
+    {"ERROR", "P2P__IPC_MESSAGE__STATUS__ERROR", 2},
+    {"FINISH", "P2P__IPC_MESSAGE__STATUS__FINISH", 3},
+    {"WAIT", "P2P__IPC_MESSAGE__STATUS__WAIT", 4},
+    {"BLOCK", "P2P__IPC_MESSAGE__STATUS__BLOCK", 5},
+    {"PING", "P2P__IPC_MESSAGE__STATUS__PING", 6},
+    {"PONG", "P2P__IPC_MESSAGE__STATUS__PONG", 7},
+    {"ASK_IF_BLOCK_READY", "P2P__IPC_MESSAGE__STATUS__ASK_IF_BLOCK_READY", 8},
+    {"BLOCK_READY", "P2P__IPC_MESSAGE__STATUS__BLOCK_READY", 9},
+    {"BLOCK_NOT_READY", "P2P__IPC_MESSAGE__STATUS__BLOCK_NOT_READY", 10},
+    {"ACKN", "P2P__IPC_MESSAGE__STATUS__ACKN", 11},
 };
-static const ProtobufCIntRange p2p__ipc_message__status__value_ranges[] = {
-{0, 0},{0, 12}
+static const ProtobufCIntRange p2p__ipc_message__status__value_ranges[] = {{0, 0}, {0, 12}};
+static const ProtobufCEnumValueIndex p2p__ipc_message__status__enum_values_by_name[12] = {
+    {"ACKN", 11},       {"ASK_IF_BLOCK_READY", 8},
+    {"BLOCK", 5},       {"BLOCK_NOT_READY", 10},
+    {"BLOCK_READY", 9}, {"ERROR", 2},
+    {"FINISH", 3},      {"OK", 1},
+    {"PING", 6},        {"PONG", 7},
+    {"TEST", 0},        {"WAIT", 4},
 };
-static const ProtobufCEnumValueIndex p2p__ipc_message__status__enum_values_by_name[12] =
-{
-  { "ACKN", 11 },
-  { "ASK_IF_BLOCK_READY", 8 },
-  { "BLOCK", 5 },
-  { "BLOCK_NOT_READY", 10 },
-  { "BLOCK_READY", 9 },
-  { "ERROR", 2 },
-  { "FINISH", 3 },
-  { "OK", 1 },
-  { "PING", 6 },
-  { "PONG", 7 },
-  { "TEST", 0 },
-  { "WAIT", 4 },
-};
-const ProtobufCEnumDescriptor p2p__ipc_message__status__descriptor =
-{
-  PROTOBUF_C__ENUM_DESCRIPTOR_MAGIC,
-  "p2p_IpcMessage.Status",
-  "Status",
-  "P2pIpcMessage__Status",
-  "",
-  12,
-  p2p__ipc_message__status__enum_values_by_number,
-  12,
-  p2p__ipc_message__status__enum_values_by_name,
-  1,
-  p2p__ipc_message__status__value_ranges,
-  NULL,NULL,NULL,NULL   /* reserved[1234] */
-};
-static const ProtobufCFieldDescriptor p2p__ipc_message__field_descriptors[8] =
-{
-  {
-    "date",
+const ProtobufCEnumDescriptor p2p__ipc_message__status__descriptor = {
+    PROTOBUF_C__ENUM_DESCRIPTOR_MAGIC,
+    "p2p_IpcMessage.Status",
+    "Status",
+    "P2pIpcMessage__Status",
+    "",
+    12,
+    p2p__ipc_message__status__enum_values_by_number,
+    12,
+    p2p__ipc_message__status__enum_values_by_name,
     1,
-    PROTOBUF_C_LABEL_REQUIRED,
-    PROTOBUF_C_TYPE_STRING,
-    0,   /* quantifier_offset */
-    offsetof(P2pIpcMessage, date),
+    p2p__ipc_message__status__value_ranges,
     NULL,
     NULL,
-    0,             /* flags */
-    0,NULL,NULL    /* reserved1,reserved2, etc */
-  },
-  {
-    "timestamp_begin",
-    2,
-    PROTOBUF_C_LABEL_OPTIONAL,
-    PROTOBUF_C_TYPE_UINT64,
-    offsetof(P2pIpcMessage, has_timestamp_begin),
-    offsetof(P2pIpcMessage, timestamp_begin),
     NULL,
-    NULL,
-    0,             /* flags */
-    0,NULL,NULL    /* reserved1,reserved2, etc */
-  },
-  {
-    "timestamp_end",
-    3,
-    PROTOBUF_C_LABEL_OPTIONAL,
-    PROTOBUF_C_TYPE_UINT64,
-    offsetof(P2pIpcMessage, has_timestamp_end),
-    offsetof(P2pIpcMessage, timestamp_end),
-    NULL,
-    NULL,
-    0,             /* flags */
-    0,NULL,NULL    /* reserved1,reserved2, etc */
-  },
-  {
-    "difficulty",
-    4,
-    PROTOBUF_C_LABEL_OPTIONAL,
-    PROTOBUF_C_TYPE_UINT64,
-    offsetof(P2pIpcMessage, has_difficulty),
-    offsetof(P2pIpcMessage, difficulty),
-    NULL,
-    NULL,
-    0,             /* flags */
-    0,NULL,NULL    /* reserved1,reserved2, etc */
-  },
-  {
-    "merkle_root",
-    5,
-    PROTOBUF_C_LABEL_OPTIONAL,
-    PROTOBUF_C_TYPE_BYTES,
-    offsetof(P2pIpcMessage, has_merkle_root),
-    offsetof(P2pIpcMessage, merkle_root),
-    NULL,
-    NULL,
-    0,             /* flags */
-    0,NULL,NULL    /* reserved1,reserved2, etc */
-  },
-  {
-    "nonce",
-    6,
-    PROTOBUF_C_LABEL_OPTIONAL,
-    PROTOBUF_C_TYPE_BYTES,
-    offsetof(P2pIpcMessage, has_nonce),
-    offsetof(P2pIpcMessage, nonce),
-    NULL,
-    NULL,
-    0,             /* flags */
-    0,NULL,NULL    /* reserved1,reserved2, etc */
-  },
-  {
-    "prev_block",
-    7,
-    PROTOBUF_C_LABEL_OPTIONAL,
-    PROTOBUF_C_TYPE_BYTES,
-    offsetof(P2pIpcMessage, has_prev_block),
-    offsetof(P2pIpcMessage, prev_block),
-    NULL,
-    NULL,
-    0,             /* flags */
-    0,NULL,NULL    /* reserved1,reserved2, etc */
-  },
-  {
-    "status_code",
-    8,
-    PROTOBUF_C_LABEL_REQUIRED,
-    PROTOBUF_C_TYPE_ENUM,
-    0,   /* quantifier_offset */
-    offsetof(P2pIpcMessage, status_code),
-    &p2p__ipc_message__status__descriptor,
-    NULL,
-    0,             /* flags */
-    0,NULL,NULL    /* reserved1,reserved2, etc */
-  },
+    NULL /* reserved[1234] */
+};
+static const ProtobufCFieldDescriptor p2p__ipc_message__field_descriptors[8] = {
+    {
+        "date", 1, PROTOBUF_C_LABEL_REQUIRED, PROTOBUF_C_TYPE_STRING, 0, /* quantifier_offset */
+        offsetof(P2pIpcMessage, date), NULL, NULL, 0,                    /* flags */
+        0, NULL, NULL                                                    /* reserved1,reserved2, etc */
+    },
+    {
+        "timestamp_begin", 2, PROTOBUF_C_LABEL_OPTIONAL, PROTOBUF_C_TYPE_UINT64,
+        offsetof(P2pIpcMessage, has_timestamp_begin), offsetof(P2pIpcMessage, timestamp_begin), NULL, NULL,
+        0,            /* flags */
+        0, NULL, NULL /* reserved1,reserved2, etc */
+    },
+    {
+        "timestamp_end", 3, PROTOBUF_C_LABEL_OPTIONAL, PROTOBUF_C_TYPE_UINT64,
+        offsetof(P2pIpcMessage, has_timestamp_end), offsetof(P2pIpcMessage, timestamp_end), NULL, NULL, 0, /* flags */
+        0, NULL, NULL /* reserved1,reserved2, etc */
+    },
+    {
+        "difficulty", 4, PROTOBUF_C_LABEL_OPTIONAL, PROTOBUF_C_TYPE_UINT64, offsetof(P2pIpcMessage, has_difficulty),
+        offsetof(P2pIpcMessage, difficulty), NULL, NULL, 0, /* flags */
+        0, NULL, NULL                                       /* reserved1,reserved2, etc */
+    },
+    {
+        "merkle_root", 5, PROTOBUF_C_LABEL_OPTIONAL, PROTOBUF_C_TYPE_BYTES, offsetof(P2pIpcMessage, has_merkle_root),
+        offsetof(P2pIpcMessage, merkle_root), NULL, NULL, 0, /* flags */
+        0, NULL, NULL                                        /* reserved1,reserved2, etc */
+    },
+    {
+        "nonce", 6, PROTOBUF_C_LABEL_OPTIONAL, PROTOBUF_C_TYPE_BYTES, offsetof(P2pIpcMessage, has_nonce),
+        offsetof(P2pIpcMessage, nonce), NULL, NULL, 0, /* flags */
+        0, NULL, NULL                                  /* reserved1,reserved2, etc */
+    },
+    {
+        "prev_block", 7, PROTOBUF_C_LABEL_OPTIONAL, PROTOBUF_C_TYPE_BYTES, offsetof(P2pIpcMessage, has_prev_block),
+        offsetof(P2pIpcMessage, prev_block), NULL, NULL, 0, /* flags */
+        0, NULL, NULL                                       /* reserved1,reserved2, etc */
+    },
+    {
+        "status_code", 8, PROTOBUF_C_LABEL_REQUIRED, PROTOBUF_C_TYPE_ENUM, 0,                 /* quantifier_offset */
+        offsetof(P2pIpcMessage, status_code), &p2p__ipc_message__status__descriptor, NULL, 0, /* flags */
+        0, NULL, NULL /* reserved1,reserved2, etc */
+    },
 };
 static const unsigned p2p__ipc_message__field_indices_by_name[] = {
-  0,   /* field[0] = date */
-  3,   /* field[3] = difficulty */
-  4,   /* field[4] = merkle_root */
-  5,   /* field[5] = nonce */
-  6,   /* field[6] = prev_block */
-  7,   /* field[7] = status_code */
-  1,   /* field[1] = timestamp_begin */
-  2,   /* field[2] = timestamp_end */
+    0, /* field[0] = date */
+    3, /* field[3] = difficulty */
+    4, /* field[4] = merkle_root */
+    5, /* field[5] = nonce */
+    6, /* field[6] = prev_block */
+    7, /* field[7] = status_code */
+    1, /* field[1] = timestamp_begin */
+    2, /* field[2] = timestamp_end */
 };
-static const ProtobufCIntRange p2p__ipc_message__number_ranges[1 + 1] =
-{
-  { 1, 0 },
-  { 0, 8 }
-};
-const ProtobufCMessageDescriptor p2p__ipc_message__descriptor =
-{
-  PROTOBUF_C__MESSAGE_DESCRIPTOR_MAGIC,
-  "p2p_IpcMessage",
-  "P2pIpcMessage",
-  "P2pIpcMessage",
-  "",
-  sizeof(P2pIpcMessage),
-  8,
-  p2p__ipc_message__field_descriptors,
-  p2p__ipc_message__field_indices_by_name,
-  1,  p2p__ipc_message__number_ranges,
-  (ProtobufCMessageInit) p2p__ipc_message__init,
-  NULL,NULL,NULL    /* reserved[123] */
+static const ProtobufCIntRange p2p__ipc_message__number_ranges[1 + 1] = {{1, 0}, {0, 8}};
+const ProtobufCMessageDescriptor p2p__ipc_message__descriptor = {
+    PROTOBUF_C__MESSAGE_DESCRIPTOR_MAGIC,
+    "p2p_IpcMessage",
+    "P2pIpcMessage",
+    "P2pIpcMessage",
+    "",
+    sizeof(P2pIpcMessage),
+    8,
+    p2p__ipc_message__field_descriptors,
+    p2p__ipc_message__field_indices_by_name,
+    1,
+    p2p__ipc_message__number_ranges,
+    (ProtobufCMessageInit)p2p__ipc_message__init,
+    NULL,
+    NULL,
+    NULL /* reserved[123] */
 };

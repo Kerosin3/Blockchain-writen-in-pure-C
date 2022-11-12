@@ -7,186 +7,132 @@
 #endif
 
 #include "transaction.pb-c.h"
-void   ipc_message__init
-                     (IpcMessage         *message)
+void ipc_message__init(IpcMessage *message)
 {
-  static const IpcMessage init_value = IPC_MESSAGE__INIT;
-  *message = init_value;
+    static const IpcMessage init_value = IPC_MESSAGE__INIT;
+    *message = init_value;
 }
-size_t ipc_message__get_packed_size
-                     (const IpcMessage *message)
+size_t ipc_message__get_packed_size(const IpcMessage *message)
 {
-  assert(message->base.descriptor == &ipc_message__descriptor);
-  return protobuf_c_message_get_packed_size ((const ProtobufCMessage*)(message));
+    assert(message->base.descriptor == &ipc_message__descriptor);
+    return protobuf_c_message_get_packed_size((const ProtobufCMessage *)(message));
 }
-size_t ipc_message__pack
-                     (const IpcMessage *message,
-                      uint8_t       *out)
+size_t ipc_message__pack(const IpcMessage *message, uint8_t *out)
 {
-  assert(message->base.descriptor == &ipc_message__descriptor);
-  return protobuf_c_message_pack ((const ProtobufCMessage*)message, out);
+    assert(message->base.descriptor == &ipc_message__descriptor);
+    return protobuf_c_message_pack((const ProtobufCMessage *)message, out);
 }
-size_t ipc_message__pack_to_buffer
-                     (const IpcMessage *message,
-                      ProtobufCBuffer *buffer)
+size_t ipc_message__pack_to_buffer(const IpcMessage *message, ProtobufCBuffer *buffer)
 {
-  assert(message->base.descriptor == &ipc_message__descriptor);
-  return protobuf_c_message_pack_to_buffer ((const ProtobufCMessage*)message, buffer);
+    assert(message->base.descriptor == &ipc_message__descriptor);
+    return protobuf_c_message_pack_to_buffer((const ProtobufCMessage *)message, buffer);
 }
-IpcMessage *
-       ipc_message__unpack
-                     (ProtobufCAllocator  *allocator,
-                      size_t               len,
-                      const uint8_t       *data)
+IpcMessage *ipc_message__unpack(ProtobufCAllocator *allocator, size_t len, const uint8_t *data)
 {
-  return (IpcMessage *)
-     protobuf_c_message_unpack (&ipc_message__descriptor,
-                                allocator, len, data);
+    return (IpcMessage *)protobuf_c_message_unpack(&ipc_message__descriptor, allocator, len, data);
 }
-void   ipc_message__free_unpacked
-                     (IpcMessage *message,
-                      ProtobufCAllocator *allocator)
+void ipc_message__free_unpacked(IpcMessage *message, ProtobufCAllocator *allocator)
 {
-  if(!message)
-    return;
-  assert(message->base.descriptor == &ipc_message__descriptor);
-  protobuf_c_message_free_unpacked ((ProtobufCMessage*)message, allocator);
+    if (!message)
+        return;
+    assert(message->base.descriptor == &ipc_message__descriptor);
+    protobuf_c_message_free_unpacked((ProtobufCMessage *)message, allocator);
 }
-static const ProtobufCEnumValue ipc_message__status__enum_values_by_number[12] =
-{
-  { "TEST", "IPC_MESSAGE__STATUS__TEST", 0 },
-  { "OK", "IPC_MESSAGE__STATUS__OK", 1 },
-  { "ERROR", "IPC_MESSAGE__STATUS__ERROR", 2 },
-  { "FINISH", "IPC_MESSAGE__STATUS__FINISH", 3 },
-  { "WAIT", "IPC_MESSAGE__STATUS__WAIT", 4 },
-  { "ASK_NEED_MSG", "IPC_MESSAGE__STATUS__ASK_NEED_MSG", 5 },
-  { "NEED_MORE", "IPC_MESSAGE__STATUS__NEED_MORE", 6 },
-  { "ACKN_OK", "IPC_MESSAGE__STATUS__ACKN_OK", 7 },
-  { "MESSAGE_SENDED", "IPC_MESSAGE__STATUS__MESSAGE_SENDED", 8 },
-  { "ENOUGH", "IPC_MESSAGE__STATUS__ENOUGH", 9 },
-  { "ALL_BLOCK_MSG_SENDED", "IPC_MESSAGE__STATUS__ALL_BLOCK_MSG_SENDED", 10 },
-  { "ALL_BLOCK_RECEIVED", "IPC_MESSAGE__STATUS__ALL_BLOCK_RECEIVED", 11 },
+static const ProtobufCEnumValue ipc_message__status__enum_values_by_number[12] = {
+    {"TEST", "IPC_MESSAGE__STATUS__TEST", 0},
+    {"OK", "IPC_MESSAGE__STATUS__OK", 1},
+    {"ERROR", "IPC_MESSAGE__STATUS__ERROR", 2},
+    {"FINISH", "IPC_MESSAGE__STATUS__FINISH", 3},
+    {"WAIT", "IPC_MESSAGE__STATUS__WAIT", 4},
+    {"ASK_NEED_MSG", "IPC_MESSAGE__STATUS__ASK_NEED_MSG", 5},
+    {"NEED_MORE", "IPC_MESSAGE__STATUS__NEED_MORE", 6},
+    {"ACKN_OK", "IPC_MESSAGE__STATUS__ACKN_OK", 7},
+    {"MESSAGE_SENDED", "IPC_MESSAGE__STATUS__MESSAGE_SENDED", 8},
+    {"ENOUGH", "IPC_MESSAGE__STATUS__ENOUGH", 9},
+    {"ALL_BLOCK_MSG_SENDED", "IPC_MESSAGE__STATUS__ALL_BLOCK_MSG_SENDED", 10},
+    {"ALL_BLOCK_RECEIVED", "IPC_MESSAGE__STATUS__ALL_BLOCK_RECEIVED", 11},
 };
-static const ProtobufCIntRange ipc_message__status__value_ranges[] = {
-{0, 0},{0, 12}
+static const ProtobufCIntRange ipc_message__status__value_ranges[] = {{0, 0}, {0, 12}};
+static const ProtobufCEnumValueIndex ipc_message__status__enum_values_by_name[12] = {
+    {"ACKN_OK", 7},
+    {"ALL_BLOCK_MSG_SENDED", 10},
+    {"ALL_BLOCK_RECEIVED", 11},
+    {"ASK_NEED_MSG", 5},
+    {"ENOUGH", 9},
+    {"ERROR", 2},
+    {"FINISH", 3},
+    {"MESSAGE_SENDED", 8},
+    {"NEED_MORE", 6},
+    {"OK", 1},
+    {"TEST", 0},
+    {"WAIT", 4},
 };
-static const ProtobufCEnumValueIndex ipc_message__status__enum_values_by_name[12] =
-{
-  { "ACKN_OK", 7 },
-  { "ALL_BLOCK_MSG_SENDED", 10 },
-  { "ALL_BLOCK_RECEIVED", 11 },
-  { "ASK_NEED_MSG", 5 },
-  { "ENOUGH", 9 },
-  { "ERROR", 2 },
-  { "FINISH", 3 },
-  { "MESSAGE_SENDED", 8 },
-  { "NEED_MORE", 6 },
-  { "OK", 1 },
-  { "TEST", 0 },
-  { "WAIT", 4 },
-};
-const ProtobufCEnumDescriptor ipc_message__status__descriptor =
-{
-  PROTOBUF_C__ENUM_DESCRIPTOR_MAGIC,
-  "IpcMessage.Status",
-  "Status",
-  "IpcMessage__Status",
-  "",
-  12,
-  ipc_message__status__enum_values_by_number,
-  12,
-  ipc_message__status__enum_values_by_name,
-  1,
-  ipc_message__status__value_ranges,
-  NULL,NULL,NULL,NULL   /* reserved[1234] */
-};
-static const ProtobufCFieldDescriptor ipc_message__field_descriptors[5] =
-{
-  {
-    "transaction_msg",
+const ProtobufCEnumDescriptor ipc_message__status__descriptor = {
+    PROTOBUF_C__ENUM_DESCRIPTOR_MAGIC,
+    "IpcMessage.Status",
+    "Status",
+    "IpcMessage__Status",
+    "",
+    12,
+    ipc_message__status__enum_values_by_number,
+    12,
+    ipc_message__status__enum_values_by_name,
     1,
-    PROTOBUF_C_LABEL_OPTIONAL,
-    PROTOBUF_C_TYPE_BYTES,
-    offsetof(IpcMessage, has_transaction_msg),
-    offsetof(IpcMessage, transaction_msg),
+    ipc_message__status__value_ranges,
     NULL,
     NULL,
-    0,             /* flags */
-    0,NULL,NULL    /* reserved1,reserved2, etc */
-  },
-  {
-    "pubkey",
-    2,
-    PROTOBUF_C_LABEL_OPTIONAL,
-    PROTOBUF_C_TYPE_BYTES,
-    offsetof(IpcMessage, has_pubkey),
-    offsetof(IpcMessage, pubkey),
     NULL,
-    NULL,
-    0,             /* flags */
-    0,NULL,NULL    /* reserved1,reserved2, etc */
-  },
-  {
-    "timestamp",
-    3,
-    PROTOBUF_C_LABEL_REQUIRED,
-    PROTOBUF_C_TYPE_STRING,
-    0,   /* quantifier_offset */
-    offsetof(IpcMessage, timestamp),
-    NULL,
-    NULL,
-    0,             /* flags */
-    0,NULL,NULL    /* reserved1,reserved2, etc */
-  },
-  {
-    "time_num",
-    4,
-    PROTOBUF_C_LABEL_REQUIRED,
-    PROTOBUF_C_TYPE_UINT64,
-    0,   /* quantifier_offset */
-    offsetof(IpcMessage, time_num),
-    NULL,
-    NULL,
-    0,             /* flags */
-    0,NULL,NULL    /* reserved1,reserved2, etc */
-  },
-  {
-    "status_code",
-    5,
-    PROTOBUF_C_LABEL_REQUIRED,
-    PROTOBUF_C_TYPE_ENUM,
-    0,   /* quantifier_offset */
-    offsetof(IpcMessage, status_code),
-    &ipc_message__status__descriptor,
-    NULL,
-    0,             /* flags */
-    0,NULL,NULL    /* reserved1,reserved2, etc */
-  },
+    NULL /* reserved[1234] */
+};
+static const ProtobufCFieldDescriptor ipc_message__field_descriptors[5] = {
+    {
+        "transaction_msg", 1, PROTOBUF_C_LABEL_OPTIONAL, PROTOBUF_C_TYPE_BYTES,
+        offsetof(IpcMessage, has_transaction_msg), offsetof(IpcMessage, transaction_msg), NULL, NULL, 0, /* flags */
+        0, NULL, NULL /* reserved1,reserved2, etc */
+    },
+    {
+        "pubkey", 2, PROTOBUF_C_LABEL_OPTIONAL, PROTOBUF_C_TYPE_BYTES, offsetof(IpcMessage, has_pubkey),
+        offsetof(IpcMessage, pubkey), NULL, NULL, 0, /* flags */
+        0, NULL, NULL                                /* reserved1,reserved2, etc */
+    },
+    {
+        "timestamp", 3, PROTOBUF_C_LABEL_REQUIRED, PROTOBUF_C_TYPE_STRING, 0, /* quantifier_offset */
+        offsetof(IpcMessage, timestamp), NULL, NULL, 0,                       /* flags */
+        0, NULL, NULL                                                         /* reserved1,reserved2, etc */
+    },
+    {
+        "time_num", 4, PROTOBUF_C_LABEL_REQUIRED, PROTOBUF_C_TYPE_UINT64, 0, /* quantifier_offset */
+        offsetof(IpcMessage, time_num), NULL, NULL, 0,                       /* flags */
+        0, NULL, NULL                                                        /* reserved1,reserved2, etc */
+    },
+    {
+        "status_code", 5, PROTOBUF_C_LABEL_REQUIRED, PROTOBUF_C_TYPE_ENUM, 0,         /* quantifier_offset */
+        offsetof(IpcMessage, status_code), &ipc_message__status__descriptor, NULL, 0, /* flags */
+        0, NULL, NULL                                                                 /* reserved1,reserved2, etc */
+    },
 };
 static const unsigned ipc_message__field_indices_by_name[] = {
-  1,   /* field[1] = pubkey */
-  4,   /* field[4] = status_code */
-  3,   /* field[3] = time_num */
-  2,   /* field[2] = timestamp */
-  0,   /* field[0] = transaction_msg */
+    1, /* field[1] = pubkey */
+    4, /* field[4] = status_code */
+    3, /* field[3] = time_num */
+    2, /* field[2] = timestamp */
+    0, /* field[0] = transaction_msg */
 };
-static const ProtobufCIntRange ipc_message__number_ranges[1 + 1] =
-{
-  { 1, 0 },
-  { 0, 5 }
-};
-const ProtobufCMessageDescriptor ipc_message__descriptor =
-{
-  PROTOBUF_C__MESSAGE_DESCRIPTOR_MAGIC,
-  "IpcMessage",
-  "IpcMessage",
-  "IpcMessage",
-  "",
-  sizeof(IpcMessage),
-  5,
-  ipc_message__field_descriptors,
-  ipc_message__field_indices_by_name,
-  1,  ipc_message__number_ranges,
-  (ProtobufCMessageInit) ipc_message__init,
-  NULL,NULL,NULL    /* reserved[123] */
+static const ProtobufCIntRange ipc_message__number_ranges[1 + 1] = {{1, 0}, {0, 5}};
+const ProtobufCMessageDescriptor ipc_message__descriptor = {
+    PROTOBUF_C__MESSAGE_DESCRIPTOR_MAGIC,
+    "IpcMessage",
+    "IpcMessage",
+    "IpcMessage",
+    "",
+    sizeof(IpcMessage),
+    5,
+    ipc_message__field_descriptors,
+    ipc_message__field_indices_by_name,
+    1,
+    ipc_message__number_ranges,
+    (ProtobufCMessageInit)ipc_message__init,
+    NULL,
+    NULL,
+    NULL /* reserved[123] */
 };
