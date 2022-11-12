@@ -1,9 +1,25 @@
 # BLOCKCHAIN WRITTEN IN C LANGUAGE DRAFT PROJECT
 
 
-[![](https://tokei.rs/b1/github/Kerosin3/C_blockchain-draft?category=code)](https://github.com/Kerosin3/C_blockchain-draft).
 
-[![](https://tokei.rs/b1/github/XAMPPRocky/tokei?category=code)](https://github.com/XAMPPRocky/tokei).
+```console
+===============================================================================
+ Language            Files        Lines         Code     Comments       Blanks
+===============================================================================
+ C                      29         3748         3038          385          325
+ C Header               29         1464          971          272          221
+ CMake                  11          336          242           15           79
+ Markdown                4          171            0          119           52
+ Protocol Buffers        2           49           47            0            2
+ Shell                   1           16            5            7            4
+ Plain Text              1           21            0           21            0
+ YAML                   24          397          182          182           33
+===============================================================================
+ Total                 101         6202         4485         1001          716
+===============================================================================
+```
+<[![](https://tokei.rs/b1/github/Kerosin3/C_blockchain-draft?category=code)](https://github.com/Kerosin3/C_blockchain-draft).>
+
 ## Overview
 
 This is a draft project that was created in order to provide practically-based experience with 
