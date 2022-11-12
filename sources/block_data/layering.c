@@ -17,7 +17,8 @@ layer_hp *create_a_h_layer(unsigned long long *size_d_layer, hash_point_p *start
         hash_point_p *beg_pointer = calloc(*size_d_layer, sizeof(hash_point_p));
         a_layer->main_pointer = beg_pointer;
         *beg_pointer = create_hpoint_hashG(*start_hpointr, start_hpointr[1]);
-        /*printf("root hash:\n"); for debugging
+	//for debugging
+        /*printf("root hash:\n"); 
         DumpHex(((*(beg_pointer))->hash), crypto_generichash_BYTES);
         printf("side hash 1:\n");
         DumpHex(  (((hash_point_p) ((*(beg_pointer))->hpoint1)))  , crypto_generichash_BYTES);
@@ -51,7 +52,7 @@ void fill_intermediate_levels(unsigned long long MSG_expt, unsigned long long *n
         L_arrays_p[k] = *L_arrays[k];
     }
 }
-
+/* create BASE layer OBSOLETE
 layer_hp *create_LEVEL0(unsigned long long *n_msg, user_keys uk)
 {
     signed_message_t *msg_arr[*n_msg];  // arr size /2
@@ -67,7 +68,7 @@ layer_hp *create_LEVEL0(unsigned long long *n_msg, user_keys uk)
     (*n_msg) >>= 1LLU;                                           // MESSAGES  LAYER DONE!
     return msg_layer;
 }
-
+*/
 hashes_hashNode get_a_hashes_Hnode(layer_hp **a_layer, size_t N)
 {
     hashes_hashNode a_hash_data;
@@ -78,7 +79,7 @@ hashes_hashNode get_a_hashes_Hnode(layer_hp **a_layer, size_t N)
 }
 
 // processing array of messages to a layer 0.  OBSOLETE
-layer_hp *process_s_messages(unsigned long long s_msgN, signed_message_t *star_msg)
+/*layer_hp *process_s_messages(unsigned long long s_msgN, signed_message_t *star_msg)
 {
     s_msgN >>= 1; // devide by 2
                   //    printf("msg merged nodes %llu\n", s_msgN);
@@ -94,7 +95,7 @@ layer_hp *process_s_messages(unsigned long long s_msgN, signed_message_t *star_m
     }
     return a_layer;
 }
-
+*/
 // processing array of messages to a layer 0
 layer_hp *process_s_messagesV2(unsigned long long s_msgN, signed_message_t **star_msg)
 {
@@ -117,7 +118,8 @@ layer_hp *process_s_messagesV2(unsigned long long s_msgN, signed_message_t **sta
     }
     return a_layer;
 }
-// supply n of messages
+// supply n of messages for TEST PURPOSES
+/*
 layer_hp *create_BASE_LAYER(unsigned long long *n_msg, user_keys uk, signed_message_t **first_msg)
 {
     signed_message_t *msg_arr[*n_msg];  // create arr size of /2
@@ -133,7 +135,7 @@ layer_hp *create_BASE_LAYER(unsigned long long *n_msg, user_keys uk, signed_mess
     (*n_msg) >>= 1LLU;                                           // MESSAGES  LAYER DONE!
     return msg_layer;
 }
-
+*/
 // getting a messages from layer 0
 msg_link get_s_msg_from_L0(layer_hp *L0, size_t n)
 {
