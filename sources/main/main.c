@@ -5,7 +5,13 @@
 
 int main()
 {
-    // tests();
+    #ifdef TESTMODE
+	printf("TESTMODE is ENABLED\n");
+	printf("server and client app are not supposed to work\n");
+    	tests();
+	return 0;
+    #endif
+
     start_server(12345);
 
     return 0;

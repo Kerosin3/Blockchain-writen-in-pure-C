@@ -17,3 +17,5 @@
 -I
 ./INCLUDE/hashing
 -I
+./INCLUDE/tests
+-I

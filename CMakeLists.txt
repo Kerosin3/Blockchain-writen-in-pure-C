@@ -9,9 +9,25 @@ if(NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE Release)
 endif()
 
+if(NOT WIN32)
+  string(ASCII 27 Esc)
+  set(ColourReset "${Esc}[m")
+  set(ColourBold  "${Esc}[1m")
+  set(Magenta     "${Esc}[35m")
+  set(Cyan        "${Esc}[36m")
+  set(White       "${Esc}[37m")
+endif()
+
 if (WRITE_LOG)
+	message("${Cyan}LOGGING ENABLED{ColourReset}")
 	add_definitions(-DWRITE_LOG)
 endif()
+
+if (TESTMODE) 
+	message("${Cyan}TEST ARE ENABLED, SERVER ALL WILL NOW RUN{ColourReset}")
+	add_definitions(-DTESTMODE)
+endif()
+
 
 set(CMAKE_REQUIRED_DEFINITIONS -D_GNU_SOURCE) 
 set(CMAKE_C_FLAGS_DEBUG "-g")
