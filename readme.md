@@ -43,7 +43,7 @@ Thus, main motivation to me was to to get in close touch with blockchain technol
   * Ansible
 ## Usage (How to install)
 
-1. compile with CMAKE -DWRITE_LOG=1 FLAG
+1. init and update gitmodules, compile project with CMAKE -DWRITE_LOG=1 FLAG
 2. make sure ports 2220,2221,2222 are free on your host machine
 3. fix Vagrantfile in "vagrant_testing" folder (lines 6,18,29) according to name of used archlinux box (download and install last arch for vagrant via **vagrant box add archlinux/archlinux** ) watch the box name here /home/{USERNAME}/.vagrant.d/boxes and write in to Vagrantfile
 4. use vagrant up in "vagrant_testing" folder to up virtual machines
