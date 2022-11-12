@@ -3,6 +3,7 @@
 
 [![](https://tokei.rs/b1/github/Kerosin3/C_blockchain-draft?category=code)](https://github.com/Kerosin3/C_blockchain-draft).
 
+[![](https://tokei.rs/b1/github/XAMPPRocky/tokei?category=code)](https://github.com/XAMPPRocky/tokei).
 ## Overview
 
 This is a draft project that was created in order to provide practically-based experience with 
