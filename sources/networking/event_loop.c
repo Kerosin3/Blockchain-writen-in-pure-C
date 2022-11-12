@@ -73,7 +73,7 @@ void event_loop(int sockfd, struct io_uring *ring)
                 case (IPC_MESSAGE__STATUS__ACKN_OK):
                     if (server_logging_enabled)
                         zlog_info(server_log, "client acknowledged the message");
-                    // 					destroy_signed_message(get_signed_message_buffer(request_data_client_fd(cqe->user_data)));
+                    //destroy_signed_message(get_signed_message_buffer(request_data_client_fd(cqe->user_data))); // destory messages when all peers received all data
                     request_ASK_NEED_MSG(ring, request_data_client_fd(cqe->user_data)); // send request ask MSG
                     if (server_logging_enabled)
                         zlog_info(server_log, "asking whether needs a message");

@@ -47,21 +47,8 @@ void destroy_hpoint_message(hash_point_p hpoint)
 {
     free(hpoint);
 }
-/*
-void create_inermmediate_layers(size_t n_layers,layer_hp* layer_beg){
 
-    for (signed k=7; k>=0 ; --k ) {
-        printf("k is %d \n",k);
-        if (k==7) {
-        layer_beg[k] =* create_a_h_layer(&n_msg,L0pointer);
-        continue;
-        }
-        L_arrays[k] = *create_a_h_layer(&n_msg,L_arrays[k+1].main_pointer );
-    }
-}
-*/
-
-// creare a host node from 2 nodes
+// create a host node from 2 nodes
 hash_point_p create_hpoint_hashG(hash_point_p hp1, hash_point_p hp2)
 {
     // calc S hash
@@ -98,15 +85,5 @@ unsigned char *merge_2hashses(unsigned char *hash1, unsigned char *hash2)
     // calc hashes
     unsigned char *out_hash = calloc(crypto_generichash_BYTES, sizeof(unsigned char));
     crypto_generichash(out_hash, crypto_generichash_BYTES, hashS, crypto_generichash_BYTES * 2, NULL, 0);
-    /*
-    printf("\n");
-    DumpHex(hash1tmp,crypto_generichash_BYTES);
-    printf("\n");
-    DumpHex(hash2tmp,crypto_generichash_BYTES);
-    printf("\n");
-    DumpHex(hashS,crypto_generichash_BYTES*2);
-    printf("Shash:\n");
-    DumpHex(out_hash,crypto_generichash_BYTES);
-    printf("\n");*/
     return out_hash;
 }

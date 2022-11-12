@@ -55,9 +55,9 @@ int setup_serv_sock(uint16_t port)
     struct sockaddr_in s_addr = {0};
     s_addr.sin_family = AF_INET; // fill sock struct
     s_addr.sin_port = htons(port);
-    s_addr.sin_addr.s_addr = htonl(INADDR_ANY);                             // ine interfac
-                                                                            //
-    if (bind(sockfd, (const struct sockaddr *)&s_addr, sizeof(s_addr)) < 0) // relate socket to an adress
+    s_addr.sin_addr.s_addr = htonl(INADDR_ANY);                             
+                                                                            
+    if (bind(sockfd, (const struct sockaddr *)&s_addr, sizeof(s_addr)) < 0) // relate socket to an address
         die("error while binding");
 
     if (listen(sockfd, MAX_CONNECTIONS) < 0)
