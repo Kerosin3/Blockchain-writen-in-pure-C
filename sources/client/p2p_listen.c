@@ -88,13 +88,12 @@ void setup_p2p_listening(char* IP_ADD_LISTEN)
 
     struct io_uring_sqe *sqe = io_uring_get_sqe(&ring);
 
-    P2pIpcMessage__Status STATUS_OF_MESSAGE;
-    char* buffer = calloc(4096, sizeof(char));
-    char* buffer_send = calloc(4096, sizeof(char));
+    char* buffer = calloc(DEFAULT_BUF_SIZE, sizeof(char));
+    char* buffer_send = calloc(DEFAULT_BUF_SIZE, sizeof(char));
 
     struct io_uring_cqe *cqe;
     sqe = io_uring_get_sqe(&ring);                                 // return io entity
-    io_uring_prep_recv(sqe, s, buffer, 4096 * sizeof(char), 0); // WAITING PING
+    io_uring_prep_recv(sqe, s, buffer, DEFAULT_BUF_SIZE * sizeof(char), 0); // WAITING PING
     size_t cycle = 0;
     int flag_ready_count = 0;
     io_uring_sqe_set_data64(sqe, make_request_data(s, PROCESS_RESPONSE)); // set first wait
@@ -102,7 +101,7 @@ void setup_p2p_listening(char* IP_ADD_LISTEN)
         if (p2p_logging_enabled) zlog_info(p2p_log, "error submitting");
     }
     for (;;){
-        if (kill_thread_p2p) break;
+        if (kill_thread_p2p) break;// kill thread
     	io_uring_wait_cqe(&ring, &cqe);
 	cl_p2p_state STATE = request_data_event_type(cqe->user_data);
  	P2pIpcMessage__Status msg_status;
@@ -175,6 +174,7 @@ void setup_p2p_listening(char* IP_ADD_LISTEN)
     close(s);
     free(buffer);
     free(buffer_send);
+    freeaddrinfo(res);
     thrd_exit(1);
 }
 

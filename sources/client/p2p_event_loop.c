@@ -18,18 +18,7 @@ void event_loop_p2p(event_p2p_params_t* elparams)
     add_accept_request(ring, sockfd, &client_addr, &client_addr_len);
     if (p2p_logging_enabled) zlog_info(p2p_log, "logging p2p application");
     int flag_block_ready = 0;
-    int flag_client_connected = 0;
     add_accept_request(ring, sockfd, &client_addr, &client_addr_len);
-/*    struct timespec mtimeout;
-    mtimeout.tv_nsec = 100;
-    mtimeout.tv_sec = 15;
-	if (mtx_timedlock(&peer_connection_accepted, &mtimeout) ==  thrd_success){
-		flag_client_connected = 1;
-		mtx_unlock(&peer_connection_accepted);
-	} else {
-		printf("cannot wait till client started\n");
-	}
-*/	
     for (;;)
     {
 	struct io_uring_cqe *cqe;

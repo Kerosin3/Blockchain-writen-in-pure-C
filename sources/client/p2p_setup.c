@@ -18,26 +18,10 @@ void setup_buffers()
     buffer_sended_N = calloc(MAX_CONNECTIONS, sizeof(size_t)); // buffers for storing current buffer size
     if (!buffer_sended_N)
         die("malloc");
-
+    //frees in main app
     buffer_BLOCK_DATA = calloc(BUFFER_SIZE, sizeof(unsigned char)); // buffers for storing current buffer size
     if (!buffer_BLOCK_DATA)
         die("malloc");
-
-
-    /*buffer_transactions = calloc(MAX_CONNECTIONS, sizeof(IpcMessage)); // buffers for storing current buffer size
-    if (!buffer_transactions)
-        die("malloc");
-
-    buffer_signed_message =
-        calloc(MAX_CONNECTIONS, sizeof(signed_message_t)); // buffers for storing current buffer size
-    if (!buffer_transactions)
-        die("malloc");
-    
-    ring_data_buf = calloc(512, sizeof(signed_message_t*)); // buffers for storing current buffer size
-    if (!ring_data_buf)
-        die("malloc");
-*/
-
 }
 
 
@@ -46,7 +30,6 @@ void destroy_buffers()
     free(buffers);
     free(buffer_lengths);
     free(buffer_sended_N);
-    free(buffer_BLOCK_DATA);
 }
 
 

@@ -29,11 +29,4 @@ void set_nonce_to_block(block_t* blk,unsigned char* nonce);
 unsigned char* solve_puzzle(unsigned char *merkle_root,unsigned difficulty);
 block_t* create_block_dummy(block_t* prev_block, unsigned char* merkle_root );
 
-/*
-block_t* try_create_block(
-        block_t* prev_block,
-            unsigned char* merkle_root
-        );
-*/
-
 #endif

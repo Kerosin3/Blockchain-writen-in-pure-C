@@ -98,6 +98,7 @@ int setup_client_iouring(char* IP_ADDR_TO_CONNECT)
     for (;;)
     {
 // 	printf("cycle!\n");
+        if (kill_thread_p2p) break;// kill thread
         struct io_uring_cqe *cqe;
         if (flag_block_filled)
         {
@@ -122,6 +123,7 @@ int setup_client_iouring(char* IP_ADDR_TO_CONNECT)
 
         ifread = 0;
         int ret = cqe->res; // N readed bytes
+	zlog_info(client_log, "cqe returned %d ",ret);
 	FLAG_FROM_SERVER = read_response_ONLY_STATUS(buffer, cqe->res);
 // 	printf("message flag form server %d\n",FLAG_FROM_SERVER);
         switch (FLAG_FROM_SERVER) 
@@ -159,10 +161,10 @@ int setup_client_iouring(char* IP_ADDR_TO_CONNECT)
     		zlog_info(client_log, "calcing merkle tree from received messges!");
     		printf("block of 512 msg has been accepted, calcing merkle root :\n");
     		L_arrays_p_cont = calc_merkle_tree(EXPONENT, msg_arr); 
-    		block_dummy = processing_block(EXPONENT, msg_arr,L_arrays_p_cont);     
+    		block_dummy = processing_block(L_arrays_p_cont);     
     		int ver_result = 0;
     		zlog_info(client_log, "verifying messages");
-    		for (size_t i = 0; i < 512; i++)
+    		for (size_t i = 0; i < BUFSIZEFORMESSAGE; i++)
     		{ // verify all messages
     		    int rez = merkle_verify_message(EXPONENT, i, L_arrays_p_cont->main_layer_pointer);
     		    if (!rez)

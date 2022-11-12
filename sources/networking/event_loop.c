@@ -96,4 +96,5 @@ void event_loop(int sockfd, struct io_uring *ring)
         */
         io_uring_cqe_seen(ring, cqe);
     }
+    io_uring_queue_exit(ring);
 }

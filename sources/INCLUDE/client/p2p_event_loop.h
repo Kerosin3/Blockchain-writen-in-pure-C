@@ -30,9 +30,11 @@ typedef struct {
 	int serv_sock;
 } event_p2p_params_t;
 
-/*!
- * @brief main event loop for p2p server 
- *****************************************************************************/
+/**
+ * @brief starts event loop for p2p "client" application, i.e server to accept blocks from a peer
+ *
+ * @param {name} ring and serv socket* dont edit
+ */
 void event_loop_p2p(event_p2p_params_t*);
 
 extern P2pIpcMessage__Status P2P_deserialize_STATUS(char *buff, unsigned len);

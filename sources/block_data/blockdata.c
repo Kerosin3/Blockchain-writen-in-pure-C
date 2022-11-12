@@ -1,5 +1,8 @@
 #include "blockdata.h"
 
+void die(const char*);
+
+
 block_t* create_block_dummy(
         block_t* prev_block,
             unsigned char* merkle_root

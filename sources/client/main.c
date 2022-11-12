@@ -25,7 +25,7 @@ int main(int argc, char *argv[])
 	
     if ((argc != 2))  // ip for listen app
     {
-        printf("please listening IP for a peer p2p client..\n");
+        printf("please enter an IP of a p2p neighboor..\n");
         exit(1);
     }
   
@@ -79,7 +79,7 @@ int main(int argc, char *argv[])
 	
     setup_buffers();      // establish buffers
     int serv_fd = setup_serv_sock(10001); // set server fd
-    printf("p2p server launched at 10001 port\n");
+    printf("p2p server for this client launched at 10001 port\n");
     zlog_info(p2p_log, "p2p server started");
     setup_iouring(&ring_p2p, false);
     kill_thread_p2p = false;
@@ -94,8 +94,8 @@ int main(int argc, char *argv[])
    //setup and start client accept message thread 
    //------------------------------------------------------------------------------------------------------>>ok
    char* ip_server = "172.16.1.1";
+   printf("this client is accepting messages from msg server with ip 172.16.1.1 port [12345] \n");
    int tc_ret = thrd_create(&thread_messages_accept, (thrd_start_t)setup_client_iouring, (void *)ip_server);
-//    int tc_ret = thrd_create(&thread_messages_accept, (thrd_start_t)setup_client_iouring, (void *)0);
    if (tc_ret == thrd_error)
         {
             printf("error while client accept thread creation\n");
@@ -111,9 +111,8 @@ int main(int argc, char *argv[])
             exit(1);
         }
    thrd_detach(thread_p2p_worker); //DETACH!
-//     setup_p2p_listening();
-    char* _ip = "127.0.0.1" ;
-    tc_ret = thrd_create(&thread_p2p_list, (thrd_start_t)setup_p2p_listening, (void *)argv[1]);
+//    char* _ip = "127.0.0.1" ;// for testing
+   tc_ret = thrd_create(&thread_p2p_list, (thrd_start_t)setup_p2p_listening, (void *)argv[1]);
 //------------------------------------------------------------------------------------------------------>>ok
    if (tc_ret == thrd_error)
      {
@@ -128,13 +127,13 @@ int main(int argc, char *argv[])
         {
             printf("error joining thread \n");
         }
-  
-//    setup_client_iouring();
+   //release resources 
    destroy_buffers();
    teardown_server_sock(serv_fd);
    close(serv_fd);
    io_uring_queue_exit(&ring_p2p);
-    zlog_info(p2p_log, "P2P APPLICATION FINISHED");
-    free(el_params);
+   zlog_info(p2p_log, "P2P APPLICATION FINISHED");
+   free(el_params);
+   free(buffer_BLOCK_DATA);
     return 0;
 }

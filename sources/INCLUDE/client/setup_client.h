@@ -37,8 +37,11 @@
  *****************************************************************************/
 int setup_client_iouring(char* );
 
+void teardown_server_sock(int servsock);
+
 extern IpcMessage *buffer_transactions;
 
+// for logging
 extern zlog_category_t *client_log;
 extern int client_logging_enabled;
 
