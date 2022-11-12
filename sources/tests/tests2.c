@@ -25,9 +25,6 @@ void test1()
     DumpHex(socket_buf_emit, len);
 
     // test deserialization
-
-    signed_message_t deser_msg;
-
     print_serialized_data(socket_buf_emit, len);
 
     free(message);

@@ -22,8 +22,7 @@ int test_process_messages_L1_v2();
 void tests()
 {
     int result = 0;
-    start_server(12345);
-    /*    result+=test_valid_messages(); // no memory safe
+        result+=test_valid_messages(); // no memory safe
         result+=test_INvalid_messages(); // no memory safe
         result+=test_hash(); // no memry safe
         result+=test_hash_merging();
@@ -36,33 +35,7 @@ void tests()
         result += create_test_messages(9);
         result += test_mekrle_proof_RIGHT();
         result += test_mekrle_proof_WRONG();
-      */
-    /*
-        int rc;
-        zlog_category_t *test;
-
-        rc = zlog_init("/home/ker0/test/prj/sources/logging/zlog.conf");
-        if (rc) {
-            printf("init failed\n");
-            return;
-        }
-
-        atexit(zlog_fini);
-
-        test = zlog_get_category("my_test");
-        if (!test) {
-            printf("get test fail\n");
-            zlog_fini();
-            return ;
-        }
-
-        zlog_info(test, "hello, zlog");
-    #if(WRITE_LOG == 1)
-        zlog_info(test, "define works!");
-    #endif
-    // 	zlog_fini();
-    */
-    // solve_puzlev2(2);
+        printf("passed %d tests\n",result);
     (!result) ? printf("ALL TESTS PASSED OK\n") : printf("SOME ERRORS WHILE TESTING OCCURRED!\n");
 }
 
@@ -101,7 +74,7 @@ int test_mekrle_proof_RIGHT()
             wrong_message->message,
             wrong_message->length  );
     */
-    int ver_result = 0;
+    unsigned long long ver_result = 0;
     for (size_t i = 0; i < (1LLU << EXPONENT); i++)
     { // verify all messages
         // printf("----------------->verify %lu nth\n",i);
@@ -246,7 +219,7 @@ int test_process_messages_L1_v2()
     user_keys uk = create_key_pair();
     signed_message_t **msg_arr = calloc(n_msg, sizeof(signed_message_t *));
     size_t i = 0;
-    int rez = 0;
+    unsigned long long rez = 0;
     for (i = 0; i < n_msg; i++)
     {
         msg_arr[i] = ls_get_a_signed_msg(uk); // pointer to message
@@ -329,6 +302,7 @@ int test_create_tree()
         }
     */
     //	layer_hp* L1 = create_a_h_layer(&n_msg,L0pointer);
+    return 1;
 }
 
 int test_hashG_node_creation()
@@ -586,7 +560,6 @@ int test_INvalid_messages()
 {
     printf("TEST FORGED MESSAGE DETECTON\n");
     user_keys uk = create_key_pair();
-    user_keys uk2 = create_key_pair();
     signed_message_t a_msg;
     // char* somemsg = "asdfghj";
 
