@@ -49,7 +49,7 @@ Thus, main motivation to me was to to get in close touch with blockchain technol
 4. use vagrant up in "vagrant_testing" folder to up virtual machines
 5. use vagrant ssh testmachine to login into server, then in home dir launch app.out
 6. use vagrant ssh client1 and vagrant ssh client2 to log into client machines, run **./client.app 172.16.1.3** for client1  and **./client_app 172.16.1.2** for client2 in home dir to start client application 
-7. (in need) run "ansible-playbook --limit %testmachine/client1/client2% load_soft.yaml" (choose one machine per update) to update recompiled soft on machines
+7. (if needs) run "ansible-playbook --limit %testmachine/client1/client2% load_soft.yaml" (choose one machine per update) to update recompiled soft on machines
 
 ## test stand
 ![](https://github.com/Kerosin3/C_blockchain-draft/blob/main_experimental/docs/pictures/blockchain.jpg)
