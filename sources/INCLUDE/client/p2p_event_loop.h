@@ -36,6 +36,13 @@ typedef struct
  */
 void event_loop_p2p(event_p2p_params_t *);
 
+/**
+ * @brief deserialize status
+ *
+ * @param buff buffer to read
+ * @param len len of valid data 
+ * @return P2P status itself
+ */
 extern P2pIpcMessage__Status P2P_deserialize_STATUS(char *buff, unsigned len);
 extern void die(char *);
 extern zlog_category_t *client_log;

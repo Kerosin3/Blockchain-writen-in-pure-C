@@ -35,7 +35,22 @@ test_msg_t ls_get_test_msg(size_t len);
  * @return pointer to a message
  */
 test_msg_t get_test_msg(size_t len);
+/**
+ * @brief debugging
+ *
+ * @param data pointer
+ * @param size size of memspace
+ */
 void DumpHex(const void *data, size_t size);
 signed_message_t *get_a_signed_msg(user_keys keys);
+
+/**
+ * struct {name} - storage for thrd puzzle solution
+ */
+typedef struct {
+    unsigned char* merkle_root_p;
+    unsigned char* nonce;
+} puzzle_thr_container;
+
 
 #endif

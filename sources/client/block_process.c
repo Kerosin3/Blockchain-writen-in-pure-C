@@ -29,6 +29,8 @@ l_msg_container *calc_merkle_tree(unsigned long long EXPONENT, signed_message_t 
     return g_cont;
 }
 
+
+
 block_t *processing_block(l_msg_container *L_arrays_p_cont)
 {
 
@@ -42,11 +44,32 @@ block_t *processing_block(l_msg_container *L_arrays_p_cont)
     memcpy(merkle_root_first, (*(L_arrays_p_cont->main_layer_pointer[0].main_pointer))->hash, crypto_generichash_BYTES);
     //****************************************************/
     printf("-=STARTING PUZZLE SOLVING WITH DIFFICULTY 3=-\n");
-    unsigned char *nonce = solve_puzzle(merkle_root_first, 3); // calc puzzle 3 = difficulty
+    puzzle_thr_container* pc = calloc(1,sizeof(puzzle_thr_container));
+
+    unsigned char *nonce_answ = calloc(NONCE_LEN, sizeof(unsigned char));
+    pc->merkle_root_p = merkle_root_first;
+    pc->nonce = nonce_answ;
+    thrd_t thread_calc_puzzle;        // create thread listen
+    int tc_ret = thrd_create(&thread_calc_puzzle, (thrd_start_t)solve_puzzle_fixed_diff, (void *)pc);
+    //------------------------------------------------------------------------------------------------------>>ok
+    if (tc_ret == thrd_error)
+    {
+        printf("error while thread computing solution \n");
+        //exit(1);
+    }
+    int rez=0;
+    if (thrd_join(thread_calc_puzzle,&rez) != thrd_success)
+    {
+        printf("error joining thread \n");
+    }
+    //thrd_detach(thread_p2p_list); // dETACH HOW?
+    printf("thread computing solution has finished!\n");
+    //unsigned char *nonce = solve_puzzle(merkle_root_first, 3); // calc puzzle 3 = difficulty 
     printf("-=PUZZLE HAS BEEN SOLVED=-\n");
     // create block
     block_t *block_dummy = create_block_dummy(0, merkle_root_first);
-    set_nonce_to_block(block_dummy, nonce);
+    set_nonce_to_block(block_dummy, nonce_answ);
     set_prev_block_hash(block_dummy, NULL);
+    free(pc); // free container
     return block_dummy;
 }

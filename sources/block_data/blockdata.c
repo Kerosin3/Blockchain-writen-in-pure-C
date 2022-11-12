@@ -123,3 +123,40 @@ unsigned char *solve_puzzle(unsigned char *merkle_root, unsigned difficulty)
     free(out_hash);
     return nonce_answ;
 }
+
+void* solve_puzzle_fixed_diff(puzzle_thr_container* pc)
+{
+    unsigned difficulty = 3;
+
+    if (sodium_init() < 0)
+        die("libsodium!");
+
+
+    unsigned char *CONCAT_BYTES =
+        calloc(NONCE_LEN + crypto_generichash_BYTES, sizeof(unsigned char)); // allocate concat bytes
+    memcpy(CONCAT_BYTES + NONCE_LEN, pc->merkle_root_p, crypto_generichash_BYTES); // copy merkle to concat
+    printf("calcing hash puzzle for merkle root: difficulty:[%u]:\n", difficulty);
+    DumpHex(pc->merkle_root_p, crypto_generichash_BYTES);
+    unsigned char *out_hash = calloc(crypto_generichash_BYTES, sizeof(unsigned char)); // allocate for hash
+
+    unsigned char ans[5] = {'\0', '\0', '\0', '\0', '\0'}; //
+    unsigned long long ii = 0;
+    do
+    {
+        if (!(ii % 1000000))
+            printf("->trying %llu'th\n", ii);
+        ii++;
+        randombytes_buf(CONCAT_BYTES, NONCE_LEN); // take random sample to CONCAT
+        crypto_generichash(out_hash, crypto_generichash_BYTES, CONCAT_BYTES, crypto_generichash_BYTES + NONCE_LEN, NULL,
+                           0); // calc HASH
+    } while ((memcmp(out_hash, ans, difficulty)));
+    printf("Calced nonce to match puzzle:\n");
+    memcpy(pc->nonce, CONCAT_BYTES, NONCE_LEN);
+    DumpHex(pc->nonce, NONCE_LEN);
+    free(CONCAT_BYTES);
+
+    test_solution(pc->merkle_root_p, (char *)pc->nonce, out_hash);
+    free(out_hash);
+    return (void*) 1;
+}
+

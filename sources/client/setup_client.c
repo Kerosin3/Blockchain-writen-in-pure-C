@@ -1,5 +1,4 @@
 #include "setup_client.h"
-#include "ipc_messages_client.h"
 
 #define BUFSIZE 4096
 #define BLOCKSIZE 512

@@ -5,7 +5,7 @@
 #include "hashing.h"
 #include "layering.h"
 #include "zlog.h"
-
+#include <threads.h>
 /**
  * struct {name} - struct for firs layer merkle tree
  */
@@ -18,6 +18,7 @@ typedef struct
 
 extern zlog_category_t *client_log;
 extern int client_logging_enabled;
+
 
 /**
  * @brief calculates a merkle tree for a given set of signed messages
