@@ -55,3 +55,16 @@ TARGET_LINK_LIBRARIES( ${PROJECT_NAME}
 		      accounts
 	      		)
 set_target_properties(${PROJECT_NAME} PROPERTIES OUTPUT_NAME "client.app")
+
+
+if(NOT WIN32)
+  string(ASCII 27 Esc)
+  set(ColourReset "${Esc}[m")
+  set(ColourBold  "${Esc}[1m")
+  set(Magenta     "${Esc}[35m")
+  set(Cyan        "${Esc}[36m")
+  set(White       "${Esc}[37m")
+endif()
+
+message("${Magenta}CONSOLIDATED SOURCES FOR CLIENT APP${ColourReset}")
+

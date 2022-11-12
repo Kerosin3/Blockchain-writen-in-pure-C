@@ -45,3 +45,14 @@ TARGET_LINK_LIBRARIES(${PROJECT_NAME}
 		      blockdata
 		      logging
 		      )
+
+if(NOT WIN32)
+  string(ASCII 27 Esc)
+  set(ColourReset "${Esc}[m")
+  set(ColourBold  "${Esc}[1m")
+  set(Magenta     "${Esc}[35m")
+  set(Cyan        "${Esc}[36m")
+  set(White       "${Esc}[37m")
+endif()
+
+message("${Magenta}CONSOLIDATED SOURCES FOR SERVER APP${ColourReset}")

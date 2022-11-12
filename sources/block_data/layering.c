@@ -52,23 +52,7 @@ void fill_intermediate_levels(unsigned long long MSG_expt, unsigned long long *n
         L_arrays_p[k] = *L_arrays[k];
     }
 }
-/* create BASE layer OBSOLETE
-layer_hp *create_LEVEL0(unsigned long long *n_msg, user_keys uk)
-{
-    signed_message_t *msg_arr[*n_msg];  // arr size /2
-    signed_message_t msg_arr_p[*n_msg]; // array for pointers
-    for (size_t i = 0; i < *n_msg; i++)
-    {
-        msg_arr[i] = ls_get_a_signed_msg(uk); // generate random
-        validate_a_message(*msg_arr[i], uk.pk);
-        msg_arr_p[i] = *msg_arr[i];
-        //	DumpHex(msg_arr[i].message, msg_arr[i].length);
-    }
-    layer_hp *msg_layer = process_s_messages(*n_msg, msg_arr_p); // messages
-    (*n_msg) >>= 1LLU;                                           // MESSAGES  LAYER DONE!
-    return msg_layer;
-}
-*/
+
 hashes_hashNode get_a_hashes_Hnode(layer_hp **a_layer, size_t N)
 {
     hashes_hashNode a_hash_data;
@@ -78,24 +62,6 @@ hashes_hashNode get_a_hashes_Hnode(layer_hp **a_layer, size_t N)
     return a_hash_data;
 }
 
-// processing array of messages to a layer 0.  OBSOLETE
-/*layer_hp *process_s_messages(unsigned long long s_msgN, signed_message_t *star_msg)
-{
-    s_msgN >>= 1; // devide by 2
-                  //    printf("msg merged nodes %llu\n", s_msgN);
-    layer_hp *a_layer = calloc(1, sizeof(layer_hp));
-    a_layer->size = s_msgN; // assign size
-    // create storage for porinters
-    hash_point_p *beg_pointer = calloc(s_msgN, sizeof(hash_point_p));
-    a_layer->main_pointer = beg_pointer;
-    for (size_t i = 0; i < (s_msgN); i++)
-    {
-        // beg_pointer = (void*) s_msgN;
-        // beg_pointer[i] = create_hpoint_message(star_msg+i, (star_msg+s_msgN+i ) ); // 0-512 1-513		//WRONG
-    }
-    return a_layer;
-}
-*/
 // processing array of messages to a layer 0
 layer_hp *process_s_messagesV2(unsigned long long s_msgN, signed_message_t **star_msg)
 {
@@ -118,24 +84,6 @@ layer_hp *process_s_messagesV2(unsigned long long s_msgN, signed_message_t **sta
     }
     return a_layer;
 }
-// supply n of messages for TEST PURPOSES
-/*
-layer_hp *create_BASE_LAYER(unsigned long long *n_msg, user_keys uk, signed_message_t **first_msg)
-{
-    signed_message_t *msg_arr[*n_msg];  // create arr size of /2
-    signed_message_t msg_arr_p[*n_msg]; // array for pointers
-    for (size_t i = 0; i < *n_msg; i++)
-    {
-        msg_arr[i] = ls_get_a_signed_msg(uk); // generate random
-        validate_a_message(*msg_arr[i], uk.pk);
-        msg_arr_p[i] = *msg_arr[i];
-        //	DumpHex(msg_arr[i].message, msg_arr[i].length);
-    }
-    layer_hp *msg_layer = process_s_messages(*n_msg, msg_arr_p); // messages
-    (*n_msg) >>= 1LLU;                                           // MESSAGES  LAYER DONE!
-    return msg_layer;
-}
-*/
 // getting a messages from layer 0
 msg_link get_s_msg_from_L0(layer_hp *L0, size_t n)
 {
