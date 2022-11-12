@@ -8,6 +8,7 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <alloca.h>
 
 #define NONCE_LEN 15
 // block struct

@@ -20,10 +20,9 @@ block_t *create_block_dummy(block_t *prev_block, unsigned char *merkle_root)
     }
     else
     { // calc hash o prev block
-        unsigned char *out_hash = calloc(crypto_generichash_BYTES, sizeof(unsigned char));
+        unsigned char *out_hash = alloca(crypto_generichash_BYTES * sizeof(unsigned char));
         crypto_generichash(out_hash, crypto_generichash_BYTES, (unsigned char *)prev_block, sizeof(block_t), NULL, 0);
         memcpy(blk->previous_block, out_hash, crypto_generichash_BYTES); // copy hash
-        free(out_hash);
     }
     blk->difficulty = 0;
     memset(blk->nonce, 0, NONCE_LEN);
