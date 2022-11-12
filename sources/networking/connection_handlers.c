@@ -1,4 +1,5 @@
 #include "connection_handlers.h"
+#include "settings.h"
 
 #define SOCKBUFSIZE 65536
 
@@ -85,7 +86,6 @@ void calc_merkle_tree(signed_message_t** msg_pointer){
     layer_hp L_arrays_p[EXPONENT]; // for free
     printf("number of messages in Merkle tree :%llu\n",n_msg);
 
-    //user_keys uk = create_key_pair();
     signed_message_t** msg_arr = calloc(n_msg, sizeof(signed_message_t *));
     //fill messages to array
     size_t i = 0;
@@ -115,8 +115,7 @@ void calc_merkle_tree(signed_message_t** msg_pointer){
 void FINISH_SENDING(struct io_uring *ring, int client_fd)
 {
     struct io_uring_sqe *sqe = io_uring_get_sqe(ring); // add to ring
-    IpcMessage *ipc_msg = get_ipc_msg_buffer(client_fd);
-    CBUF.fill_size = 0; // reset
+    CBUF.fill_size = 0; // set buffer of current client to zero 
     beffer_sended_N[client_fd] = 0; // reset
     if (server_logging_enabled) zlog_info(server_log,"calcin merkle root");
     calc_merkle_tree(CBUF.buffer); 
@@ -132,7 +131,7 @@ void FINISH_SENDING(struct io_uring *ring, int client_fd)
 void handle_response_NEED_MORE_MSG(struct io_uring *ring, int client_fd)
 {
     if (server_logging_enabled) zlog_info(server_log,"SENDED TO CURRENT CLIENT %lu", beffer_sended_N[client_fd]);
-    if (beffer_sended_N[client_fd] >= 512 )
+    if (beffer_sended_N[client_fd] >= N_MESSAGES)
     { // block filled
                request_SEND_STATUS(ring, client_fd, IPC_MESSAGE__STATUS__ALL_BLOCK_MSG_SENDED);
     	       if (server_logging_enabled) zlog_info(server_log,"server sent all messages!!!!!!!!!!!!!!"); 
@@ -141,7 +140,7 @@ void handle_response_NEED_MORE_MSG(struct io_uring *ring, int client_fd)
     struct io_uring_sqe *sqe = io_uring_get_sqe(ring);                // add to ring
     memset(get_client_buffer(client_fd), 0, BUFFER_SIZE);             // set current buffer to zero;
     buffer_lengths[client_fd] = 0;                                    // set length to zero
-    // validate here!
+    // validate here if need
     signed_message_t* a_msg_p = GET_nth_circ_buf(&CBUF,beffer_sended_N[client_fd]);//send form buffer
     size_t n = serialize_data_v2(get_client_buffer(client_fd), a_msg_p,
                                  get_ipc_msg_buffer(client_fd)); // write serialized data to buf;
@@ -192,23 +191,6 @@ void add_close_request(struct io_uring *ring, int client_fd)
         printf("error submitting\n");
     printf("set state read\n");
 }
-
-void add_write_request_transaqtion(struct io_uring *ring, int client_fd, size_t nbytes, bool more_data)
-{
-    struct io_uring_sqe *sqe = io_uring_get_sqe(ring);
-    io_uring_prep_send(sqe, client_fd, get_client_buffer(client_fd), nbytes, MSG_DONTWAIT | (more_data ? MSG_MORE : 0));
-    io_uring_sqe_set_data(sqe, (void *)make_request_data(client_fd, FLAG_SEND_TRANSACTIONS));
-    io_uring_submit(ring);
-}
-
-void handle_request_transactions(struct io_uring *ring, int client_fd)
-{
-    DumpHex(get_client_buffer(client_fd), 100);
-    int n = snprintf(get_client_buffer(client_fd), BUFFER_SIZE, "hahahaha");
-    buffer_lengths[client_fd] = n;
-    add_write_request_transaqtion(ring, client_fd, n, false);
-}
-//  ---flag---clientfd
 
 u_int64_t make_request_data(int client_fd, flag_state flag)
 {

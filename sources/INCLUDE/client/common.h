@@ -7,6 +7,7 @@
 #include <stdatomic.h>
 
 #define DEFAULT_BUF_SIZE 4096
+#define MAX_PEERS 100
 
 extern atomic_uint_least64_t block_written_size;
 extern atomic_bool block_transmitted;

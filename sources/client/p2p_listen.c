@@ -1,6 +1,5 @@
 #include <p2p_listen.h>
 
-#define ring_entries_num 10
 
 typedef enum {
 	TEST = 0,
@@ -35,7 +34,6 @@ void setup_p2p_listening(char* IP_ADD_LISTEN)
     {
     	if (p2p_logging_enabled) zlog_info(p2p_log, "getaddrinfo error:%s\n", gai_strerror(status));
     	thrd_exit(1);
-        //exit(1);
     }
     for (p = res; p != NULL; p = p->ai_next)
     {
@@ -84,7 +82,7 @@ void setup_p2p_listening(char* IP_ADD_LISTEN)
     printf("GOT CONNECTION!\n");
     if (p2p_logging_enabled) zlog_info(p2p_log, "got connection to p2p server");
     struct io_uring ring;
-    io_uring_queue_init(ring_entries_num, &ring, 0);
+    io_uring_queue_init(MAX_CONNECTIONS, &ring, 0);
 
     struct io_uring_sqe *sqe = io_uring_get_sqe(&ring);
 

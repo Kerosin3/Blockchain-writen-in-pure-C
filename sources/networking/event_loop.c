@@ -13,8 +13,7 @@ void event_loop(int sockfd, struct io_uring *ring)
         strerror(err);
     if ((err = setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR | SO_RCVBUF, (char *)&sndsize, (int)sizeof(sndsize))))
         strerror(err);
-    unsigned long long ii = 0;
-    PUSH_msg_circ_buf(&CBUF);
+    PUSH_msg_circ_buf(&CBUF);// create buffer
     add_accept_request(ring, sockfd, &client_addr, &client_addr_len);
     if (server_logging_enabled) zlog_info(server_log, "logging..");
     for (;;)
@@ -48,8 +47,9 @@ void event_loop(int sockfd, struct io_uring *ring)
     	    if (server_logging_enabled) zlog_info(server_log, "closing connection to the client %d", request_data_client_fd(cqe->user_data));
             shutdown(current_client_fd, SHUT_RDWR);
             int closeret = close(current_client_fd);
-            if (closeret < 0)
+            if (closeret < 0){
     	        if (server_logging_enabled) zlog_info(server_log, "error closing socket %d, error %s", current_client_fd, strerror(errno));
+	    }
     		beffer_sended_N[request_data_client_fd(cqe->user_data)] =0; // add sended
             break;
         case TEST_RESPONSE:
@@ -86,6 +86,11 @@ void event_loop(int sockfd, struct io_uring *ring)
     	        if (server_logging_enabled) zlog_info(server_log, "error while processing %d",cqe->res);
             }
             break;
+	case FLAG_SEND_TRANSACTIONS:
+    	    if (server_logging_enabled) zlog_info(server_log, "server has sended message");
+	    break;
+	default:
+	    break;
         }
         /* when??
             shutdown(current_client_fd, SHUT_RDWR);

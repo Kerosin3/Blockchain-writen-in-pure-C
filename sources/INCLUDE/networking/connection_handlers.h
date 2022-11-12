@@ -40,33 +40,23 @@ typedef enum
     FLAG_READ,
     FLAG_WRITE,
 } flag_state;
+// bunch of function to process even loop events
 signed_message_t *get_signed_message_buffer(int client_fd);
-
 void FINISH_SENDING(struct io_uring *ring, int client_fd);
 void request_SEND_STATUS(struct io_uring *ring, int client_fd, IpcMessage__Status status);
-// concat fd and state to uin64
 u_int64_t make_request_data(int client_fd, flag_state flag);
 IpcMessage *get_ipc_msg_buffer(int client_fd);
 void READ_STATUS_RESPONSE(struct io_uring *ring, int client_fd);
-
 void set_flags(int socket);
 void WHETHER_ACK_OK(struct io_uring *ring, int client_fd);
-
 void request_ASK_NEED_MSG(struct io_uring *ring, int client_fd);
 void handle_request_transactions(struct io_uring *ring, int client_fd);
 int request_data_client_fd(uint64_t request_data);
-
 flag_state request_data_event_type(uint64_t request_data);
-
 char *get_client_buffer(int client_fd);
-
 void handle_response_NEED_MORE_MSG(struct io_uring *ring, int client_fd);
-
-void add_accept_request(struct io_uring *ring, int serverfd, struct sockaddr_in *a_client_adrd,
-                        socklen_t *client_addr_len);
+void add_accept_request(struct io_uring *ring, int serverfd, struct sockaddr_in *a_client_adrd,socklen_t *client_addr_len);
 void add_read_request(struct io_uring *ring, int client_fd);
-
 void add_write_request(struct io_uring *ring, int client_fd, size_t nbytes, bool more_data);
-
 void handle_request(struct io_uring *ring, int client_fd, size_t n_read);
 #endif

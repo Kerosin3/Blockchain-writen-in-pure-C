@@ -23,13 +23,19 @@ extern size_t *buffer_lengths; // current buffer length
 extern IpcMessage *buffer_transactions;
 extern signed_message_t *buffer_signed_message;
 extern size_t *beffer_sended_N;
-int setup_serv_sock(uint16_t port);
-
 extern signed_message_t **ring_data_buf;
 
+
+int setup_serv_sock(uint16_t port);
 void destroy_buffers();
 void setup_buffers();
+/**
+ * @brief setup server for sending signed messages
+ *
+ * @param pooling works only in root mode 
+ */
 void setup_iouring(struct io_uring *ring, int ncon, bool pooling);
+
 inline _Noreturn void die(const char *message)
 {
     perror(message);

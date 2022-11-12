@@ -3,7 +3,7 @@
 size_t send_ONLY_status_code(IpcMessage *message, void *socket_buf, IpcMessage__Status STATUS)
 {
     int len = 0;
-    char *date[32];
+    char date[32];
     memset(message, 0, sizeof(IpcMessage)); // clear
     ipc_message__init(message);
 
