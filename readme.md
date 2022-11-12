@@ -47,7 +47,7 @@ Thus, main motivation to me was to to get in close touch with blockchain technol
 2. fix Vagrantfile in "vagrant_testing" folder (lines 6,18,29) according to name of used archlinux box (download and install last arch for vagrant) /home/{USERNAME}/.vagrant.d/boxes
 3. use vagrant up in "vagrant_testing" folder to up virtual machines
 4. use vagrant ssh testmachine to login into server, then in home dir launch app.out
-5. use vagrant ssh client1 and vagrant ssh client2 to logint into client machines, use ./client.app 172.16.1.3 for client1  and ./client_app 172.16.1.2 for client2 to start application
+5. use vagrant ssh client1 and vagrant ssh client2 to log into client machines, run <./client.app 172.16.1.3> for client1  and ./client_app 172.16.1.2 for client2 in home dir to start client application 
 6. run "ansible-playbook --limit %testmachine/client1/client2% load_soft.yaml" (choose one machine per update) to update soft on machines
 
 ## test stand
