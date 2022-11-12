@@ -1,5 +1,8 @@
 # BLOCKCHAIN WRITTEN IN C LANGUAGE DRAFT PROJECT
 
+
+[![](https://tokei.rs/b1/github/Kerosin3/C_blockchain-draft?category=code)](https://github.com/Kerosin3/C_blockchain-draft).
+
 ## Overview
 
 This is a draft project that was created in order to provide practically-based experience with 
