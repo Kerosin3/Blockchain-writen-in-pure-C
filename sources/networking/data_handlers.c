@@ -12,22 +12,6 @@ circ_buf_t create_circ_buf(){
 	return cbuf;
 }
 
-/*
-signed_message_t* GET_nth_circ_buf(circ_buf_t* cbuf,size_t N){
-	size_t cur_last_msg_serial = (cbuf->fill_size)-1;
-	printf("here\n");
-	if (N > cur_last_msg_serial) {
-		do {
-			PUSH_msg_circ_buf(cbuf);
-		}while ( (N + 1) != cbuf->fill_size); // push while
-		return cbuf->buffer[ (cbuf->fill_size-1) ] ;
-	} else {
-		return cbuf->buffer[N];
-	}
-
-}
-*/
-
 signed_message_t* GET_nth_circ_buf(circ_buf_t* cbuf,size_t N){
 	size_t cur_last_msg_serial = (cbuf->fill_size)-1;
 	if (N > cur_last_msg_serial) {
@@ -40,9 +24,6 @@ signed_message_t* GET_nth_circ_buf(circ_buf_t* cbuf,size_t N){
 	}
 
 }
-
-
-
 
 int PUSH_msg_circ_buf(circ_buf_t* cbuf ){
 
@@ -83,4 +64,3 @@ void clean_circ_buf(circ_buf_t* cbuf){
 }
 
 
-//int check_CIRC_buf(create_circ_buf* cbuf,)

@@ -131,7 +131,7 @@ int setup_client_iouring(char* IP_ADDR_TO_CONNECT)
         case IPC_MESSAGE__STATUS__ASK_NEED_MSG:
             if (client_logging_enabled)
                 zlog_info(client_log, "server ask if need msg");
-            ret = send_STATUS(&ring, s, buffer2, IPC_MESSAGE__STATUS__NEED_MORE); // BNUFFER2 &&&
+            ret = send_STATUS(&ring, s, buffer2, IPC_MESSAGE__STATUS__NEED_MORE); 
             break;
         case IPC_MESSAGE__STATUS__OK:
             if (client_logging_enabled)
@@ -163,7 +163,7 @@ int setup_client_iouring(char* IP_ADDR_TO_CONNECT)
     		L_arrays_p_cont = calc_merkle_tree(EXPONENT, msg_arr); 
     		block_dummy = processing_block(L_arrays_p_cont);     
     		int ver_result = 0;
-    		zlog_info(client_log, "verifying messages");
+    		zlog_info(client_log, "verifying messages in a block dummy");
     		for (size_t i = 0; i < BUFSIZEFORMESSAGE; i++)
     		{ // verify all messages
     		    int rez = merkle_verify_message(EXPONENT, i, L_arrays_p_cont->main_layer_pointer);
@@ -172,7 +172,7 @@ int setup_client_iouring(char* IP_ADDR_TO_CONNECT)
     		    ver_result += rez;
   		  }
 		printf("verification result %d\n",ver_result);
-    		zlog_info(client_log, "verification passed with result %d",ver_result);
+    		zlog_info(client_log, "verification passed with a result %d",ver_result);
     		flag_block_created = 1;
     		size_t written_block_size = P2P_serialize_block_to_sock(block_dummy,buffer_BLOCK_DATA);//then send via server
     		block_written_size = written_block_size;
@@ -197,7 +197,7 @@ int setup_client_iouring(char* IP_ADDR_TO_CONNECT)
             flag_block_filled = 1;
             break;
         default:
-	    printf("default!\n");
+//	    printf("default!\n");
             break;
         }
 

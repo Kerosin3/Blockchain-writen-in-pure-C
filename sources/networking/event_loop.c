@@ -43,7 +43,7 @@ void event_loop(int sockfd, struct io_uring *ring)
         case WAIT_ACKNOWLEDGEMENT:
     	        if (server_logging_enabled) zlog_info(server_log, "waiting client responce");
             break;
-        case FLAG_CLOSE_CONNECTION:
+        case FLAG_CLOSE_CONNECTION: // close connection for a client
     	    if (server_logging_enabled) zlog_info(server_log, "closing connection to the client %d", request_data_client_fd(cqe->user_data));
             shutdown(current_client_fd, SHUT_RDWR);
             int closeret = close(current_client_fd);
@@ -92,13 +92,6 @@ void event_loop(int sockfd, struct io_uring *ring)
 	default:
 	    break;
         }
-        /* when??
-            shutdown(current_client_fd, SHUT_RDWR);
-            int closeret = close(current_client_fd);
-            if (closeret < 0)
-                   printf("error while closing socket %d, %s\n", current_client_fd, strerror(errno));
-
-        */
         io_uring_cqe_seen(ring, cqe);
     }
     io_uring_queue_exit(ring);

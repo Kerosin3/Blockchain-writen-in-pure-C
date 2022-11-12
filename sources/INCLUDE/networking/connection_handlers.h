@@ -50,7 +50,6 @@ void READ_STATUS_RESPONSE(struct io_uring *ring, int client_fd);
 void set_flags(int socket);
 void WHETHER_ACK_OK(struct io_uring *ring, int client_fd);
 void request_ASK_NEED_MSG(struct io_uring *ring, int client_fd);
-void handle_request_transactions(struct io_uring *ring, int client_fd);
 int request_data_client_fd(uint64_t request_data);
 flag_state request_data_event_type(uint64_t request_data);
 char *get_client_buffer(int client_fd);

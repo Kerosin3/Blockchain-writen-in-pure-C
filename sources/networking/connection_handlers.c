@@ -145,13 +145,11 @@ void handle_response_NEED_MORE_MSG(struct io_uring *ring, int client_fd)
     size_t n = serialize_data_v2(get_client_buffer(client_fd), a_msg_p,
                                  get_ipc_msg_buffer(client_fd)); // write serialized data to buf;
     buffer_lengths[client_fd] = n;
-//     DumpHex(get_client_buffer(client_fd), n);
     io_uring_prep_send(sqe, client_fd, get_client_buffer(client_fd), n, MSG_CONFIRM); // read answer
     if (server_logging_enabled) zlog_info(server_log,"send signed message size = %zu serial: %lu ", buffer_lengths[client_fd],beffer_sended_N[client_fd]);
     io_uring_sqe_set_data64(sqe, make_request_data(client_fd, READ_RESPONSE));
     if (io_uring_submit(ring) < 0)
         printf("error submitting\n");
-    // free(msg);
     beffer_sended_N[client_fd] += 1; // add sended
 }
 

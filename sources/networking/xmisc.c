@@ -1,15 +1,4 @@
 #include "misc.h"
-/*
-static void die(const char *message)
-{
-    perror(message);
-    exit(EXIT_FAILURE);
-}
-*/
-/*
- * for debugging
- * */
-
 
 void DumpHex(const void *data, size_t size)
 {
