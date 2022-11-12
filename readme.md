@@ -1,5 +1,5 @@
 # BLOCKCHAIN WRITTEN IN C LANGUAGE DRAFT PROJECT
-
+[![](https://tokei.rs/b1/github/Kerosin3/C_blockchain-draft?category=code)](https://github.com/Kerosin3/C_blockchain-draft).
 
 
 ```console
@@ -18,7 +18,6 @@
  Total                 101         6202         4485         1001          716
 ===============================================================================
 ```
-<[![](https://tokei.rs/b1/github/Kerosin3/C_blockchain-draft?category=code)](https://github.com/Kerosin3/C_blockchain-draft).>
 
 ## Overview
 
