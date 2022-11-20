@@ -13,7 +13,6 @@ int test_process_messages();
 int create_test_messages(unsigned long long);
 int test_mekrle_proof_RIGHT();
 int test_mekrle_proof_WRONG();
-int test_create_tree(); // obsolete
 int test_cleanup_message();
 int test_message_creation_and_validation();
 int test_create_and_destroy_hpoint();
@@ -236,75 +235,6 @@ int test_process_messages_L1_v2()
 
     return (rez == n_msg) ? 0 : 1;
 }
-// OBSILETE
-int test_create_tree()
-{
-    // create messages
-    user_keys uk = create_key_pair();
-    unsigned long long MSG_EXPONENT = 6LLU;
-    layer_hp *L_arrays[MSG_EXPONENT];
-    layer_hp L_arrays_p[MSG_EXPONENT]; // for free
-
-    unsigned long long n_msg = (1LLU << MSG_EXPONENT); // level 0
-    printf("N msg %llu\n", n_msg);
-
-    L_arrays[MSG_EXPONENT - 1] = create_LEVEL0(&n_msg, uk); // need to free messages!
-    L_arrays_p[MSG_EXPONENT - 1] = *L_arrays[MSG_EXPONENT - 1];
-
-    fill_intermediate_levels(MSG_EXPONENT, &n_msg, L_arrays, L_arrays_p); // done
-    /*
-    size_t ii = 0;
-    msg_link a_link;
-    for (ii = 0; ii< L_arrays[MSG_EXPONENT-1]->size; ii++) {
-        a_link = get_s_msg_from_L0( L_arrays[MSG_EXPONENT-1],ii );
-        if (!(a_link.msg1 == (msg_arr_p)+ii)){
-            break;
-        } else if (!( a_link.msg2 == msg_arr_p+(ii + L_arrays[(MSG_EXPONENT-1)]->size ) )) {
-            break;
-        } else {
-            continue;
-        }
-    }
-    if (ii != 256) return 0;
-    printf("ii is %lu\n",ii);
-    */
-    //---------------------------------------------
-    // check others layer
-    printf("getting msg from root node\n");
-    DumpHex(get_a_hashes_Hnode(L_arrays, 0).Shash, crypto_generichash_BYTES);
-    printf("\n");
-    DumpHex(get_a_hashes_Hnode(L_arrays, 0).hash1, crypto_generichash_BYTES);
-    printf("\n");
-    DumpHex(get_a_hashes_Hnode(L_arrays, 0).hash2, crypto_generichash_BYTES);
-    // check others layer
-    printf("getting msg from root node\n");
-    DumpHex(get_a_hashes_Hnode(L_arrays + 1, 0).Shash, crypto_generichash_BYTES);
-    printf("\n");
-    DumpHex(get_a_hashes_Hnode(L_arrays + 1, 0).hash1, crypto_generichash_BYTES);
-    printf("\n");
-    DumpHex(get_a_hashes_Hnode(L_arrays + 1, 0).hash2, crypto_generichash_BYTES);
-
-    /*
-    printf("root pointer\n");
-    DumpHex( (*(L_arrays[0]->main_pointer))->hash, crypto_generichash_BYTES);
-    printf("check hash from ouside side 1\n");
-    DumpHex(  (((hash_point_p) ((*(L_arrays[0]->main_pointer))->hpoint1)))  , crypto_generichash_BYTES);
-    printf("check hash from ouside side 2\n");
-    DumpHex(  (((hash_point_p) ((*(L_arrays[0]->main_pointer))->hpoint2)))  , crypto_generichash_BYTES);
-    */
-    for (size_t i = 0; i < MSG_EXPONENT; i++)
-    {
-        destoroy_a_layer(L_arrays[i]);
-    }
-    /*
-        for (size_t i =0; i< n_msg; i++) {
-            free( msg_arr_p[i].message );
-        }
-    */
-    //	layer_hp* L1 = create_a_h_layer(&n_msg,L0pointer);
-    return 1;
-}
-
 int test_hashG_node_creation()
 {
     // create 1 ground node with 2 msg
